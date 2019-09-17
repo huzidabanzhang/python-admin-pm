@@ -17,14 +17,14 @@ import demoFrame from './modules/demo-frame'
 
 // 菜单 侧边栏
 export const menuAside = [
-  demoComponents,
-  demoPlugins,
-  demoCharts,
-  demoElement,
-  demoPlayground,
-  demoBusiness,
-  demoD2Crud,
-  demoFrame
+//   demoComponents,
+//   demoPlugins,
+//   demoCharts,
+//   demoElement,
+//   demoPlayground,
+//   demoBusiness,
+//   demoD2Crud,
+//   demoFrame
 ]
 
 // 菜单 顶栏
@@ -38,12 +38,12 @@ export const menuHeader = [
     title: '功能',
     icon: 'puzzle-piece',
     children: [
-      demoD2Crud,
-      demoComponents,
-      demoElement,
-      demoCharts,
-      demoPlugins,
-      demoFrame,
+    //   demoD2Crud,
+    //   demoComponents,
+    //   demoElement,
+    //   demoCharts,
+    //   demoPlugins,
+    //   demoFrame,
       {
         title: '新窗口打开链接',
         icon: 'link',
@@ -58,6 +58,6 @@ export const menuHeader = [
       }
     ]
   },
-  demoPlayground,
-  demoBusiness
+//   demoPlayground,
+//   demoBusiness
 ]
