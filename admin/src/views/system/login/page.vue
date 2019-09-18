@@ -39,8 +39,7 @@
                             </el-form>
                         </el-card>
                         <p class="page-login--options" flex="main:justify cross:center">
-                            <span>
-                                <d2-icon name="question-circle" /> 忘记密码</span>
+                            <span><d2-icon name="question-circle" /> 忘记密码</span>
                             <span>注册用户</span>
                         </p>
                     </div>
@@ -73,7 +72,7 @@ export default {
                 code: ''
             },
             // 验证码url
-            captcha: '/API/User/Captcha',
+            captcha: '/API/v1/User/Captcha',
             // 表单校验
             rules: {
                 username: [
@@ -105,7 +104,7 @@ export default {
             'login'
         ]),
         refresh() {
-            this.captcha = '/API/User/Captcha?rand=' + Math.random()
+            this.captcha = '/API/v1/User/Captcha?rand=' + Math.random()
         },
         /**
          * @description 提交表单
