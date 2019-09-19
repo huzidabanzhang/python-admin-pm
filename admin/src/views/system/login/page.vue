@@ -39,7 +39,8 @@
                             </el-form>
                         </el-card>
                         <p class="page-login--options" flex="main:justify cross:center">
-                            <span><d2-icon name="question-circle" /> 忘记密码</span>
+                            <span>
+                                <d2-icon name="question-circle" /> 忘记密码</span>
                             <span>注册用户</span>
                         </p>
                     </div>
@@ -118,11 +119,15 @@ export default {
                     // 具体需要传递的数据请自行修改代码
                     this.login({
                         username: this.formLogin.username,
-                        password: this.formLogin.password
+                        password: this.formLogin.password,
+                        code: this.formLogin.code
                     })
                         .then(() => {
                             // 重定向对象不存在则返回顶层路径
                             this.$router.replace(this.$route.query.redirect || '/')
+                        })
+                        .catch(() => {
+                            this.refresh()
                         })
                 } else {
                     // 登录表单校验失败

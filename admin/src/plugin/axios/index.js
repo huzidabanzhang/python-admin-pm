@@ -1,4 +1,4 @@
-import store from '@/store'
+import qs from 'qs'
 import axios from 'axios'
 import { Message } from 'element-ui'
 import util from '@/libs/util'
@@ -44,6 +44,8 @@ service.interceptors.request.use(
             username: token,
             password: password
         }
+        config.headers['content-type'] = 'application/x-www-form-urlencoded'
+        config.data = qs.stringify(config.data)
         return config
     },
     error => {
@@ -78,6 +80,11 @@ service.interceptors.response.use(
                     // token 问题返回登录页面
                     errorCreate(dataAxios.msg)
                     
+                    break
+                case 403:
+                    // 无权限访问 跳转到无权限页面
+                    errorCreate(dataAxios.msg)
+
                     break
                 default:
                     // 不是正确的 code
