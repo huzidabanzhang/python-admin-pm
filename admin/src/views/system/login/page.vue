@@ -61,8 +61,7 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
-import { mapActions } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 export default {
     data() {
         return {
@@ -97,15 +96,42 @@ export default {
                         trigger: 'blur'
                     }
                 ]
-            }
+            },
+            menus: []
         }
     },
     methods: {
         ...mapActions('d2admin/account', [
             'login'
         ]),
+        ...mapMutations({
+            asideSet: 'd2admin/menu/asideSet'
+        }),
         refresh() {
             this.captcha = '/API/v1/User/Captcha?rand=' + Math.random()
+        },
+        getInfo(parentId) {
+            let info = []
+            for (let i = 0; i < this.menus.length; i++) {
+                let item = {
+                    path: this.menus[i].path,
+                    title: this.menus[i].title,
+                    icon: this.menus[i].icon,
+                    id: this.menus[i].id
+                }
+                if (parentId == 0) {
+                    if (this.menus[i].parentId == 0) {
+                        info.push(item)
+                        this.menus.splice(i--, 1)
+                    }
+                } else {
+                    if (res.menus[i].id == parentId) {
+                        info.push(item)
+                        this.menus.splice(i--, 1)
+                    }
+                }
+            }
+            return info
         },
         /**
          * @description 提交表单
@@ -114,15 +140,25 @@ export default {
         submit() {
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
-                    // 登录
-                    // 注意 这里的演示没有传验证码
-                    // 具体需要传递的数据请自行修改代码
                     this.login({
                         username: this.formLogin.username,
                         password: this.formLogin.password,
                         code: this.formLogin.code
                     })
-                        .then(() => {
+                        .then((res) => {
+                            this.menus = res.menus
+                            let menu = []
+                            while (this.menus.length > 0) {
+                                if (menu.length == 0) {
+                                    menu = this.getInfo(0)
+                                } else {
+                                    for (let i = 0; i < menu.length; i++) {
+                                        let info = this.getInfo(menu[i].id)
+                                        if (info.length > 0) menu[i]['children'] = info
+                                    }
+                                }
+                            }
+                            this.asideSet(menu)
                             // 重定向对象不存在则返回顶层路径
                             this.$router.replace(this.$route.query.redirect || '/')
                         })

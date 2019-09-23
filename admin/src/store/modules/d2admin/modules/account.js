@@ -2,7 +2,6 @@ import { Message, MessageBox } from 'element-ui'
 import util from '@/libs/util.js'
 import router from '@/router'
 import { AccountLogin } from '@api/sys.user'
-import { menuAside } from '@/menu'
 
 export default {
     namespaced: true,
@@ -28,7 +27,6 @@ export default {
                     code
                 })
                     .then(async res => {
-                        console.log(res)
                         // 设置 cookie 一定要存 uuid 和 token 两个 cookie
                         // 整个系统依赖这两个数据进行校验和存储
                         // uuid 是用户身份唯一标识 用户注册的时候确定 并且不可改变 不可重复
@@ -37,46 +35,6 @@ export default {
                         util.cookies.set('uuid', res.info.user_id)
                         util.cookies.set('token', res.token)
 
-                        let menu = []
-
-                        while (res.menus.length > 0) {
-                            if (menu.length == 0) {
-                                menu = getInfo(0)
-                                console.log(menu)
-                            } else {
-                                for (let i = 0; i < menu.length; i++) {
-                                    let info = getInfo(menu[i].id)
-                                    if (info.length > 0) menu[i]['children'] = info
-                                }
-                            }
-                        }
-
-                        menuAside = menu
-
-                        function getInfo(parentId) {
-                            let info = []
-                            for (let i = 0; i < res.menus.length; i++) {
-                                let item = {
-                                    path: res.menus[i].path,
-                                    title: res.menus[i].title,
-                                    icon: res.menus[i].icon,
-                                    id: res.menus[i].id
-                                }
-                                if (parentId == 0) {
-                                    if (res.menus[i].parentId == 0) {
-                                        info.push(item)
-                                        res.menus.splice(i--, 1)
-                                    }
-                                } else {
-                                    if (res.menus[i].id == parentId) {
-                                        info.push(item)
-                                        res.menus.splice(i--, 1)
-                                    }
-                                }
-                            }
-                            return info
-                        }
-
                         // 设置 vuex 用户信息
                         await dispatch('d2admin/user/set', {
                             name: res.info.name
@@ -84,7 +42,7 @@ export default {
                         // 用户登录后从持久化数据加载一系列的设置
                         await dispatch('load')
                         // 结束
-                        resolve()
+                        resolve(res)
                     })
                     .catch(err => {
                         console.log('err: ', err)
