@@ -1,84 +1,88 @@
 <template>
-  <d2-container class="page">
-    <d2-page-cover>
-      <d2-icon-svg class="logo" name="d2-admin"/>
-      <template slot="footer">
-        <div class="btn-group">
-          <span class="btn-group__btn" @click="$open('https://github.com/d2-projects')">
-            开源组织
-          </span> |
-          <span class="btn-group__btn" @click="$open('https://doc.d2admin.fairyever.com/zh/')">
-            文档
-          </span> |
-          <span class="btn-group__btn" @click="$open('https://github.com/d2-projects/d2-admin-start-kit')">
-            简化版
-          </span> |
-          <span class="btn-group__btn" @click="$open('https://alibaba.github.io/ice/scaffold?type=vue')">
-            飞冰
-          </span> |
-          <span class="btn-group__btn" @click="$open('https://juejin.im/user/57a48b632e958a006691b946/posts')">
-            掘金
-          </span> |
-          <span class="btn-group__btn" @click="$open('https://daily.fairyever.com')">
-            日报
-          </span> |
-          <el-popover :width="172" trigger="hover">
-            <p class="d2-mt-0 d2-mb-10">今日前端</p>
-            <img src="./image/qr@2x.png" style="width: 172px;">
-            <span slot="reference" class="btn-group__btn btn-group__btn--link">
-              <d2-icon name="weixin"/>
-              微信公众号
-            </span>
-            <p style="font-size: 12px; margin-top: 0px; margin-bottom: 0px;">
-              官方公众号，主要推送前端技术类文章、框架资源、学习教程，以及 D2 系列项目更新信息
-            </p>
-          </el-popover>
-        </div>
-        <d2-badge/>
-        <d2-help/>
-      </template>
-    </d2-page-cover>
-  </d2-container>
+    <d2-container class="page">
+    </d2-container>
 </template>
 
 <script>
-import D2Badge from './components/d2-badge'
-import D2Help from './components/d2-help'
-import D2PageCover from './components/d2-page-cover'
+import { mapMutations, mapActions } from 'vuex'
 export default {
-  components: {
-    D2Badge,
-    D2Help,
-    D2PageCover
-  },
-  data () {
-    return {
-      filename: __filename
+    data() {
+        return {}
+    },
+    // 回退 刷新时执行
+    activated() {
+        this.init()
+    },
+    computed: {
+        menus () {
+            return this.$store.state.d2admin.user.info.menus || []
+        }
+    },
+    methods: {
+        ...mapMutations({
+            headerSet: 'd2admin/menu/headerSet'
+        }),
+        init() {
+            let menu = []
+            while (this.menus.length > 0) {
+                if (menu.length == 0) {
+                    menu = this.getInfo(0)
+                } else {
+                    for (let i = 0; i < menu.length; i++) {
+                        let info = this.getInfo(menu[i].id)
+                        if (info.length > 0) menu[i]['children'] = info
+                    }
+                }
+            }
+            this.headerSet(menu)
+        },
+        getInfo(parentId) {
+            let info = []
+            for (let i = 0; i < this.menus.length; i++) {
+                let item = {
+                    path: this.menus[i].path,
+                    title: this.menus[i].title,
+                    icon: this.menus[i].icon,
+                    id: this.menus[i].id
+                }
+                if (parentId == 0) {
+                    if (this.menus[i].parentId == 0) {
+                        info.push(item)
+                        this.menus.splice(i--, 1)
+                    }
+                } else {
+                    if (res.menus[i].id == parentId) {
+                        info.push(item)
+                        this.menus.splice(i--, 1)
+                    }
+                }
+            }
+            return info
+        }
     }
-  }
 }
 </script>
 
 <style lang="scss" scoped>
 .page {
-  .logo {
-    width: 120px;
-  }
-  .btn-group {
-    color: $color-text-placehoder;
-    font-size: 12px;
-    line-height: 12px;
-    margin-top: 0px;
-    margin-bottom: 20px;
-    .btn-group__btn {
-      color: $color-text-sub;
-      &:hover {
-        color: $color-text-main;
-      }
-      &.btn-group__btn--link {
-        color: $color-primary;
-      }
+    .logo {
+        width: 120px;
     }
-  }
+    .btn-group {
+        color: $color-text-placehoder;
+        font-size: 12px;
+        line-height: 12px;
+        margin-top: 0px;
+        margin-bottom: 20px;
+        .btn-group__btn {
+            color: $color-text-sub;
+            &:hover {
+                color: $color-text-main;
+            }
+            &.btn-group__btn--link {
+                color: $color-primary;
+            }
+        }
+    }
 }
 </style>
