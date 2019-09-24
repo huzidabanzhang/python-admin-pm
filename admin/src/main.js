@@ -69,16 +69,18 @@ new Vue({
         // 初始化全屏监听
         this.$store.dispatch('d2admin/fullscreen/listen')
     },
-    watch: {
-        // 检测路由变化切换侧边栏内容
-        '$route.matched': {
-            handler(matched) {
-                if (matched.length > 0) {
-                    const _side = menuAside.filter(menu => menu.path === matched[0].path)
-                    this.$store.commit('d2admin/menu/asideSet', _side.length > 0 ? _side[0].children : [])
-                }
-            },
-            immediate: true
-        }
-    }
+    // watch: {
+    //     // 检测路由变化切换侧边栏内容
+    //     '$route.matched': {
+    //         handler(matched) {
+    //             if (matched.length > 0) {
+    //                 const _side = menuAside.filter(menu => menu.path === matched[0].path)
+    //                 console.log(matched)
+    //                 console.log(_side)
+    //                 this.$store.commit('d2admin/menu/asideSet', _side.length > 0 ? _side[0].children : [])
+    //             }
+    //         },
+    //         immediate: true
+    //     }
+    // }
 }).$mount('#app')

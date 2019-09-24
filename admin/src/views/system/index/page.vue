@@ -4,60 +4,95 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
 import { mapMutations, mapActions } from 'vuex'
+import { frameInRoutes } from '@/router/routes'
+import layoutHeaderAside from '@/layout/header-aside'
+import router from '@/router'
 export default {
     data() {
-        return {}
+        return {
+            menu: []
+        }
+    },
+    created() {
+        this.init()
     },
     // 回退 刷新时执行
     activated() {
         this.init()
     },
     computed: {
-        menus () {
+        menus() {
             return this.$store.state.d2admin.user.info.menus || []
+        },
+        routes() {
+            return this.$store.state.d2admin.user.info.routes || []
         }
     },
     methods: {
         ...mapMutations({
-            headerSet: 'd2admin/menu/headerSet'
+            pageInit: 'd2admin/page/init',
+            headerSet: 'd2admin/menu/headerSet',
+            asideSet: 'd2admin/menu/asideSet'
         }),
         init() {
+            let children = this.routes.map(item => {
+                const index = this.menus.findIndex(i => i.id === item.menu_id)
+                return {
+                    name: item.name,
+                    path: this.menus[index].path,
+                    component: () => import(`@/views/` + item.path),
+                    meta: {
+                        auth: true,
+                        name: item.name
+                    }
+                }
+            })
+
+            const route = [
+                {
+                    path: '/',
+                    component: layoutHeaderAside,
+                    children: children
+                }
+            ]
+
+            this.$router.addRoutes(route)
+            // 更新标签页池
+            this.pageInit([
+                ...frameInRoutes,
+                ...route
+            ])
+
+            this.menu = cloneDeep(this.menus)
+
             let menu = []
-            while (this.menus.length > 0) {
-                if (menu.length == 0) {
-                    menu = this.getInfo(0)
-                } else {
-                    for (let i = 0; i < menu.length; i++) {
-                        let info = this.getInfo(menu[i].id)
-                        if (info.length > 0) menu[i]['children'] = info
+            while (this.menu.length > 0) {
+                for (let i = 0; i < this.menu.length; i++) {
+                    if (this.menu[i].parentId == 0) {
+                        menu.push(this.getMenuInfo(this.menu[i]))
+                        this.menu.splice(i, 1)
+                    } else {
+                        let index = menu.findIndex(item => item.id === this.menu[i].parentId)
+                        if (index == -1) continue
+                        if (!menu[index]['children']) menu[index]['children'] = []
+                        menu[index]['children'].push(this.getMenuInfo(this.menu[i]))
+                        this.menu.splice(i, 1)
                     }
                 }
             }
             this.headerSet(menu)
+            this.asideSet(menu)
         },
-        getInfo(parentId) {
-            let info = []
-            for (let i = 0; i < this.menus.length; i++) {
-                let item = {
-                    path: this.menus[i].path,
-                    title: this.menus[i].title,
-                    icon: this.menus[i].icon,
-                    id: this.menus[i].id
-                }
-                if (parentId == 0) {
-                    if (this.menus[i].parentId == 0) {
-                        info.push(item)
-                        this.menus.splice(i--, 1)
-                    }
-                } else {
-                    if (res.menus[i].id == parentId) {
-                        info.push(item)
-                        this.menus.splice(i--, 1)
-                    }
-                }
+        getMenuInfo(params) {
+            let item = {
+                title: params.title,
+                icon: params.icon,
+                id: params.id
             }
-            return info
+            if (params.path) item['path'] = params.path
+            return item
         }
     }
 }
