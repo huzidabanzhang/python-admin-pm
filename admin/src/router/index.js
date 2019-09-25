@@ -11,6 +11,8 @@ import util from '@/libs/util.js'
 
 // 路由数据
 import routes from './routes'
+import layoutHeaderAside from '@/layout/header-aside'
+import { frameInRoutes } from '@/router/routes'
 
 Vue.use(VueRouter)
 
@@ -20,17 +22,61 @@ const router = new VueRouter({
     mode: 'history'
 })
 
+let RouteFresh = true
+
 /**
  * 路由拦截
  * 权限验证
  */
 router.beforeEach(async (to, from, next) => {
+    console.log(router)
+    // 进度条
+    NProgress.start()
+    // 处理动态理由 刷新后失效的问题 通过判断RouteFresh来确定是否加载
+    if (RouteFresh) {
+        store.dispatch('d2admin/user/get').then(res => { // 根据role过滤路由
+            const r = res.routes || []
+            const m = res.menus || []
+
+            let children = r.map(item => {
+                const index = m.findIndex(i => i.id === item.menu_id)
+                return {
+                    name: item.name,
+                    path: m[index].path,
+                    component: () => import(`@/views/` + item.path),
+                    meta: {
+                        auth: true,
+                        name: item.name
+                    }
+                }
+            })
+
+            const route = [
+                {
+                    path: '/',
+                    component: layoutHeaderAside,
+                    children: children
+                },
+                { path: '*', redirect: '/404', hidden: true }
+            ]
+
+            router.$addRoutes(route)
+            // 更新标签页池
+            store.commit('d2admin/page/init', [
+                ...frameInRoutes,
+                ...route
+            ])
+            RouteFresh = false
+            next({ ...to, replace: true })
+        }).catch(err => {
+            console.log(err)
+        })
+        return true
+    }
     // 确认已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201
     await store.dispatch('d2admin/page/isLoaded')
     // 确认已经加载组件尺寸设置 https://github.com/d2-projects/d2-admin/issues/198
     await store.dispatch('d2admin/size/isLoaded')
-    // 进度条
-    NProgress.start()
     // 关闭搜索面板
     store.commit('d2admin/search/set', false)
     // 验证当前路由所有的匹配中是否需要有登录验证的
@@ -67,5 +113,11 @@ router.afterEach(to => {
     // 更改标题
     util.title(to.meta.title)
 })
+
+// 重置当前router的match = 初始router.match 防止回退之类的重置路由报重名警报 https://github.com/vuejs/vue-router/issues/1727
+router.$addRoutes = (params) => {
+    router.matcher = new VueRouter({ mode: 'history', routes }).matcher
+    router.addRoutes(params)
+}
 
 export default router

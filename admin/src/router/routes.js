@@ -56,12 +56,6 @@ const frameIn = [
                 component: _import('system/function/redirect')
             }
         ]
-    },
-    {
-        path: '*',
-        redirect: '/404',
-        name: 'notFound',
-        hidden: true
     }
 ]
 

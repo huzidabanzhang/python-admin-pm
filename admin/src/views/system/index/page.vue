@@ -33,7 +33,6 @@ export default {
     methods: {
         ...mapMutations({
             pageInit: 'd2admin/page/init',
-            headerSet: 'd2admin/menu/headerSet',
             asideSet: 'd2admin/menu/asideSet'
         }),
         init() {
@@ -58,7 +57,7 @@ export default {
                 }
             ]
 
-            this.$router.addRoutes(route)
+            this.$router.$addRoutes(route)
             // 更新标签页池
             this.pageInit([
                 ...frameInRoutes,
@@ -82,7 +81,6 @@ export default {
                     }
                 }
             }
-            this.headerSet(menu)
             this.asideSet(menu)
         },
         getMenuInfo(params) {
