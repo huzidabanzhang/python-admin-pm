@@ -12,6 +12,7 @@ import util from '@/libs/util.js'
 // 路由数据
 import routes from './routes'
 import layoutHeaderAside from '@/layout/header-aside'
+import { cloneDeep } from 'lodash'
 import { frameInRoutes } from '@/router/routes'
 
 Vue.use(VueRouter)
@@ -24,17 +25,31 @@ const router = new VueRouter({
 
 let RouteFresh = true
 
+let getMenuInfo = (params) => {
+    let item = {
+        title: params.title,
+        icon: params.icon,
+        id: params.id
+    }
+    if (params.path) item['path'] = params.path
+    return item
+}
+
 /**
  * 路由拦截
  * 权限验证
  */
 router.beforeEach(async (to, from, next) => {
-    console.log(router)
     // 进度条
     NProgress.start()
     // 处理动态理由 刷新后失效的问题 通过判断RouteFresh来确定是否加载
     if (RouteFresh) {
-        store.dispatch('d2admin/user/get').then(res => { // 根据role过滤路由
+        store.dispatch('d2admin/db/get', {
+            dbName: 'sys',
+            path: 'user.info',
+            defaultValue: {},
+            user: true
+        }, { root: true }).then(res => {
             const r = res.routes || []
             const m = res.menus || []
 
@@ -66,6 +81,25 @@ router.beforeEach(async (to, from, next) => {
                 ...frameInRoutes,
                 ...route
             ])
+
+            let menu_list = cloneDeep(res.menus), menu = []
+            while (menu_list.length > 0) {
+                for (let i = 0; i < menu_list.length; i++) {
+                    if (menu_list[i].parentId == 0) {
+                        menu.push(getMenuInfo(menu_list[i]))
+                        menu_list.splice(i, 1)
+                    } else {
+                        let index = menu.findIndex(item => item.id === menu_list[i].parentId)
+                        if (index == -1) continue
+                        if (!menu[index]['children']) menu[index]['children'] = []
+                        menu[index]['children'].push(getMenuInfo(menu_list[i]))
+                        menu_list.splice(i, 1)
+                    }
+                }
+            }
+
+            store.commit('d2admin/menu/asideSet', menu)
+
             RouteFresh = false
             next({ ...to, replace: true })
         }).catch(err => {

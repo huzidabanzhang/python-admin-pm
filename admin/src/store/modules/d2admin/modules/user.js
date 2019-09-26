@@ -26,16 +26,6 @@ export default {
             })
         },
         /**
-         * @description 获取用户信息
-         * @param {Object} context
-         */
-        get({ state }) {
-            return new Promise(async resolve => {
-                // end
-                resolve(state.info)
-            })
-        },
-        /**
          * @description 从数据库取用户数据
          * @param {Object} context
          */
