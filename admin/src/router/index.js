@@ -61,7 +61,7 @@ router.beforeEach(async (to, from, next) => {
                     component: () => import(`@/views/` + item.path),
                     meta: {
                         auth: true,
-                        name: item.name
+                        title: item.name
                     }
                 }
             })
