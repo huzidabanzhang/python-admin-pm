@@ -35,14 +35,8 @@ let getMenuInfo = (params) => {
     return item
 }
 
-/**
- * 路由拦截
- * 权限验证
- */
-router.beforeEach(async (to, from, next) => {
-    // 进度条
-    NProgress.start()
-    // 处理动态理由 刷新后失效的问题 通过判断RouteFresh来确定是否加载
+// 处理动态理由 刷新后失效的问题 通过判断RouteFresh来确定是否加载
+function ResetRoute(to, next) {
     if (RouteFresh) {
         store.dispatch('d2admin/db/get', {
             dbName: 'sys',
@@ -52,7 +46,6 @@ router.beforeEach(async (to, from, next) => {
         }, { root: true }).then(res => {
             const r = res.routes || []
             const m = res.menus || []
-
             let children = r.map(item => {
                 const index = m.findIndex(i => i.id === item.menu_id)
                 return {
@@ -107,6 +100,15 @@ router.beforeEach(async (to, from, next) => {
         })
         return true
     }
+}
+
+/**
+ * 路由拦截
+ * 权限验证
+ */
+router.beforeEach(async (to, from, next) => {
+    // 进度条
+    NProgress.start()
     // 确认已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201
     await store.dispatch('d2admin/page/isLoaded')
     // 确认已经加载组件尺寸设置 https://github.com/d2-projects/d2-admin/issues/198
@@ -120,6 +122,7 @@ router.beforeEach(async (to, from, next) => {
         const token = util.cookies.get('token')
         const user_info = store.state.d2admin.user.info
         if (token && token !== 'undefined' && JSON.stringify(user_info) != '{}') {
+            ResetRoute(to, next)
             next()
         } else {
             // 没有登录的时候跳转到登录界面
@@ -135,6 +138,7 @@ router.beforeEach(async (to, from, next) => {
         }
     } else {
         // 不需要身份校验 直接通过
+        ResetRoute(to, next)
         next()
     }
 })
