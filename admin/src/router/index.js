@@ -26,13 +26,25 @@ const router = new VueRouter({
 let RouteFresh = true
 
 let getMenuInfo = (params) => {
-    let item = {
+    return {
         title: params.title,
         icon: params.icon,
-        id: params.id
+        id: params.menu_id,
+        path: params.path
     }
-    if (params.path) item['path'] = params.path
-    return item
+}
+
+let getRouteInfo = (data) => {
+    return {
+        name: data.name,
+        path: data.path,
+        component: () => import('@' + data.componentPath),
+        meta: {
+            title: data.title,
+            auth: data.auth
+        },
+        id: data.route_id
+    }
 }
 
 // 处理动态理由 刷新后失效的问题 通过判断RouteFresh来确定是否加载
@@ -46,27 +58,29 @@ function ResetRoute(to, next) {
         }, { root: true }).then(res => {
             const r = res.routes || []
             const m = res.menus || []
-            let children = r.map(item => {
-                const index = m.findIndex(i => i.id === item.menu_id)
-                return {
-                    name: item.name,
-                    path: m[index].path,
-                    component: () => import(`@/views/` + item.path),
-                    meta: {
-                        auth: true,
-                        title: item.name
-                    }
-                }
-            })
-
-            const route = [
+            
+            let route_list = cloneDeep(r), route = [
                 {
                     path: '/',
-                    component: layoutHeaderAside,
-                    children: children
+                    component: layoutHeaderAside
                 },
                 { path: '*', redirect: '/404', hidden: true }
             ]
+
+            while (route_list.length > 0) {
+                for (let i = 0; i < route_list.length; i++) {
+                    if (route_list[i].parentId == 0) {
+                        route.push(getRouteInfo(route_list[i]))
+                        route_list.splice(i, 1)
+                    } else {
+                        let index = route.findIndex(item => item.id === route_list[i].parentId)
+                        if (index == -1) continue
+                        if (!route[index]['children']) route[index]['children'] = []
+                        route[index]['children'].push(getRouteInfo(route_list[i]))
+                        route_list.splice(i, 1)
+                    }
+                }
+            }
 
             router.$addRoutes(route)
             // 更新标签页池
@@ -75,7 +89,7 @@ function ResetRoute(to, next) {
                 ...route
             ])
 
-            let menu_list = cloneDeep(res.menus), menu = []
+            let menu_list = cloneDeep(m), menu = []
             while (menu_list.length > 0) {
                 for (let i = 0; i < menu_list.length; i++) {
                     if (menu_list[i].parentId == 0) {
