@@ -72,12 +72,14 @@ function ResetRoute(to, next) {
                     if (route_list[i].parentId == 0) {
                         route.push(getRouteInfo(route_list[i]))
                         route_list.splice(i, 1)
+                        i--
                     } else {
                         let index = route.findIndex(item => item.id === route_list[i].parentId)
                         if (index == -1) continue
                         if (!route[index]['children']) route[index]['children'] = []
                         route[index]['children'].push(getRouteInfo(route_list[i]))
                         route_list.splice(i, 1)
+                        i--
                     }
                 }
             }
@@ -95,12 +97,14 @@ function ResetRoute(to, next) {
                     if (menu_list[i].parentId == 0) {
                         menu.push(getMenuInfo(menu_list[i]))
                         menu_list.splice(i, 1)
+                        i--
                     } else {
                         let index = menu.findIndex(item => item.id === menu_list[i].parentId)
                         if (index == -1) continue
                         if (!menu[index]['children']) menu[index]['children'] = []
                         menu[index]['children'].push(getMenuInfo(menu_list[i]))
                         menu_list.splice(i, 1)
+                        i--
                     }
                 }
             }
