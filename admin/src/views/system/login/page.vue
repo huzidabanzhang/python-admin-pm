@@ -41,7 +41,6 @@
                         <p class="page-login--options" flex="main:justify cross:center">
                             <span>
                                 <d2-icon name="question-circle" /> 忘记密码</span>
-                            <span>注册用户</span>
                         </p>
                     </div>
                 </div>
@@ -72,7 +71,7 @@ export default {
                 code: ''
             },
             // 验证码url
-            captcha: '/API/v1/User/Captcha',
+            captcha: '/API/v1/Admin/Captcha',
             // 表单校验
             rules: {
                 username: [
@@ -100,12 +99,17 @@ export default {
             menus: []
         }
     },
+    watch: {
+        $route() {
+            this.refresh()
+        }
+    },
     methods: {
         ...mapActions('d2admin/account', [
             'login'
         ]),
         refresh() {
-            this.captcha = '/API/v1/User/Captcha?rand=' + Math.random()
+            this.captcha = '/API/v1/Admin/Captcha?rand=' + Math.random()
         },
         /**
          * @description 提交表单

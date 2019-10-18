@@ -156,7 +156,6 @@ router.beforeEach(async (to, from, next) => {
         }
     } else {
         // 不需要身份校验 直接通过
-        ResetRoute(to, next)
         next()
     }
 })
