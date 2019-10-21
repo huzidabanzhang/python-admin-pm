@@ -44,7 +44,8 @@ service.interceptors.request.use(
             username: token,
             password: password
         }
-        config.headers['content-type'] = 'application/x-www-form-urlencoded'
+        if (!config.headers['content-type'])
+            config.headers['content-type'] = 'application/x-www-form-urlencoded'
         config.data = qs.stringify(config.data)
         return config
     },
@@ -86,9 +87,19 @@ service.interceptors.response.use(
                     errorCreate(dataAxios.msg)
 
                     break
+                case 404:
+                    // 无权限访问 跳转到无权限页面
+                    errorCreate(dataAxios.msg)
+
+                    break
+                case 405:
+                    // 无权限访问 跳转到无权限页面
+                    errorCreate(dataAxios.msg)
+
+                    break
                 default:
                     // 不是正确的 code
-                    errorCreate(`${dataAxios.msg}: ${response.config.url}`)
+                    errorCreate(dataAxios.msg)
                     break
             }
         }

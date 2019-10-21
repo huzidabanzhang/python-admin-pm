@@ -1,7 +1,7 @@
 import { Message, MessageBox } from 'element-ui'
 import util from '@/libs/util.js'
 import router from '@/router'
-import { AccountLogin } from '@api/sys.user'
+import { AccountLogin, AccountLogout } from '@api/sys.user'
 
 export default {
     namespaced: true,
@@ -63,16 +63,24 @@ export default {
              * @description 注销
              */
             async function logout() {
-                // 删除cookie
-                util.cookies.remove('token')
-                util.cookies.remove('uuid')
-                util.cookies.remove('password')
-                // 清空 vuex 用户信息
-                await dispatch('d2admin/user/set', {}, { root: true })
-                // 跳转路由
-                router.push({
-                    name: 'login'
+                AccountLogout().then(async res => {
+                    // 删除cookie
+                    util.cookies.remove('token')
+                    util.cookies.remove('uuid')
+                    util.cookies.remove('password')
+                    // 清空 vuex 用户信息
+                    await dispatch('d2admin/user/set', {}, { root: true })
+                    // 跳转路由
+                    router.push({
+                        name: 'login'
+                    })
+                    // 结束
+                    resolve(res)
                 })
+                    .catch(err => {
+                        console.log('err: ', err)
+                        reject(err)
+                    })
             }
             // 判断是否需要确认
             if (confirm) {
@@ -88,9 +96,6 @@ export default {
                     })
                     .catch(() => {
                         commit('d2admin/gray/set', false, { root: true })
-                        Message({
-                            message: '取消注销操作'
-                        })
                     })
             } else {
                 logout()
