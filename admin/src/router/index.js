@@ -35,16 +35,22 @@ let getMenuInfo = (params) => {
 }
 
 let getRouteInfo = (data) => {
-    return {
+    let info = {
         name: data.name,
         path: data.path,
-        component: () => import('@' + data.componentPath),
         meta: {
             title: data.title,
-            auth: data.auth
+            cache: data.cache,
+            auth: true
         },
         id: data.route_id
     }
+
+    if (data.componentPath == 'layout/header-aside')
+        info['component'] = layoutHeaderAside
+    else info['component'] = () => import('@/pages/' + data.componentPath)
+
+    return info
 }
 
 // 处理动态理由 刷新后失效的问题 通过判断RouteFresh来确定是否加载
@@ -125,6 +131,7 @@ function ResetRoute(to, next) {
  * 权限验证
  */
 router.beforeEach(async (to, from, next) => {
+    ResetRoute(to, next)
     // 进度条
     NProgress.start()
     // 确认已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201

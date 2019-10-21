@@ -1,6 +1,6 @@
 import qs from 'qs'
 import axios from 'axios'
-import { Message } from 'element-ui'
+import { Message, Loading } from 'element-ui'
 import util from '@/libs/util'
 
 // 创建一个错误
@@ -34,6 +34,16 @@ const service = axios.create({
 // 解决跨域session丢失问题
 service.defaults.withCredentials = true
 
+// Loading服务
+const loadOption = {
+    lock: true,
+    text: '拼命加载中...',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.7)'
+}
+
+let loadingInstance = null
+
 // 请求拦截器
 service.interceptors.request.use(
     config => {
@@ -47,6 +57,9 @@ service.interceptors.request.use(
         if (!config.headers['content-type'])
             config.headers['content-type'] = 'application/x-www-form-urlencoded'
         config.data = qs.stringify(config.data)
+
+        // 显示等待框
+        loadingInstance = Loading.service(loadOption)
         return config
     },
     error => {
@@ -59,6 +72,8 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
     response => {
+        // 关闭等待框
+        loadingInstance.close()
         // dataAxios 是 axios 返回数据中的 data
         const dataAxios = response.data
         // 这个状态码是和后端约定的
@@ -122,6 +137,8 @@ service.interceptors.response.use(
             }
         }
         errorLog(error)
+        // 关闭等待框
+        loadingInstance.close()
         return Promise.reject(error)
     }
 )

@@ -74,12 +74,9 @@ export default {
                     router.push({
                         name: 'login'
                     })
-                    // 结束
-                    resolve(res)
                 })
                     .catch(err => {
                         console.log('err: ', err)
-                        reject(err)
                     })
             }
             // 判断是否需要确认

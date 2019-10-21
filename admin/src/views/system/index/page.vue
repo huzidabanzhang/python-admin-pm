@@ -4,11 +4,21 @@
 </template>
 
 <script>
+import { QueryLogByParam } from '@api/sys.log'
 export default {
     data() {
-        return {}
+        return {
+            LogData: []
+        }
     },
-    methods: {}
+
+    methods: {
+        init() {
+            // QueryLogByParam().then(async res => {
+
+            // })
+        }
+    }
 }
 </script>
 

@@ -9,8 +9,8 @@ import store from '@/store/index'
 
 // [ 可选组件 ]D2-Crud
 import D2Crud from '@d2-projects/d2-crud'
-// // [ 可选组件 ] 图表
-// import VCharts from 'v-charts'
+// [ 可选组件 ] 图表
+import VCharts from 'v-charts'
 // // [ 可选组件 ] 右键菜单
 // import contentmenu from 'v-contextmenu'
 // import 'v-contextmenu/dist/index.css'
@@ -36,7 +36,7 @@ Vue.use(d2Admin)
 
 // 可选插件组件
 Vue.use(D2Crud)
-// Vue.use(VCharts)
+Vue.use(VCharts)
 // Vue.use(contentmenu)
 // Vue.use(vueJsonTreeView)
 // Vue.use(pluginExport)
