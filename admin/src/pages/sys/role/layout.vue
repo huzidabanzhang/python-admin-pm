@@ -1,16 +1,87 @@
 <template>
+    <d2-container>
+        <el-form :inline="true" slot="header" size="mini">
+            <el-form-item>
+                <el-select v-model="value" placeholder="请选择" clearable size="mini" :clear="clearStatus">
+                    <el-option v-for="item in statusOption" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-button icon="el-icon-search" size="mini" type="primary" @click="changeStatus"></el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline">新增</el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="danger" size="mini" icon="el-icon-delete">禁用</el-button>
+            </el-form-item>
+        </el-form>
+
+        <el-table :data="roleData" style="width: 100%" size="mini" type="ghost">
+            <el-table-column type="selection" width="55" :selectable="isAdmin">
+            </el-table-column>
+            <el-table-column prop="name" label="角色名" align="center">
+            </el-table-column>
+            <el-table-column prop="isLock" label="状态" align="center">
+                <template slot-scope="scope">
+                    <el-tag size="medium" type="success" v-if="scope.row.isLock">启用</el-tag>
+                    <el-tag size="medium" type="info" v-else>禁用</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column prop="content" label="操作" align="center">
+                <template slot-scope="scope" v-if="scope.row.id != 1">
+                    <el-button icon="el-icon-edit" size="mini" circle></el-button>
+                    <el-button type="danger" icon="el-icon-delete" size="mini" circle></el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </d2-container>
 </template>
 
 <script>
+import { QueryRoleByParam } from '@api/sys.role'
 export default {
-  components: {
-  },
-  data () {
-      return {}
-  },
-  computed: {
-  },
-  methods: {
-  }
+    name: 'sys-login-log',
+    data() {
+        return {
+            roleData: [],
+            value: '',
+            isLock: '',
+            statusOption: [
+                { label: '启用', value: 'true' },
+                { label: '禁用', value: 'false' }
+            ]
+        }
+    },
+    created() {
+        this.init()
+    },
+    methods: {
+        init() {
+            let params = {}
+            if (this.isLock != '') params['isLock'] = this.isLock
+
+            QueryRoleByParam(params)
+                .then(async res => {
+                    this.roleData = res
+                })
+        },
+        changeStatus() {
+            console.log(this.value)
+            this.isLock = this.value
+            this.init()
+        },
+        clearStatus() {
+            this.value = ''
+        },
+        isAdmin(row, index) {
+            return row.id != 1
+        }
+    }
 }
 </script>
+
+<style scoped>
+.el-form-item--mini.el-form-item {
+    margin-bottom: 0;
+}
+</style>

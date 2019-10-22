@@ -131,6 +131,7 @@ function ResetRoute(to, next) {
  * 权限验证
  */
 router.beforeEach(async (to, from, next) => {
+    if (to.path == '/login') RouteFresh = true
     // 进度条
     NProgress.start()
     // 确认已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201

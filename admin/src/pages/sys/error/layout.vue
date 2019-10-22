@@ -6,7 +6,7 @@
             </el-form-item>
         </el-form>
 
-        <el-table :data="logData" style="width: 100%" border size="mini" type="ghost">
+        <el-table :data="logData" style="width: 100%" size="mini" type="ghost">
             <el-table-column prop="path" label="请求URL" align="center">
             </el-table-column>
             <el-table-column prop="method" label="请求方式" align="center">
