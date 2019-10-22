@@ -67,11 +67,11 @@ export default {
     methods: {
         init() {
             let params = {
-                type: 1, // 登录类型
+                type: [1], // 登录类型
                 page: this.page,
                 page_size: this.size
             }
-            if (this.status != '') params['status'] = this.status
+            if (this.status != '') params['status'] = [this.status]
 
             QueryLogByParam(params)
                 .then(async res => {

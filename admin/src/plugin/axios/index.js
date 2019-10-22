@@ -56,7 +56,7 @@ service.interceptors.request.use(
         }
         if (!config.headers['content-type'])
             config.headers['content-type'] = 'application/x-www-form-urlencoded'
-        config.data = qs.stringify(config.data)
+        config.data = qs.stringify(config.data, { arrayFormat: 'brackets' }) // 传数组到后端接收为 type[] = xxx
 
         // 显示等待框
         loadingInstance = Loading.service(loadOption)

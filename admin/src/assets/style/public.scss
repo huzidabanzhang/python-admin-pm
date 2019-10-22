@@ -3,6 +3,10 @@
 // 工具类名统一前缀
 $prefix: d2;
 
+::-webkit-scrollbar {
+    width: 3px;
+}
+
 // 禁止用户选中 鼠标变为手形
 %unable-select {
   user-select: none;

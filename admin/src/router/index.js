@@ -131,7 +131,6 @@ function ResetRoute(to, next) {
  * 权限验证
  */
 router.beforeEach(async (to, from, next) => {
-    ResetRoute(to, next)
     // 进度条
     NProgress.start()
     // 确认已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201
@@ -162,6 +161,7 @@ router.beforeEach(async (to, from, next) => {
             NProgress.done()
         }
     } else {
+        ResetRoute(to, next)
         // 不需要身份校验 直接通过
         next()
     }
