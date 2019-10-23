@@ -116,8 +116,7 @@ function ResetRoute(to, next) {
             }
 
             store.commit('d2admin/menu/asideSet', menu)
-
-            RouteFresh = false
+            if (to.path != '/login') RouteFresh = false
             next({ ...to, replace: true })
         }).catch(err => {
             console.log(err)
@@ -131,7 +130,6 @@ function ResetRoute(to, next) {
  * 权限验证
  */
 router.beforeEach(async (to, from, next) => {
-    if (to.path == '/login') RouteFresh = true
     // 进度条
     NProgress.start()
     // 确认已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201

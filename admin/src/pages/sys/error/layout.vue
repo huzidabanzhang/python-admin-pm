@@ -6,7 +6,7 @@
             </el-form-item>
         </el-form>
 
-        <el-table :data="logData" style="width: 100%" size="mini" type="ghost">
+        <el-table :data="logData" style="width: 100%" size="mini" type="ghost" v-loading="loading">
             <el-table-column prop="path" label="请求URL" align="center">
             </el-table-column>
             <el-table-column prop="method" label="请求方式" align="center">
@@ -56,7 +56,8 @@ export default {
             total: 0,
             size: 20,
             centerDialogVisible: false,
-            error: ''
+            error: '',
+            loading: false
         }
     },
     created() {
@@ -71,10 +72,15 @@ export default {
                 page_size: this.size
             }
 
+            this.loading = true
             QueryLogByParam(params)
                 .then(async res => {
                     this.logData = res.data
                     this.total = res.total
+                    this.loading = false
+                })
+                .catch(() => {
+                    this.loading = false
                 })
         },
         handleSize(size) {

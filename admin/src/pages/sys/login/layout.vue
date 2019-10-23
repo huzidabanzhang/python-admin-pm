@@ -12,7 +12,7 @@
             </el-form-item>
         </el-form>
 
-        <el-table :data="logData" style="width: 100%" size="mini" type="ghost">
+        <el-table :data="logData" style="width: 100%" size="mini" type="ghost" v-loading="loading">
             <el-table-column prop="username" label="用户名" align="center">
             </el-table-column>
             <el-table-column prop="type" label="操作类型" align="center">
@@ -58,7 +58,8 @@ export default {
                 { label: '成功', value: 0 },
                 { label: '失败', value: 1 },
                 { label: '禁用', value: 2 }
-            ]
+            ],
+            loading: false
         }
     },
     created() {
@@ -73,10 +74,15 @@ export default {
             }
             if (this.status != '') params['status'] = [this.status]
 
+            this.loading = true
             QueryLogByParam(params)
                 .then(async res => {
+                    this.loading = false
                     this.logData = res.data
                     this.total = res.total
+                })
+                .catch(() => {
+                    this.loading = false
                 })
         },
         changeStatus() {

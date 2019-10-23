@@ -26,6 +26,15 @@ export default {
     Vue.prototype.$version = process.env.VUE_APP_VERSION
     // 构建时间
     Vue.prototype.$buildTime = process.env.VUE_APP_BUILD_TIME
+    // 加载框
+    Vue.prototype.loadOption = (title) => {
+        return {
+            lock: true,
+            text: title,
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+        }
+    }
     // Element
     Vue.use(ElementUI)
     // 插件

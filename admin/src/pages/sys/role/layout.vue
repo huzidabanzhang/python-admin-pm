@@ -9,14 +9,14 @@
                 <el-button icon="el-icon-search" size="mini" type="primary" @click="changeStatus"></el-button>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline">新增</el-button>
+                <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="addRole">新增</el-button>
             </el-form-item>
             <el-form-item>
                 <el-button type="danger" size="mini" icon="el-icon-delete">禁用</el-button>
             </el-form-item>
         </el-form>
 
-        <el-table :data="roleData" style="width: 100%" size="mini" type="ghost">
+        <el-table :data="roleData" style="width: 100%" size="mini" type="ghost" v-loading="loading">
             <el-table-column type="selection" width="55" :selectable="isAdmin">
             </el-table-column>
             <el-table-column prop="name" label="角色名" align="center">
@@ -34,13 +34,17 @@
                 </template>
             </el-table-column>
         </el-table>
+
+        <Info ref="roleInfo" :title="title" :params="params" :centerDialogVisible="centerDialogVisible" @handleClose="handleClose"></Info>
     </d2-container>
 </template>
 
 <script>
 import { QueryRoleByParam } from '@api/sys.role'
+import Info from './info.vue'
 export default {
-    name: 'sys-login-log',
+    name: 'sys-role',
+    components: { Info },
     data() {
         return {
             roleData: [],
@@ -49,7 +53,11 @@ export default {
             statusOption: [
                 { label: '启用', value: 'true' },
                 { label: '禁用', value: 'false' }
-            ]
+            ],
+            loading: false,
+            title: '',
+            params: {},
+            centerDialogVisible: false
         }
     },
     created() {
@@ -60,9 +68,14 @@ export default {
             let params = {}
             if (this.isLock != '') params['isLock'] = this.isLock
 
+            this.loading = true
             QueryRoleByParam(params)
                 .then(async res => {
                     this.roleData = res
+                    this.loading = false
+                })
+                .catch(() => {
+                    this.loading = false
                 })
         },
         changeStatus() {
@@ -75,6 +88,15 @@ export default {
         },
         isAdmin(row, index) {
             return row.id != 1
+        },
+        handleClose() {
+            this.centerDialogVisible = false
+        },
+        addRole() {
+            this.title = '新建角色'
+            this.params = {}
+            this.$refs.roleInfo.getAllList()
+            this.centerDialogVisible = true
         }
     }
 }
