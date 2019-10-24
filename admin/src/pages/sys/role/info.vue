@@ -6,11 +6,12 @@
                 <el-input v-model="form.name"></el-input>
             </el-form-item>
             <el-form-item label="菜单" class="el-form-width">
-                <el-tree ref="treeMenu" :data="menu" :props="prop" show-checkbox>
+                <el-tree ref="treeMenu" :data="menu" :props="prop" node-key="menu_id" show-checkbox default-expand-all>
                 </el-tree>
             </el-form-item>
             <el-form-item label="路由" class="el-form-width">
-                <el-tree ref="treeRoute" :data="route" :props="prop" show-checkbox>
+                <el-tree ref="treeRoute" :data="route" :props="prop" node-key="route_id" show-checkbox
+                    default-expand-all>
                 </el-tree>
             </el-form-item>
         </el-form>
@@ -24,7 +25,7 @@
 <script>
 import { QueryMenuByParam } from '@api/sys.menu'
 import { QueryRouteByParam } from '@api/sys.route'
-import { CreateRole } from '@api/sys.role'
+import { CreateRole, ModifyRole } from '@api/sys.role'
 export default {
     props: {
         title: String,
@@ -34,7 +35,7 @@ export default {
     data() {
         return {
             Visible: this.centerDialogVisible,
-            form: { name: '' },
+            form: { name: this.params.name },
             rules: {
                 name: [
                     { required: true, message: '请输入角色名', trigger: 'blur' }
@@ -43,7 +44,6 @@ export default {
             isSubmit: false,
             menu: [],
             route: [],
-            checkKeys: [],
             loading: false,
             prop: {
                 label: 'title',
@@ -54,6 +54,7 @@ export default {
     watch: {
         centerDialogVisible(newVal) {
             this.Visible = newVal
+            this.form.name = this.params.name
         }
     },
     methods: {
@@ -70,6 +71,9 @@ export default {
             })
                 .then(async res => {
                     this.dealData(res, 'menu')
+                    this.$nextTick(() => {
+                        this.$refs.treeMenu.setCheckedKeys(this.params.checkKey.menu)
+                    })
                     this.loading = false
                 })
                 .catch(() => {
@@ -83,6 +87,9 @@ export default {
             })
                 .then(async res => {
                     this.dealData(res, 'route')
+                    this.$nextTick(() => {
+                        this.$refs.treeRoute.setCheckedKeys(this.params.checkKey.route)
+                    })
                     this.loading = false
                 })
                 .catch(() => {
@@ -112,14 +119,19 @@ export default {
             }
         },
         handelInfo() {
-            let menu_id = [], route_id = []
+            let menu_id = [], route_id = [], checkKey = {
+                menu: [],
+                route: []
+            }
             this.$refs.treeMenu.getCheckedNodes().map((i) => {
+                checkKey['menu'].push(i.menu_id)
                 return menu_id.push(i.menu_id)
             })
             this.$refs.treeMenu.getHalfCheckedNodes().map((i) => {
                 return menu_id.push(i.menu_id)
             })
             this.$refs.treeRoute.getCheckedNodes().map((i) => {
+                checkKey['route'].push(i.route_id)
                 return route_id.push(i.route_id)
             })
             this.$refs.treeRoute.getHalfCheckedNodes().map((i) => {
@@ -135,18 +147,40 @@ export default {
             }
 
             this.loading = true
-            CreateRole({
+            let params = {
                 menu_id: menu_id,
                 route_id: route_id,
-                name: this.form.name
+                name: this.form.name,
+                checkKey: JSON.stringify(checkKey)
+            }
+
+            if (this.params.role_id) {
+                params['role_id'] = this.params.role_id
+                ModifyRole(params)
+                    .then(async res => {
+                        this.handleInitParent(1)
+                    })
+                    .catch(() => {
+                        this.loading = false
+                    })
+            } else {
+                CreateRole(params)
+                    .then(async res => {
+                        this.handleInitParent(2)
+                    })
+                    .catch(() => {
+                        this.loading = false
+                    })
+            }
+        },
+        handleInitParent(type) {
+            this.$message({
+                message: type == 1 ? '角色编辑成功' : '角色创建成功',
+                type: 'success',
+                duration: 3 * 1000
             })
-                .then(async res => {
-                    this.Visible = false
-                    this.loading = false
-                })
-                .catch(() => {
-                    this.loading = false
-                })
+            this.$emit('callback', true)
+            this.loading = false
         },
         handleClosed() {
             this.$emit('handleClose', false)
@@ -158,6 +192,6 @@ export default {
 <style scoped>
 .el-form-width {
     width: 50%;
-    display: inline-table;
+    display: inline-grid;
 }
 </style>

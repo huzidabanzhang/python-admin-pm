@@ -11,14 +11,9 @@
             <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="addRole">新增</el-button>
             </el-form-item>
-            <el-form-item>
-                <el-button type="danger" size="mini" icon="el-icon-delete">禁用</el-button>
-            </el-form-item>
         </el-form>
 
         <el-table :data="roleData" style="width: 100%" size="mini" type="ghost" v-loading="loading">
-            <el-table-column type="selection" width="55" :selectable="isAdmin">
-            </el-table-column>
             <el-table-column prop="name" label="角色名" align="center">
             </el-table-column>
             <el-table-column prop="isLock" label="状态" align="center">
@@ -29,18 +24,24 @@
             </el-table-column>
             <el-table-column prop="content" label="操作" align="center">
                 <template slot-scope="scope" v-if="scope.row.id != 1">
-                    <el-button icon="el-icon-edit" size="mini" circle></el-button>
-                    <el-button type="danger" icon="el-icon-delete" size="mini" circle></el-button>
+                    <el-button icon="el-icon-edit" v-if="scope.row.isLock" size="mini" circle
+                        @click.native="editRole(scope.row)" title="编辑"></el-button>
+                    <el-button type="danger" v-if="scope.row.isLock" icon="el-icon-delete" size="mini" circle
+                        @click.native="lockRole([scope.row.role_id], false)" title="禁用"></el-button>
+                    <el-button v-if="!scope.row.isLock" type="primary" icon="el-icon-circle-check" size="mini" circle
+                        @click.native="lockRole([scope.row.role_id], true)" title="启用">
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
 
-        <Info ref="roleInfo" :title="title" :params="params" :centerDialogVisible="centerDialogVisible" @handleClose="handleClose"></Info>
+        <Info ref="roleInfo" :title="title" :params="params" :centerDialogVisible="centerDialogVisible"
+            @handleClose="handleClose" @callback="init"></Info>
     </d2-container>
 </template>
 
 <script>
-import { QueryRoleByParam } from '@api/sys.role'
+import { QueryRoleByParam, LockRole } from '@api/sys.role'
 import Info from './info.vue'
 export default {
     name: 'sys-role',
@@ -64,7 +65,8 @@ export default {
         this.init()
     },
     methods: {
-        init() {
+        init(isTrue) {
+            if (isTrue) this.centerDialogVisible = false
             let params = {}
             if (this.isLock != '') params['isLock'] = this.isLock
 
@@ -79,7 +81,6 @@ export default {
                 })
         },
         changeStatus() {
-            console.log(this.value)
             this.isLock = this.value
             this.init()
         },
@@ -94,9 +95,41 @@ export default {
         },
         addRole() {
             this.title = '新建角色'
-            this.params = {}
-            this.$refs.roleInfo.getAllList()
+            this.params = {
+                name: '',
+                checkKey: {
+                    route: [],
+                    menu: []
+                }
+            }
             this.centerDialogVisible = true
+            this.$refs.roleInfo.getAllList()
+        },
+        editRole(params) {
+            this.title = '编辑角色'
+            this.params = params
+            this.centerDialogVisible = true
+            this.$refs.roleInfo.getAllList()
+        },
+        lockRole(keys, isLock) {
+            this.$confirm(!isLock ? '确定要禁用吗' : '确定要启用吗',
+                !isLock ? '禁用管理员' : '启用管理员',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    this.Lock(keys, isLock)
+                })
+        },
+        Lock(keys, isLock) {
+            LockRole({
+                role_id: keys,
+                isLock: isLock
+            }).then(async res => {
+                this.init()
+            })
         }
     }
 }

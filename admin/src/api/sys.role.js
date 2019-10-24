@@ -37,30 +37,6 @@ export function ModifyRole(data) {
 }
 
 /**
- * 修改路由权限关联
- * @param {*} data 
- */
-export function ModifyRoleToRoute(data) {
-    return request({
-        url: '/v1/Role/ModifyRoleToRoute',
-        method: 'post',
-        data
-    })
-}
-
-/**
- * 修改菜单权限关联
- * @param {*} data 
- */
-export function ModifyRoleToMenu(data) {
-    return request({
-        url: '/v1/Role/ModifyRoleToMenu',
-        method: 'post',
-        data
-    })
-}
-
-/**
  * 获取权限列表
  * @param {*} data 
  */
