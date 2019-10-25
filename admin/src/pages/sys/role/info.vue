@@ -146,7 +146,7 @@ export default {
                 return true
             }
 
-            this.loading = true
+            this.isSubmit = true
             let params = {
                 menu_id: menu_id,
                 route_id: route_id,
@@ -161,7 +161,7 @@ export default {
                         this.handleInitParent(1)
                     })
                     .catch(() => {
-                        this.loading = false
+                        this.isSubmit = false
                     })
             } else {
                 CreateRole(params)
@@ -169,7 +169,7 @@ export default {
                         this.handleInitParent(2)
                     })
                     .catch(() => {
-                        this.loading = false
+                        this.isSubmit = false
                     })
             }
         },
@@ -180,7 +180,7 @@ export default {
                 duration: 3 * 1000
             })
             this.$emit('callback', true)
-            this.loading = false
+            this.isSubmit = false
         },
         handleClosed() {
             this.$emit('handleClose', false)

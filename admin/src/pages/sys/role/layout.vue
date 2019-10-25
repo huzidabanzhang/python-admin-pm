@@ -87,9 +87,6 @@ export default {
         clearStatus() {
             this.value = ''
         },
-        isAdmin(row, index) {
-            return row.id != 1
-        },
         handleClose() {
             this.centerDialogVisible = false
         },
@@ -113,7 +110,7 @@ export default {
         },
         lockRole(keys, isLock) {
             this.$confirm(!isLock ? '确定要禁用吗' : '确定要启用吗',
-                !isLock ? '禁用管理员' : '启用管理员',
+                !isLock ? '禁用角色' : '启用角色',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
