@@ -44,9 +44,10 @@ service.interceptors.request.use(
             username: token,
             password: password
         }
-        if (!config.headers['content-type'])
+        if (!config.headers['content-type']) {
             config.headers['content-type'] = 'application/x-www-form-urlencoded'
-        config.data = qs.stringify(config.data, { arrayFormat: 'brackets' }) // 传数组到后端接收为 type[] = xxx
+            config.data = qs.stringify(config.data, { arrayFormat: 'brackets' }) // 传数组到后端接收为 type[] = xxx
+        }
         return config
     },
     error => {
@@ -66,7 +67,7 @@ service.interceptors.response.use(
         // 根据 code 进行判断
         if (code === undefined) {
             // 如果没有 code 代表这不是项目后端开发的接口 比如可能是 D2Admin 请求最新版本
-            return dataAxios
+            return response
         } else {
             // 有 code 代表这是一个后端接口 可以进行进一步的判断
             switch (code) {

@@ -29,11 +29,11 @@ export function DelDocument(data) {
  * 获取文档
  * @param {*} data 
  */
-export function GetDocument(data) {
+export function GetDocument(params) {
     return request({
-        url: '/v1/Document/GetDocument',
+        url: '/v1/Document/GetDocument' + params,
         method: 'get',
-        data
+        responseType: 'arraybuffer'
     })
 }
 
@@ -41,11 +41,10 @@ export function GetDocument(data) {
  * 下载文档
  * @param {*} data 
  */
-export function DownDocument(data) {
+export function DownDocument(params) {
     return request({
-        url: '/v1/Document/DownDocument',
-        method: 'get',
-        data
+        url: '/v1/Document/DownDocument' + params,
+        method: 'get'
     })
 }
 

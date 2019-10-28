@@ -38,22 +38,9 @@
                                 </el-button>
                             </el-form>
                         </el-card>
-                        <p class="page-login--options" flex="main:justify cross:center">
-                            <span>
-                                <d2-icon name="question-circle" /> 忘记密码</span>
-                        </p>
                     </div>
                 </div>
-                <div class="page-login--content-footer">
-                    <p class="page-login--content-footer-copyright">
-                        Copyright
-                        <d2-icon name="copyright" />
-                        2018 D2 Projects 开源组织出品
-                        <a href="https://github.com/FairyEver">
-                            @FairyEver
-                        </a>
-                    </p>
-                </div>
+                <div class="page-login--content-footer"></div>
             </div>
         </div>
     </div>
@@ -79,14 +66,16 @@ export default {
                         required: true,
                         message: '请输入用户名',
                         trigger: 'blur'
-                    }
+                    },
+                    { min: 4, max: 20, message: '长度在 4 到 20 个字之间', trigger: 'blur' }
                 ],
                 password: [
                     {
                         required: true,
                         message: '请输入密码',
                         trigger: 'blur'
-                    }
+                    },
+                    { min: 6, max: 20, message: '长度在 6 到 20 个字之间', trigger: 'blur' }
                 ],
                 code: [
                     {

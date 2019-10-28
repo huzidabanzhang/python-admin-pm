@@ -166,7 +166,14 @@ export default {
         },
         addAdmin() {
             this.title = '新建管理员'
-            this.params = {}
+            this.params = {
+                username: '',
+                password: '',
+                nickname: '',
+                sex: 1,
+                role_id: '',
+                avatarUrl: ''
+            }
             this.centerDialogVisible = true
         },
         editAdmin(params) {

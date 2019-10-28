@@ -3,7 +3,11 @@
         @closed="handleClosed">
         <el-form label-width="80px" ref="adminForm" :model="form" :rules="rules" size="medium" v-loading="loading">
             <el-form-item label="头像" prop="avatarUrl">
-                <el-avatar :size="50" :src="form.avatarUrl == '' ? circleUrl : form.avatarUrl"></el-avatar>
+                <el-upload class="avatar-uploader" :http-request="CreateUpload" :show-file-list="false" ref="avatarUrl"
+                    action="1" accept="image/jpeg, image/png, image/jpg">
+                    <img v-if="avatarUrl != ''" :src="avatarUrl" class="avatar">
+                    <img v-else :src="circleUrl" class="avatar">
+                </el-upload>
             </el-form-item>
             <el-form-item label="用户名" prop="username">
                 <el-input v-model="form.username"></el-input>
@@ -37,6 +41,8 @@
 
 <script>
 import { CreateAdmin, ModifyAdmin } from '@api/sys.user'
+import { CreateDocument, GetDocument } from '@api/sys.document'
+import util from '@/libs/util.js'
 import defaultImg from '@/assets/3ea6beec64369c2642b92c6726f1epng.png'
 export default {
     props: {
@@ -57,6 +63,7 @@ export default {
                 role_id: '',
                 avatarUrl: ''
             },
+            avatarUrl: '',
             rules: {
                 username: [
                     { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -64,7 +71,7 @@ export default {
                 ],
                 password: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
-                    { min: 8, max: 20, message: '长度在 8 到 20 个字之间', trigger: 'blur' }
+                    { min: 6, max: 20, message: '长度在 6 到 20 个字之间', trigger: 'blur' }
                 ],
                 sex: [
                     { required: true, message: '请选择性别', trigger: 'change' }
@@ -75,6 +82,7 @@ export default {
             },
             isSubmit: false,
             loading: false,
+            img_load: false,
             sexOption: [
                 { label: '男', value: 1 },
                 { label: '女', value: 2 }
@@ -87,6 +95,9 @@ export default {
             this.Visible = newVal
             this.roleOption = this.role
             this.form = this.params
+            if (this.form.avatarUrl != '') {
+                GetDocument(this.params.avatarUrl).then(r => { this.avatarUrl = 'data:' + r.mime + ';base64,' + encodeURI(r.base64) })
+            } else this.avatarUrl = ''
         }
     },
     methods: {
@@ -101,14 +112,9 @@ export default {
             if (isError) return true
 
             this.isSubmit = true
-            let params = {
-                menu_id: menu_id,
-                route_id: route_id,
-                name: this.form.name,
-                checkKey: JSON.stringify(checkKey)
-            }
+            let params = this.form
 
-            if (JSON.stringify(this.params) != '{}') {
+            if (this.form.admin_id) {
                 params['admin_id'] = this.params.admin_id
                 ModifyAdmin(params)
                     .then(async res => {
@@ -138,14 +144,55 @@ export default {
         },
         handleClosed() {
             this.$emit('handleClose', false)
+        },
+        CreateUpload(params) {
+            const isLt2M = params.file.size / 1024 / 1024 < 2
+            if (!isLt2M) {
+                this.$message.error('上传头像图片大小不能超过 2MB!')
+                this.$refs.avatarUrl.uploadFiles = []
+                return false
+            }
+            let self = this, formData = new FormData()
+            formData.append('document', params.file)
+            formData.append('admin_id', util.cookies.get('uuid'))
+            formData.append('type', 1)
+
+            this.img_load = true
+            CreateDocument(formData)
+                .then(async res => {
+                    GetDocument(res).then(r => { this.avatarUrl = 'data:' + r.mime + ';base64,' + encodeURI(r.base64) })
+                    this.form.avatarUrl = res
+                    this.$refs.avatarUrl.uploadFiles = []
+                    this.$message.success('上传头像成功')
+                    this.img_load = false
+                })
+                .catch(() => {
+                    this.img_load = false
+                })
         }
     }
 }
 </script>
 
-<style scoped>
+<style>
 .el-form-width {
     width: 50%;
     display: inline-grid;
+}
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+}
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: block;
 }
 </style>
