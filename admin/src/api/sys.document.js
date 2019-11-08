@@ -26,18 +26,6 @@ export function DelDocument(data) {
 }
 
 /**
- * 获取文档
- * @param {*} data 
- */
-export function GetDocument(params) {
-    return request({
-        url: '/v1/Document/GetDocument' + params,
-        method: 'get',
-        responseType: 'arraybuffer'
-    })
-}
-
-/**
  * 下载文档
  * @param {*} data 
  */

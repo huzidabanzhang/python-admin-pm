@@ -12,7 +12,7 @@
             <el-form-item label="用户名" prop="username">
                 <el-input v-model="form.username"></el-input>
             </el-form-item>
-            <el-form-item label="密码" prop="password">
+            <el-form-item v-if="!form.admin_id" label="密码" prop="password">
                 <el-input v-model="form.password" type="password"></el-input>
             </el-form-item>
             <el-form-item label="昵称" prop="nickname">
@@ -44,6 +44,7 @@ import { CreateAdmin, ModifyAdmin } from '@api/sys.user'
 import { CreateDocument, GetDocument } from '@api/sys.document'
 import util from '@/libs/util.js'
 import defaultImg from '@/assets/3ea6beec64369c2642b92c6726f1epng.png'
+import { cloneDeep } from 'lodash'
 export default {
     props: {
         title: String,
@@ -57,8 +58,8 @@ export default {
             Visible: this.centerDialogVisible,
             form: {
                 username: '',
-                password: '',
                 nickname: '',
+                password: '',
                 sex: 1,
                 role_id: '',
                 avatarUrl: ''
@@ -71,7 +72,7 @@ export default {
                 ],
                 password: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
-                    { min: 6, max: 20, message: '长度在 6 到 20 个字之间', trigger: 'blur' }
+                    { min: 4, max: 20, message: '长度在 4 到 20 个字之间', trigger: 'blur' }
                 ],
                 sex: [
                     { required: true, message: '请选择性别', trigger: 'change' }
@@ -87,16 +88,17 @@ export default {
                 { label: '男', value: 1 },
                 { label: '女', value: 2 }
             ],
-            roleOption: this.role
+            roleOption: this.role,
+            API: '/API/v1/Document/GetDocument/'
         }
     },
     watch: {
         centerDialogVisible(newVal) {
             this.Visible = newVal
             this.roleOption = this.role
-            this.form = this.params
+            this.form = cloneDeep(this.params)
             if (this.form.avatarUrl != '') {
-                GetDocument(this.params.avatarUrl).then(r => { this.avatarUrl = 'data:' + r.mime + ';base64,' + encodeURI(r.base64) })
+                this.avatarUrl = this.API + this.form.avatarUrl
             } else this.avatarUrl = ''
         }
     },
@@ -115,7 +117,6 @@ export default {
             let params = this.form
 
             if (this.form.admin_id) {
-                params['admin_id'] = this.params.admin_id
                 ModifyAdmin(params)
                     .then(async res => {
                         this.handleInitParent(1)
@@ -160,7 +161,7 @@ export default {
             this.img_load = true
             CreateDocument(formData)
                 .then(async res => {
-                    GetDocument(res).then(r => { this.avatarUrl = 'data:' + r.mime + ';base64,' + encodeURI(r.base64) })
+                    this.avatarUrl = this.API + res
                     this.form.avatarUrl = res
                     this.$refs.avatarUrl.uploadFiles = []
                     this.$message.success('上传头像成功')
