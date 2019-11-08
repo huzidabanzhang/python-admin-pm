@@ -13,14 +13,16 @@
                 <el-button icon="el-icon-search" size="mini" type="primary" @click="changeAdmin"></el-button>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="addAdmin">新增</el-button>
+                <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="addAdmin">新增
+                </el-button>
             </el-form-item>
             <el-form-item>
-                <el-button type="danger" size="mini" icon="el-icon-delete" @click="lockAdmin(admin_id)">禁用</el-button>
+                <el-button type="danger" size="mini" icon="el-icon-close" @click="lockAdmin(admin_id)">禁用</el-button>
             </el-form-item>
         </el-form>
 
-        <el-table :data="adminData" style="width: 100%" size="mini" type="ghost" v-loading="loading" @select="changeSelect">
+        <el-table :data="adminData" style="width: 100%" size="mini" type="ghost" v-loading="loading"
+            @select="changeSelect" @select-all="changeSelect">
             <el-table-column type="selection" width="55" :selectable="isSelect">
             </el-table-column>
             <el-table-column prop="username" label="用户名" align="center">
@@ -44,9 +46,9 @@
                 <template slot-scope="scope" v-if="scope.row.role_id != 1">
                     <el-button icon="el-icon-edit" v-if="scope.row.isLock" size="mini" circle
                         @click.native="editAdmin(scope.row)" title="编辑"></el-button>
-                    <el-button type="danger" v-if="scope.row.isLock" icon="el-icon-delete" size="mini" circle
+                    <el-button type="danger" v-if="scope.row.isLock" icon="el-icon-close" size="mini" circle
                         @click.native="lockAdmin([scope.row.admin_id], false)" title="禁用"></el-button>
-                    <el-button v-else type="primary" icon="el-icon-circle-check" size="mini" circle
+                    <el-button v-else type="primary" icon="el-icon-check" size="mini" circle
                         @click.native="lockAdmin([scope.row.admin_id], true)" title="启用">
                     </el-button>
                 </template>
@@ -56,8 +58,8 @@
         <Pagination slot="footer" :page="page" :total="total" :size="size" @handleSize="handleSize"
             @handleCurrent="handleCurrent"></Pagination>
 
-        <Info ref="adminData" :title="title" :params="params" :role="roleOption" :centerDialogVisible="centerDialogVisible"
-            @handleClose="handleClose" @callback="init"></Info>
+        <Info ref="adminData" :title="title" :params="params" :role="roleOption"
+            :centerDialogVisible="centerDialogVisible" @handleClose="handleClose" @callback="init"></Info>
     </d2-container>
 </template>
 
@@ -161,7 +163,7 @@ export default {
         },
         changeSelect(selection) {
             this.admin_id = selection.map((i) => {
-                return i.id
+                return i.admin_id
             })
         },
         addAdmin() {
