@@ -6,6 +6,10 @@
                     <el-option v-for="item in lockOption" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
+                <el-select v-model="method" placeholder="请选择" clearable size="mini" :clear="clearMethod">
+                    <el-option v-for="item in methodOption" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
                 <el-button icon="el-icon-search" size="mini" type="primary" @click="changeLock"></el-button>
             </el-form-item>
             <el-form-item>
@@ -55,14 +59,18 @@
                 </template>
             </el-table-column>
         </el-table>
+
+        <Info ref="routeInfo" :title="title" :params="params" :centerDialogVisible="centerDialogVisible"
+            :parent="routeData" @handleClose="handleClose" @callback="init"></Info>
     </d2-container>
 </template>
 
 <script>
 import { QueryRouteByParam, LockRoute } from '@api/sys.route'
+import Info from './info.vue'
 export default {
     name: 'sys-route',
-    components: {  },
+    components: { Info },
     data() {
         return {
             routeData: [],
@@ -71,6 +79,14 @@ export default {
             lockOption: [
                 { label: '启用', value: 'true' },
                 { label: '禁用', value: 'false' }
+            ],
+            method: '',
+            isMethod: '',
+            methodOption: [
+                { label: 'GET', value: 'GET' },
+                { label: 'POST', value: 'POST' },
+                { label: 'PUT', value: 'PUT' },
+                { label: 'DELETE', value: 'DELETE' }
             ],
             loading: false,
             title: '',
@@ -119,10 +135,14 @@ export default {
         },
         changeLock() {
             this.isLock = this.lock
+            this.isMethod = this.method
             this.init()
         },
         clearLock() {
             this.lock = ''
+        },
+        clearMethod() {
+            this.method = ''
         },
         handleClose() {
             this.centerDialogVisible = false
