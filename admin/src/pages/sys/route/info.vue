@@ -1,18 +1,31 @@
 <template>
-    <el-dialog :title="title" :visible.sync="Visible" width="60%" append-to-body destroy-on-close
+    <el-dialog :title="title" :visible.sync="Visible" width="50%" append-to-body destroy-on-close
         @closed="handleClosed">
         <el-form label-width="80px" :model="form" :rules="rules" size="medium" v-loading="loading">
-            <el-form-item label="角色名" prop="name">
+            <el-form-item label="路由名称" prop="title">
+                <el-input v-model="form.title"></el-input>
+            </el-form-item>
+            <el-form-item label="名称" prop="name">
                 <el-input v-model="form.name"></el-input>
             </el-form-item>
-            <el-form-item label="菜单" class="el-form-width">
-                <el-tree ref="treeMenu" :data="menu" :props="prop" node-key="menu_id" show-checkbox default-expand-all>
-                </el-tree>
+            <el-form-item label="上级路由">
+                <el-cascader :options="parent" :props="prop" :show-all-levels="false" v-model="form.parentId" clearable
+                    filterable></el-cascader>
             </el-form-item>
-            <el-form-item label="路由" class="el-form-width">
-                <el-tree ref="treeRoute" :data="route" :props="prop" node-key="route_id" show-checkbox
-                    default-expand-all>
-                </el-tree>
+            <el-form-item label="路径" prop="path">
+                <el-input v-model="form.path"></el-input>
+            </el-form-item>
+            <el-form-item label="组件" prop="component">
+                <el-input v-model="form.component"></el-input>
+            </el-form-item>
+            <el-form-item label="组件路径" prop="componentPath">
+                <el-input v-model="form.componentPath"></el-input>
+            </el-form-item>
+            <el-form-item label="是否缓存" prop="cache">
+                <el-select placeholder="请选择" v-model="form.cache">
+                    <el-option v-for="item in cacheOption" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -24,6 +37,7 @@
 
 <script>
 import { CreateRoute, ModifyRoute } from '@api/sys.route'
+import { cloneDeep } from 'lodash'
 export default {
     props: {
         title: String,
@@ -34,68 +48,36 @@ export default {
     data() {
         return {
             Visible: this.centerDialogVisible,
-            form: { name: this.params.name },
+            form: {},
             rules: {
-                name: [
-                    { required: true, message: '请输入角色名', trigger: 'blur' }
-                ]
+                name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+                title: [{ required: true, message: '请输入路由名称', trigger: 'blur' }],
+                path: [{ required: true, message: '请输入路径', trigger: 'blur' }],
+                component: [{ required: true, message: '请输入组件', trigger: 'blur' }],
+                componentPath: [{ required: true, message: '请输入组件路径', trigger: 'blur' }],
+                cache: [{ required: true, message: '请选择是否缓存', trigger: 'blur' }]
             },
+            cacheOption: [
+                { label: '启用', value: true },
+                { label: '禁用', value: false }
+            ],
             isSubmit: false,
-            menu: [],
-            route: [],
             loading: false,
-            prop: {
-                label: 'title',
-                children: 'children'
-            }
+            prop: { checkStrictly: true, value: 'route_id', label: 'title', emitPath: false }
         }
     },
     watch: {
         centerDialogVisible(newVal) {
             this.Visible = newVal
-            this.form.name = this.params.name
+            this.form = cloneDeep(this.params)  
         }
     },
     methods: {
         handelInfo() {
-            let menu_id = [], route_id = [], checkKey = {
-                menu: [],
-                route: []
-            }
-            this.$refs.treeMenu.getCheckedNodes().map((i) => {
-                checkKey['menu'].push(i.menu_id)
-                return menu_id.push(i.menu_id)
-            })
-            this.$refs.treeMenu.getHalfCheckedNodes().map((i) => {
-                return menu_id.push(i.menu_id)
-            })
-            this.$refs.treeRoute.getCheckedNodes().map((i) => {
-                checkKey['route'].push(i.route_id)
-                return route_id.push(i.route_id)
-            })
-            this.$refs.treeRoute.getHalfCheckedNodes().map((i) => {
-                return route_id.push(i.route_id)
-            })
-            if (this.form.name == '') {
-                this.$message({
-                    message: '请输入角色名',
-                    type: 'error',
-                    duration: 3 * 1000
-                })
-                return true
-            }
-
             this.isSubmit = true
-            let params = {
-                menu_id: menu_id,
-                route_id: route_id,
-                name: this.form.name,
-                checkKey: JSON.stringify(checkKey)
-            }
-
-            if (this.params.role_id) {
-                params['role_id'] = this.params.role_id
-                ModifyRoute(params)
+            if (this.form.parentId == null) this.form.parentId = '0'
+            if (this.form.route_id) {
+                ModifyRoute(this.form)
                     .then(async res => {
                         this.handleInitParent(1)
                     })
@@ -103,7 +85,7 @@ export default {
                         this.isSubmit = false
                     })
             } else {
-                CreateRoute(params)
+                CreateRoute(this.form)
                     .then(async res => {
                         this.handleInitParent(2)
                     })

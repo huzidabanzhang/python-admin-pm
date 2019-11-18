@@ -1,5 +1,5 @@
 <template>
-    <el-dialog :title="title" :visible.sync="Visible" width="60%" append-to-body destroy-on-close
+    <el-dialog :title="title" :visible.sync="Visible" width="50%" append-to-body destroy-on-close
         @closed="handleClosed">
         <el-form label-width="80px" :model="form" :rules="rules" size="medium" v-loading="loading">
             <el-form-item label="角色名" prop="name">

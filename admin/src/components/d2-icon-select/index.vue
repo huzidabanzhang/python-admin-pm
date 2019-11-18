@@ -47,7 +47,9 @@
       v-if="userInput"
       v-model="currentValue"
       v-bind="bind"
-      style="max-width: 240px;">
+      style="max-width: 240px;"
+      @blur="blur"
+      @clear="clear">
       <template v-if="value" slot="prepend">
         <i :class="'fa fa-' + value"></i>
       </template>
@@ -157,6 +159,12 @@ export default {
       if (iconName && this.autoClose) {
         this.pop = false
       }
+    },
+    clear () {
+      this.$emit('input', '')
+    },
+    blur () {
+      this.$emit('input', this.currentValue)
     }
   }
 }

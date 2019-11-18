@@ -6,10 +6,6 @@
                     <el-option v-for="item in lockOption" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
-                <el-select v-model="method" placeholder="请选择" clearable size="mini" :clear="clearMethod">
-                    <el-option v-for="item in methodOption" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
                 <el-button icon="el-icon-search" size="mini" type="primary" @click="changeLock"></el-button>
             </el-form-item>
             <el-form-item>
@@ -80,14 +76,6 @@ export default {
                 { label: '启用', value: 'true' },
                 { label: '禁用', value: 'false' }
             ],
-            method: '',
-            isMethod: '',
-            methodOption: [
-                { label: 'GET', value: 'GET' },
-                { label: 'POST', value: 'POST' },
-                { label: 'PUT', value: 'PUT' },
-                { label: 'DELETE', value: 'DELETE' }
-            ],
             loading: false,
             title: '',
             params: {},
@@ -118,7 +106,6 @@ export default {
         dealData(data) {
             while (data.length > 0) {
                 for (let i = 0; i < data.length; i++) {
-                    data[i].children = []
                     if (data[i].parentId == '0') {
                         this.routeData.push(data[i])
                         data.splice(i, 1)
@@ -126,6 +113,7 @@ export default {
                     } else {
                         let index = this.routeData.findIndex(item => item.route_id == data[i].parentId)
                         if (index == -1) continue
+                        if (!this.routeData[index].children) this.routeData[index].children = []
                         this.routeData[index].children.push(data[i])
                         data.splice(i, 1)
                         i--
@@ -135,14 +123,10 @@ export default {
         },
         changeLock() {
             this.isLock = this.lock
-            this.isMethod = this.method
             this.init()
         },
         clearLock() {
             this.lock = ''
-        },
-        clearMethod() {
-            this.method = ''
         },
         handleClose() {
             this.centerDialogVisible = false
@@ -155,12 +139,13 @@ export default {
         addRoute() {
             this.title = '新建路由'
             this.params = {
-                username: '',
-                password: '',
-                nickname: '',
-                sex: 1,
-                role_id: '',
-                avatarUrl: ''
+                parentId: '0',
+                name: '',
+                title: '',
+                path: '',
+                component: '',
+                componentPath: '',
+                cache: true
             }
             this.centerDialogVisible = true
         },
