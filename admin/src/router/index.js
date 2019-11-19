@@ -145,6 +145,7 @@ router.beforeEach(async (to, from, next) => {
         const token = util.cookies.get('token')
         const user_info = store.state.d2admin.user.info
         if (token && token !== 'undefined' && JSON.stringify(user_info) != '{}') {
+            if (to.path == '/index') RouteFresh = true
             ResetRoute(to, next)
             next()
         } else {

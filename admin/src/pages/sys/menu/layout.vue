@@ -59,6 +59,7 @@
 <script>
 import { QueryMenuByParam, CreateMenu, ModifyMenu, LockMenu } from '@api/sys.menu'
 import { cloneDeep } from 'lodash'
+import store from '@/store/index'
 export default {
     name: 'sys-menu',
     data() {
@@ -104,6 +105,8 @@ export default {
                     this.menuData = []
                     this.dealData(res)
                     this.loading = false
+                    // 更新当前菜单
+                    if (isTrue) store.commit('d2admin/menu/asideSet', this.menuData)
                 })
                 .catch(() => {
                     this.loading = false
@@ -155,6 +158,7 @@ export default {
                 duration: 3 * 1000
             })
             this.formLoad = false
+            this.init(true)
         },
         resetForm(formName) {
             this.$refs[formName].resetFields()
@@ -194,7 +198,7 @@ export default {
                 menu_id: data.menu_id,
                 isLock: !data.isLock
             }).then(async res => {
-                this.init()
+                this.init(true)
             })
         }
     }

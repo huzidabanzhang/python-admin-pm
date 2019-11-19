@@ -64,12 +64,12 @@ export default {
              */
             async function logout() {
                 AccountLogout().then(async res => {
+                    // 清空 vuex 用户信息 菜单 路由
+                    await dispatch('d2admin/user/set', {}, { root: true })
                     // 删除cookie
                     util.cookies.remove('token')
                     util.cookies.remove('uuid')
                     util.cookies.remove('password')
-                    // 清空 vuex 用户信息
-                    await dispatch('d2admin/user/set', {}, { root: true })
                     // 跳转路由
                     router.push({
                         name: 'login'
