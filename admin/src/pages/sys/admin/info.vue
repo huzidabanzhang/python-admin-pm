@@ -12,7 +12,7 @@
             <el-form-item label="用户名" prop="username">
                 <el-input v-model="form.username"></el-input>
             </el-form-item>
-            <el-form-item v-if="!form.admin_id" label="密码" prop="password">
+            <el-form-item label="密码" prop="password">
                 <el-input v-model="form.password" type="password"></el-input>
             </el-form-item>
             <el-form-item label="昵称" prop="nickname">
@@ -72,7 +72,7 @@ export default {
                 ],
                 password: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
-                    { min: 4, max: 20, message: '长度在 4 到 20 个字之间', trigger: 'blur' }
+                    { min: 4, max: 32, message: '长度在 4 到 32 个字之间', trigger: 'blur' }
                 ],
                 sex: [
                     { required: true, message: '请选择性别', trigger: 'change' }

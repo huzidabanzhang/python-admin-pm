@@ -58,7 +58,7 @@ export default {
                 code: ''
             },
             // 验证码url
-            captcha: '/API/v1/Admin/Captcha',
+            captcha: '/API/v1/Admin/Captcha?rand=' + Math.random(),
             // 表单校验
             rules: {
                 username: [
@@ -89,9 +89,7 @@ export default {
         }
     },
     watch: {
-        $route() {
-            this.refresh()
-        }
+        '$route': 'refresh'
     },
     methods: {
         ...mapActions('d2admin/account', [

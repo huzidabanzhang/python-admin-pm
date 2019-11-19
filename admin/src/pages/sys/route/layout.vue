@@ -64,6 +64,7 @@
 <script>
 import { QueryRouteByParam, LockRoute } from '@api/sys.route'
 import Info from './info.vue'
+import store from '@/store/index'
 export default {
     name: 'sys-route',
     components: { Info },

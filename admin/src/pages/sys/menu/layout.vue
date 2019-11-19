@@ -46,7 +46,7 @@
                     <d2-icon-select v-model="form.icon" :user-input="true" />
                 </el-form-item>
                 <el-form-item label="排序" prop="sort">
-                    <el-input v-model="form.sort"></el-input>
+                    <el-input v-model.number="form.sort"></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="类型" prop="type">
                     <el-input v-model="form.type"></el-input>
@@ -95,18 +95,42 @@ export default {
     methods: {
         init(isTrue) {
             this.addMenu()
-
             let params = {}
             if (this.isLock != '') params['isLock'] = this.isLock
 
             this.loading = true
             QueryMenuByParam(params)
                 .then(async res => {
+                    let data = cloneDeep(res)
                     this.menuData = []
                     this.dealData(res)
                     this.loading = false
                     // 更新当前菜单
-                    if (isTrue) store.commit('d2admin/menu/asideSet', this.menuData)
+                    if (isTrue) {
+                        let menu = []
+                        while (data.length > 0) {
+                            for (let i = 0; i < data.length; i++) {
+                                if (!data[i].isLock) {
+                                    data.splice(i, 1)
+                                    i--
+                                } else {
+                                    if (data[i].parentId == '0') {
+                                        menu.push(data[i])
+                                        data.splice(i, 1)
+                                        i--
+                                    } else {
+                                        let index = menu.findIndex(item => item.menu_id == data[i].parentId)
+                                        if (index == -1) continue
+                                        if (!menu[index].children) menu[index].children = []
+                                        menu[index].children.push(data[i])
+                                        data.splice(i, 1)
+                                        i--
+                                    }
+                                }
+                            }
+                        }
+                        store.commit('d2admin/menu/asideSet', menu)
+                    }
                 })
                 .catch(() => {
                     this.loading = false
@@ -177,6 +201,7 @@ export default {
             this.title = '新建菜单'
         },
         getMenuItem(data) {
+            if (!data.isLock) return true
             this.form = cloneDeep(data)
             this.isAdd = false
             this.title = '编辑菜单'
@@ -246,7 +271,7 @@ export default {
 .disabled {
     cursor: not-allowed;
     .label {
-        opacity: .25;
+        opacity: 0.25;
     }
 }
 </style>
