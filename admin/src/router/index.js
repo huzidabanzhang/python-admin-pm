@@ -11,9 +11,6 @@ import util from '@/libs/util.js'
 
 // 路由数据
 import routes from './routes'
-import layoutHeaderAside from '@/layout/header-aside'
-import { cloneDeep } from 'lodash'
-import { frameInRoutes } from '@/router/routes'
 
 Vue.use(VueRouter)
 
@@ -24,34 +21,6 @@ const router = new VueRouter({
 })
 
 let RouteFresh = true
-
-let getMenuInfo = (params) => {
-    return {
-        title: params.title,
-        icon: params.icon,
-        id: params.menu_id,
-        path: params.path
-    }
-}
-
-let getRouteInfo = (data) => {
-    let info = {
-        name: data.name,
-        path: data.path,
-        meta: {
-            title: data.title,
-            cache: data.cache,
-            auth: true
-        },
-        id: data.route_id
-    }
-
-    if (data.componentPath == 'layout/header-aside')
-        info['component'] = layoutHeaderAside
-    else info['component'] = () => import('@/pages/' + data.componentPath)
-
-    return info
-}
 
 // 处理动态理由 刷新后失效的问题 通过判断RouteFresh来确定是否加载
 function ResetRoute(to, next) {
@@ -64,58 +33,10 @@ function ResetRoute(to, next) {
         }, { root: true }).then(res => {
             const r = res.routes || []
             const m = res.menus || []
-            
-            let route_list = cloneDeep(r), route = [
-                {
-                    path: '/',
-                    component: layoutHeaderAside
-                },
-                { path: '*', redirect: '/404', hidden: true }
-            ]
 
-            while (route_list.length > 0) {
-                for (let i = 0; i < route_list.length; i++) {
-                    if (route_list[i].parentId == 0) {
-                        route.push(getRouteInfo(route_list[i]))
-                        route_list.splice(i, 1)
-                        i--
-                    } else {
-                        let index = route.findIndex(item => item.id === route_list[i].parentId)
-                        if (index == -1) continue
-                        if (!route[index]['children']) route[index]['children'] = []
-                        route[index]['children'].push(getRouteInfo(route_list[i]))
-                        route_list.splice(i, 1)
-                        i--
-                    }
-                }
-            }
+            util.initRoute(r, 1, true)
+            util.initMenu(m, 1, true)
 
-            router.$addRoutes(route)
-            // 更新标签页池
-            store.commit('d2admin/page/init', [
-                ...frameInRoutes,
-                ...route
-            ])
-
-            let menu_list = cloneDeep(m), menu = []
-            while (menu_list.length > 0) {
-                for (let i = 0; i < menu_list.length; i++) {
-                    if (menu_list[i].parentId == 0) {
-                        menu.push(getMenuInfo(menu_list[i]))
-                        menu_list.splice(i, 1)
-                        i--
-                    } else {
-                        let index = menu.findIndex(item => item.id === menu_list[i].parentId)
-                        if (index == -1) continue
-                        if (!menu[index]['children']) menu[index]['children'] = []
-                        menu[index]['children'].push(getMenuInfo(menu_list[i]))
-                        menu_list.splice(i, 1)
-                        i--
-                    }
-                }
-            }
-
-            store.commit('d2admin/menu/asideSet', menu)
             if (to.path != '/login') RouteFresh = false
             next({ ...to, replace: true })
         }).catch(err => {
@@ -147,7 +68,14 @@ router.beforeEach(async (to, from, next) => {
         if (token && token !== 'undefined' && JSON.stringify(user_info) != '{}') {
             if (to.path == '/index') RouteFresh = true
             ResetRoute(to, next)
-            next()
+            if (to.matched.some(r => r.meta.isLock == false )) { 
+                next({
+                    name: 'page403',
+                    query: {
+                        redirect: to.fullPath
+                    }
+                })
+            } else next()
         } else {
             // 没有登录的时候跳转到登录界面
             // 携带上登陆成功之后需要跳转的页面完整路径

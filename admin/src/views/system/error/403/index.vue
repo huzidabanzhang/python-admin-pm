@@ -13,9 +13,9 @@ export default {
     name: 'BasicNotFound',
     data() {
         return {
-            imgSrc: 'https://img.alicdn.com/tfs/TB1txw7bNrI8KJjy0FpXXb5hVXa-260-260.png',
-            title: '抱歉，你访问的页面不存在',
-            description: '您要找的页面没有找到，请看看其他页面'
+            imgSrc: 'https://img.alicdn.com/tfs/TB1Gy4Yjv6H8KJjy0FjXXaXepXa-780-780.png',
+            title: '抱歉，您没有权限访问',
+            description: '抱歉您暂无权限，请看看其他页面'
         }
     }
 }

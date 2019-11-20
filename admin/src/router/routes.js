@@ -31,6 +31,15 @@ const frameIn = [
                 },
                 component: _import('system/error/404')
             },
+            {
+                path: '403',
+                name: 'page403',
+                meta: {
+                    title: '无权限~',
+                    auth: false
+                },
+                component: _import('system/error/403')
+            },
             // 刷新页面 必须保留
             {
                 path: 'refresh',

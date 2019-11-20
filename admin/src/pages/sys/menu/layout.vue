@@ -59,7 +59,7 @@
 <script>
 import { QueryMenuByParam, CreateMenu, ModifyMenu, LockMenu } from '@api/sys.menu'
 import { cloneDeep } from 'lodash'
-import store from '@/store/index'
+import util from '@/libs/util.js'
 export default {
     name: 'sys-menu',
     data() {
@@ -97,62 +97,18 @@ export default {
             this.addMenu()
             let params = {}
             if (this.isLock != '') params['isLock'] = this.isLock
-
             this.loading = true
             QueryMenuByParam(params)
                 .then(async res => {
                     let data = cloneDeep(res)
-                    this.menuData = []
-                    this.dealData(res)
+                    this.menuData = util.dealData(res, 3, false)
                     this.loading = false
-                    // 更新当前菜单
-                    if (isTrue) {
-                        let menu = []
-                        while (data.length > 0) {
-                            for (let i = 0; i < data.length; i++) {
-                                if (!data[i].isLock) {
-                                    data.splice(i, 1)
-                                    i--
-                                } else {
-                                    if (data[i].parentId == '0') {
-                                        menu.push(data[i])
-                                        data.splice(i, 1)
-                                        i--
-                                    } else {
-                                        let index = menu.findIndex(item => item.menu_id == data[i].parentId)
-                                        if (index == -1) continue
-                                        if (!menu[index].children) menu[index].children = []
-                                        menu[index].children.push(data[i])
-                                        data.splice(i, 1)
-                                        i--
-                                    }
-                                }
-                            }
-                        }
-                        store.commit('d2admin/menu/asideSet', menu)
-                    }
+                    // 更新当前路由
+                    if (isTrue) util.initMenu(data, 3, true)
                 })
                 .catch(() => {
                     this.loading = false
                 })
-        },
-        dealData(data) {
-            while (data.length > 0) {
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i].parentId == '0') {
-                        this.menuData.push(data[i])
-                        data.splice(i, 1)
-                        i--
-                    } else {
-                        let index = this.menuData.findIndex(item => item.menu_id == data[i].parentId)
-                        if (index == -1) continue
-                        if (!this.menuData[index].children) this.menuData[index].children = []
-                        this.menuData[index].children.push(data[i])
-                        data.splice(i, 1)
-                        i--
-                    }
-                }
-            }
         },
         submit() {
             this.formLoad = true

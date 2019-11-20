@@ -120,7 +120,9 @@
         float: left;
         text-align: center;
         img {
-          height: 60px;
+            height: 40px;
+            top: 12px;
+            position: relative;
         }
       }
       // 折叠侧边栏切换按钮

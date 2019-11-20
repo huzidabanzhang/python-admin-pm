@@ -18,9 +18,8 @@
         </el-form>
 
         <el-table :data="routeData" style="width: 100%" size="mini" type="ghost" v-loading="loading"
-            :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-            row-key="id"
-            @select="changeSelect" @select-all="changeSelect">
+            :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="id" @select="changeSelect"
+            @select-all="changeSelect">
             <el-table-column type="selection" width="55">
             </el-table-column>
             <el-table-column prop="title" label="路由名称" align="center">
@@ -63,8 +62,9 @@
 
 <script>
 import { QueryRouteByParam, LockRoute } from '@api/sys.route'
+import { cloneDeep } from 'lodash'
 import Info from './info.vue'
-import store from '@/store/index'
+import util from '@/libs/util.js'
 export default {
     name: 'sys-route',
     components: { Info },
@@ -96,31 +96,15 @@ export default {
             this.loading = true
             QueryRouteByParam(params)
                 .then(async res => {
-                    this.routeData = []
-                    this.dealData(res)
+                    let data = cloneDeep(res)
+                    this.routeData = util.dealData(res, 2, false)
                     this.loading = false
+                    // 更新当前路由
+                    if (isTrue) util.initRoute(data, 2, true)
                 })
                 .catch(() => {
                     this.loading = false
                 })
-        },
-        dealData(data) {
-            while (data.length > 0) {
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i].parentId == '0') {
-                        this.routeData.push(data[i])
-                        data.splice(i, 1)
-                        i--
-                    } else {
-                        let index = this.routeData.findIndex(item => item.route_id == data[i].parentId)
-                        if (index == -1) continue
-                        if (!this.routeData[index].children) this.routeData[index].children = []
-                        this.routeData[index].children.push(data[i])
-                        data.splice(i, 1)
-                        i--
-                    }
-                }
-            }
         },
         changeLock() {
             this.isLock = this.lock
@@ -172,7 +156,7 @@ export default {
                 route_id: keys,
                 isLock: isLock
             }).then(async res => {
-                this.init()
+                this.init(true)
             })
         }
     }
