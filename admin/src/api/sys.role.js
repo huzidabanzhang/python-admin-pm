@@ -8,7 +8,8 @@ export function CreateRole(data) {
     return request({
         url: '/v1/Role/CreateRole',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -20,7 +21,8 @@ export function LockRole(data) {
     return request({
         url: '/v1/Role/LockRole',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -32,7 +34,8 @@ export function ModifyRole(data) {
     return request({
         url: '/v1/Role/ModifyRole',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -44,6 +47,7 @@ export function QueryRoleByParam(data) {
     return request({
         url: '/v1/Role/QueryRoleByParam',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }

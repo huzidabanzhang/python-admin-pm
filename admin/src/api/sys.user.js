@@ -40,7 +40,8 @@ export function CreateAdmin(data) {
     return request({
         url: '/v1/Admin/CreateAdmin',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -52,7 +53,8 @@ export function LockAdmin(data) {
     return request({
         url: '/v1/Admin/LockAdmin',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -64,7 +66,8 @@ export function ModifyAdmin(data) {
     return request({
         url: '/v1/Admin/ModifyAdmin',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -76,6 +79,7 @@ export function QueryAdminByParam(data) {
     return request({
         url: '/v1/Admin/QueryAdminByParam',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }

@@ -9,7 +9,8 @@ export function CreateDocument(data) {
         url: '/v1/Document/CreateDocument',
         method: 'post',
         data,
-        headers: { 'content-type': 'multipart/form-data' }
+        headers: { 'content-type': 'multipart/form-data' },
+        isCheck: true
     })
 }
 
@@ -21,7 +22,8 @@ export function DelDocument(data) {
     return request({
         url: '/v1/Document/DelDocument',
         method: 'post',
-        data    
+        data,
+        isCheck: true   
     })
 }
 
@@ -32,7 +34,8 @@ export function DelDocument(data) {
 export function DownDocument(params) {
     return request({
         url: '/v1/Document/DownDocument' + params,
-        method: 'get'
+        method: 'get',
+        isCheck: true
     })
 }
 
@@ -44,6 +47,7 @@ export function QueryDocumentByParam(data) {
     return request({
         url: '/v1/Document/QueryDocumentByParam',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }

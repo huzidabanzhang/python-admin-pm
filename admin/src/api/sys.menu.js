@@ -8,7 +8,8 @@ export function CreateMenu(data) {
     return request({
         url: '/v1/Menu/CreateMenu',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -20,7 +21,8 @@ export function LockMenu(data) {
     return request({
         url: '/v1/Menu/LockMenu',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -32,7 +34,8 @@ export function ModifyMenu(data) {
     return request({
         url: '/v1/Menu/ModifyMenu',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -44,6 +47,7 @@ export function QueryMenuByParam(data) {
     return request({
         url: '/v1/Menu/QueryMenuByParam',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }

@@ -8,7 +8,8 @@ export function CreateInterface(data) {
     return request({
         url: '/v1/Interface/CreateInterface',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -20,7 +21,8 @@ export function LockInterface(data) {
     return request({
         url: '/v1/Interface/LockInterface',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -32,7 +34,8 @@ export function ModifyInterface(data) {
     return request({
         url: '/v1/Interface/ModifyInterface',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }
 
@@ -44,6 +47,7 @@ export function QueryInterfaceByParam(data) {
     return request({
         url: '/v1/Interface/QueryInterfaceByParam',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }

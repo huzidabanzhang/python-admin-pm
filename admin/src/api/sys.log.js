@@ -8,6 +8,7 @@ export function QueryLogByParam(data) {
     return request({
         url: '/v1/Log/QueryLogByParam',
         method: 'post',
-        data
+        data,
+        isCheck: true
     })
 }

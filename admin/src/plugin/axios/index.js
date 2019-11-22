@@ -37,6 +37,9 @@ service.defaults.withCredentials = true
 // 请求拦截器
 service.interceptors.request.use(
     config => {
+        console.log(config)
+
+
         // 在请求发送之前做一些处理
         const token = util.cookies.get('token')
         const password = util.cookies.get('password')
