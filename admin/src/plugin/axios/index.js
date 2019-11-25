@@ -1,7 +1,8 @@
 import qs from 'qs'
 import axios from 'axios'
-import { Message, Loading } from 'element-ui'
+import { Message } from 'element-ui'
 import util from '@/libs/util'
+import store from '@/store/index'
 
 // 创建一个错误
 function errorCreate(msg) {
@@ -37,8 +38,29 @@ service.defaults.withCredentials = true
 // 请求拦截器
 service.interceptors.request.use(
     config => {
-        console.log(config)
+        // API接口权限判断
+        let isCheck = true
 
+        if (config.headers.isCheck)  {
+            store.dispatch('d2admin/db/get', {
+                dbName: 'sys',
+                path: 'user.info.interfaces',
+                defaultValue: {},
+                user: true
+            }, { root: true }).then(res => {
+                isCheck = res.some((item) => {
+                    return '/API' + item.path == config.url
+                })
+
+                if (!isCheck) {
+                    return Promise.reject(Message({
+                        message: '无权限~',
+                        type: 'error',
+                        duration: 3 * 1000
+                    }))
+                }
+            }).catch(err => {})
+        }
 
         // 在请求发送之前做一些处理
         const token = util.cookies.get('token')

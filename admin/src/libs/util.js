@@ -87,7 +87,7 @@ util.initRoute = function (r, type, isAll = false) {
             user: true
         }, { root: true }).then(res => {
             store.dispatch('d2admin/user/set', {
-                name: res.name,
+                info: res.info,
                 menus: res.menus,
                 routes: r
             }, { root: true })
@@ -119,7 +119,7 @@ util.initMenu = function (m, type, isAll = false) {
             user: true
         }, { root: true }).then(res => {
             store.dispatch('d2admin/user/set', {
-                name: res.name,
+                info: res.info,
                 menus: m,
                 routes: res.routes
             }, { root: true })

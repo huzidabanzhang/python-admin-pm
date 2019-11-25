@@ -41,7 +41,7 @@ export function CreateAdmin(data) {
         url: '/v1/Admin/CreateAdmin',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -54,7 +54,7 @@ export function LockAdmin(data) {
         url: '/v1/Admin/LockAdmin',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -67,7 +67,7 @@ export function ModifyAdmin(data) {
         url: '/v1/Admin/ModifyAdmin',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -80,6 +80,6 @@ export function QueryAdminByParam(data) {
         url: '/v1/Admin/QueryAdminByParam',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }

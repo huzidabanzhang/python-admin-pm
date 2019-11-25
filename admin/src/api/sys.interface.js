@@ -9,7 +9,7 @@ export function CreateInterface(data) {
         url: '/v1/Interface/CreateInterface',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -22,7 +22,7 @@ export function LockInterface(data) {
         url: '/v1/Interface/LockInterface',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -35,7 +35,7 @@ export function ModifyInterface(data) {
         url: '/v1/Interface/ModifyInterface',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -48,6 +48,6 @@ export function QueryInterfaceByParam(data) {
         url: '/v1/Interface/QueryInterfaceByParam',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }

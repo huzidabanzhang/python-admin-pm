@@ -9,7 +9,7 @@ export function CreateMenu(data) {
         url: '/v1/Menu/CreateMenu',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -22,7 +22,7 @@ export function LockMenu(data) {
         url: '/v1/Menu/LockMenu',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -35,7 +35,7 @@ export function ModifyMenu(data) {
         url: '/v1/Menu/ModifyMenu',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -48,6 +48,6 @@ export function QueryMenuByParam(data) {
         url: '/v1/Menu/QueryMenuByParam',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }

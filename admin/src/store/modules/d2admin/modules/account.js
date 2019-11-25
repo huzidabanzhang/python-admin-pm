@@ -1,4 +1,4 @@
-import { Message, MessageBox } from 'element-ui'
+import { MessageBox } from 'element-ui'
 import util from '@/libs/util.js'
 import router from '@/router'
 import { AccountLogin, AccountLogout } from '@api/sys.user'
@@ -41,7 +41,7 @@ export default {
                             info: res.info,
                             menus: res.menus,
                             routes: res.routes,
-                            interfaces: res.interfaces
+                            interfaces: res.interface
                         }, { root: true })
                         // 用户登录后从持久化数据加载一系列的设置
                         await dispatch('load')

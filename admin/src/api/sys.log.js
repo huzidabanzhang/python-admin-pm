@@ -9,6 +9,6 @@ export function QueryLogByParam(data) {
         url: '/v1/Log/QueryLogByParam',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }

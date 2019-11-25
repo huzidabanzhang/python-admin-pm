@@ -9,7 +9,7 @@ export function CreateRole(data) {
         url: '/v1/Role/CreateRole',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -22,7 +22,7 @@ export function LockRole(data) {
         url: '/v1/Role/LockRole',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -35,7 +35,7 @@ export function ModifyRole(data) {
         url: '/v1/Role/ModifyRole',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -48,6 +48,6 @@ export function QueryRoleByParam(data) {
         url: '/v1/Role/QueryRoleByParam',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }

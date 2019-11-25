@@ -9,7 +9,7 @@ export function CreateRoute(data) {
         url: '/v1/Route/CreateRoute',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -22,7 +22,7 @@ export function LockRoute(data) {
         url: '/v1/Route/LockRoute',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -35,7 +35,7 @@ export function ModifyRoute(data) {
         url: '/v1/Route/ModifyRoute',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
 
@@ -48,6 +48,6 @@ export function QueryRouteByParam(data) {
         url: '/v1/Route/QueryRouteByParam',
         method: 'post',
         data,
-        isCheck: true
+        headers: {isCheck: true}
     })
 }
