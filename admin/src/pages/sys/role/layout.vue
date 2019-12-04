@@ -133,6 +133,10 @@ export default {
 </script>
 
 <style scoped>
+.el-select {
+    padding-right: 5px;
+}
+
 .el-form-item--mini.el-form-item {
     margin-bottom: 0;
 }
