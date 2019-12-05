@@ -1,36 +1,91 @@
 <template>
-    <el-dialog :title="title" :visible.sync="Visible" width="50%" append-to-body destroy-on-close
-        @closed="handleClosed">
-        <el-form label-width="80px" :model="form" :rules="rules" size="medium" v-loading="loading">
-            <el-form-item label="路由名称" prop="title">
+    <el-dialog
+        :title="title"
+        :visible.sync="Visible"
+        width="50%"
+        append-to-body
+        destroy-on-close
+        @closed="handleClosed"
+    >
+        <el-form
+            label-width="80px"
+            :model="form"
+            :rules="rules"
+            size="medium"
+            v-loading="loading"
+        >
+            <el-form-item
+                label="路由名称"
+                prop="title"
+            >
                 <el-input v-model="form.title"></el-input>
             </el-form-item>
-            <el-form-item label="名称" prop="name">
+            <el-form-item
+                label="名称"
+                prop="name"
+            >
                 <el-input v-model="form.name"></el-input>
             </el-form-item>
             <el-form-item label="上级路由">
-                <el-cascader :options="parent" :props="prop" :show-all-levels="false" v-model="form.parentId" clearable
-                    filterable></el-cascader>
+                <el-cascader
+                    :options="parent"
+                    :props="prop"
+                    :show-all-levels="false"
+                    v-model="form.parentId"
+                    clearable
+                    filterable
+                ></el-cascader>
             </el-form-item>
-            <el-form-item label="路径" prop="path">
+            <el-form-item
+                label="路径"
+                prop="path"
+            >
                 <el-input v-model="form.path"></el-input>
             </el-form-item>
-            <el-form-item label="组件" prop="component">
+            <el-form-item
+                label="组件"
+                prop="component"
+            >
                 <el-input v-model="form.component"></el-input>
             </el-form-item>
-            <el-form-item label="组件路径" prop="componentPath">
+            <el-form-item
+                label="组件路径"
+                prop="componentPath"
+            >
                 <el-input v-model="form.componentPath"></el-input>
             </el-form-item>
-            <el-form-item label="是否缓存" prop="cache">
-                <el-select placeholder="请选择" v-model="form.cache">
-                    <el-option v-for="item in cacheOption" :key="item.value" :label="item.label" :value="item.value">
+            <el-form-item
+                label="是否缓存"
+                prop="cache"
+            >
+                <el-select
+                    placeholder="请选择"
+                    v-model="form.cache"
+                >
+                    <el-option
+                        v-for="item in cacheOption"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    >
                     </el-option>
                 </el-select>
             </el-form-item>
         </el-form>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="handleClosed" size="medium">取 消</el-button>
-            <el-button type="primary" @click="handelInfo" :loading="isSubmit" size="medium">确 定</el-button>
+        <span
+            slot="footer"
+            class="dialog-footer"
+        >
+            <el-button
+                @click="handleClosed"
+                size="medium"
+            >取 消</el-button>
+            <el-button
+                type="primary"
+                @click="handelInfo"
+                :loading="isSubmit"
+                size="medium"
+            >确 定</el-button>
         </span>
     </el-dialog>
 </template>
@@ -69,7 +124,7 @@ export default {
     watch: {
         centerDialogVisible(newVal) {
             this.Visible = newVal
-            this.form = cloneDeep(this.params)  
+            if (newVal) this.form = cloneDeep(this.params)
         }
     },
     methods: {

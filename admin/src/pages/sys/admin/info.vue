@@ -1,40 +1,115 @@
 <template>
-    <el-dialog :title="title" :visible.sync="Visible" width="40%" append-to-body destroy-on-close
-        @closed="handleClosed">
-        <el-form label-width="80px" ref="adminForm" :model="form" :rules="rules" size="medium" v-loading="loading">
-            <el-form-item label="头像" prop="avatarUrl">
-                <el-upload class="avatar-uploader" :http-request="CreateUpload" :show-file-list="false" ref="avatarUrl"
-                    action="1" accept="image/jpeg, image/png, image/jpg">
-                    <img v-if="avatarUrl != ''" :src="avatarUrl" class="avatar">
-                    <img v-else :src="circleUrl" class="avatar">
+    <el-dialog
+        :title="title"
+        :visible.sync="Visible"
+        width="40%"
+        append-to-body
+        destroy-on-close
+        @closed="handleClosed"
+    >
+        <el-form
+            label-width="80px"
+            ref="adminForm"
+            :model="form"
+            :rules="rules"
+            size="medium"
+            v-loading="loading"
+        >
+            <el-form-item
+                label="头像"
+                prop="avatarUrl"
+            >
+                <el-upload
+                    class="avatar-uploader"
+                    :http-request="CreateUpload"
+                    :show-file-list="false"
+                    ref="avatarUrl"
+                    action="1"
+                    accept="image/jpeg, image/png, image/jpg"
+                >
+                    <img
+                        v-if="avatarUrl != ''"
+                        :src="avatarUrl"
+                        class="avatar"
+                    >
+                    <img
+                        v-else
+                        :src="circleUrl"
+                        class="avatar"
+                    >
                 </el-upload>
             </el-form-item>
-            <el-form-item label="用户名" prop="username">
+            <el-form-item
+                label="用户名"
+                prop="username"
+            >
                 <el-input v-model="form.username"></el-input>
             </el-form-item>
-            <el-form-item label="密码" prop="password">
-                <el-input v-model="form.password" type="password"></el-input>
+            <el-form-item
+                label="密码"
+                prop="password"
+            >
+                <el-input
+                    v-model="form.password"
+                    type="password"
+                ></el-input>
             </el-form-item>
-            <el-form-item label="昵称" prop="nickname">
+            <el-form-item
+                label="昵称"
+                prop="nickname"
+            >
                 <el-input v-model="form.nickname"></el-input>
             </el-form-item>
-            <el-form-item label="性别" prop="sex">
-                <el-select v-model="form.sex" placeholder="请选择性别">
-                    <el-option v-for="item in sexOption" :key="item.value" :label="item.label" :value="item.value">
+            <el-form-item
+                label="性别"
+                prop="sex"
+            >
+                <el-select
+                    v-model="form.sex"
+                    placeholder="请选择性别"
+                >
+                    <el-option
+                        v-for="item in sexOption"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    >
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="角色" prop="role_id">
-                <el-select v-model="form.role_id" placeholder="请选择角色">
-                    <el-option v-for="item in roleOption" :key="item.value" :label="item.label" :value="item.value"
-                        :disabled="item.vlaue == 1">
+            <el-form-item
+                label="角色"
+                prop="role_id"
+            >
+                <el-select
+                    v-model="form.role_id"
+                    placeholder="请选择角色"
+                >
+                    <el-option
+                        v-for="item in roleOption"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                        :disabled="item.vlaue == 1"
+                    >
                     </el-option>
                 </el-select>
             </el-form-item>
         </el-form>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="handleClosed" size="medium">取 消</el-button>
-            <el-button type="primary" @click="handelInfo" :loading="isSubmit" size="medium">确 定</el-button>
+        <span
+            slot="footer"
+            class="dialog-footer"
+        >
+            <el-button
+                @click="handleClosed"
+                size="medium"
+            >取 消</el-button>
+            <el-button
+                type="primary"
+                @click="handelInfo"
+                :loading="isSubmit"
+                size="medium"
+            >确 定</el-button>
         </span>
     </el-dialog>
 </template>
@@ -95,11 +170,13 @@ export default {
     watch: {
         centerDialogVisible(newVal) {
             this.Visible = newVal
-            this.roleOption = this.role
-            this.form = cloneDeep(this.params)
-            if (this.form.avatarUrl != '') {
-                this.avatarUrl = this.API + this.form.avatarUrl
-            } else this.avatarUrl = ''
+            if (newVal) {
+                this.roleOption = this.role
+                this.form = cloneDeep(this.params)
+                if (this.form.avatarUrl != '') {
+                    this.avatarUrl = this.API + this.form.avatarUrl
+                } else this.avatarUrl = ''
+            }
         }
     },
     methods: {

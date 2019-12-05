@@ -89,7 +89,8 @@ util.initRoute = function (r, type, isAll = false) {
             store.dispatch('d2admin/user/set', {
                 info: res.info,
                 menus: res.menus,
-                routes: r
+                routes: r,
+                interfaces: res.interface
             }, { root: true })
         })
     }
@@ -121,10 +122,20 @@ util.initMenu = function (m, type, isAll = false) {
             store.dispatch('d2admin/user/set', {
                 info: res.info,
                 menus: m,
-                routes: res.routes
+                routes: res.routes,
+                interfaces: res.interface
             }, { root: true })
         })
     }
+}
+
+/**
+ * @description 获取菜单树
+ * @param {Object} params 数据
+ */
+util.getMenuTree = function () {
+    let menus = cloneDeep(store.state.d2admin.user.info.menus)
+    return util.dealData(menus, 1, true)
 }
 
 /**

@@ -1,23 +1,68 @@
 <template>
-    <el-dialog :title="title" :visible.sync="Visible" width="50%" append-to-body destroy-on-close
-        @closed="handleClosed">
-        <el-form label-width="80px" :model="form" :rules="rules" size="medium" v-loading="loading">
-            <el-form-item label="角色名" prop="name">
+    <el-dialog
+        :title="title"
+        :visible.sync="Visible"
+        width="50%"
+        append-to-body
+        destroy-on-close
+        @closed="handleClosed"
+    >
+        <el-form
+            label-width="80px"
+            :model="form"
+            :rules="rules"
+            size="medium"
+            v-loading="loading"
+        >
+            <el-form-item
+                label="角色名"
+                prop="name"
+            >
                 <el-input v-model="form.name"></el-input>
             </el-form-item>
-            <el-form-item label="菜单" class="el-form-width">
-                <el-tree ref="treeMenu" :data="menu" :props="prop" node-key="menu_id" show-checkbox default-expand-all>
+            <el-form-item
+                label="菜单"
+                class="el-form-width"
+            >
+                <el-tree
+                    ref="treeMenu"
+                    :data="menu"
+                    :props="prop"
+                    node-key="menu_id"
+                    show-checkbox
+                    default-expand-all
+                >
                 </el-tree>
             </el-form-item>
-            <el-form-item label="路由" class="el-form-width">
-                <el-tree ref="treeRoute" :data="route" :props="prop" node-key="route_id" show-checkbox
-                    default-expand-all>
+            <el-form-item
+                label="路由"
+                class="el-form-width"
+            >
+                <el-tree
+                    ref="treeRoute"
+                    :data="route"
+                    :props="prop"
+                    node-key="route_id"
+                    show-checkbox
+                    default-expand-all
+                >
                 </el-tree>
             </el-form-item>
         </el-form>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="handleClosed" size="medium">取 消</el-button>
-            <el-button type="primary" @click="handelInfo" :loading="isSubmit" size="medium">确 定</el-button>
+        <span
+            slot="footer"
+            class="dialog-footer"
+        >
+            <el-button
+                @click="handleClosed"
+                size="medium"
+            >取 消</el-button>
+            <el-button
+                type="primary"
+                @click="handelInfo"
+                :loading="isSubmit"
+                size="medium"
+            >确 定</el-button>
         </span>
     </el-dialog>
 </template>
@@ -54,7 +99,7 @@ export default {
     watch: {
         centerDialogVisible(newVal) {
             this.Visible = newVal
-            this.form.name = this.params.name
+            if (newVal) this.form.name = this.params.name
         }
     },
     methods: {

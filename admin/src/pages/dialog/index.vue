@@ -1,6 +1,13 @@
 <template>
-    <el-dialog :title="title" :visible.sync="Visible" width="50%" append-to-body center destroy-on-close
-        @closed="handleClosed">
+    <el-dialog
+        :title="title"
+        :visible.sync="Visible"
+        width="50%"
+        append-to-body
+        center
+        destroy-on-close
+        @closed="handleClosed"
+    >
         <span>{{ content }}</span>
     </el-dialog>
 </template>
@@ -12,13 +19,13 @@ export default {
         content: String,
         centerDialogVisible: Boolean
     },
-    data () {
+    data() {
         return {
             Visible: this.centerDialogVisible
         }
     },
     watch: {
-        centerDialogVisible(newVal){
+        centerDialogVisible(newVal) {
             this.Visible = newVal
         }
     },

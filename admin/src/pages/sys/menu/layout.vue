@@ -1,51 +1,125 @@
 <template>
     <d2-container>
-        <el-tree :data="menuData" :props="tree_prop" node-key="menu_id" default-expand-all :expand-on-click-node="false"
-            @node-click="getMenuItem" v-loading="loading">
-            <span :class="data.isLock ? '' : 'disabled'" class="custom-tree-node" slot-scope="{ node, data }">
+        <el-tree
+            :data="menuData"
+            :props="tree_prop"
+            node-key="menu_id"
+            default-expand-all
+            :expand-on-click-node="false"
+            @node-click="getMenuItem"
+            v-loading="loading"
+        >
+            <span
+                :class="data.isLock ? '' : 'disabled'"
+                class="custom-tree-node"
+                slot-scope="{ node, data }"
+            >
                 <span class="label"><i :class="'fa fa-' + data.icon"></i>{{ node.label }}</span>
                 <span>
-                    <el-button type="text" size="mini" @click.stop="remove(node, data)"
-                        v-if="node.label != '系统' && node.label != '菜单管理' && data.isLock">
+                    <el-button
+                        type="text"
+                        size="mini"
+                        @click.stop="remove(node, data)"
+                        v-if="node.label != '系统' && node.label != '菜单管理' && data.isLock"
+                    >
                         禁用
                     </el-button>
-                    <el-button type="text" size="mini" @click.stop="remove(node, data)"
-                        v-if="node.label != '系统' && node.label != '菜单管理' && !data.isLock">
+                    <el-button
+                        type="text"
+                        size="mini"
+                        @click.stop="remove(node, data)"
+                        v-if="node.label != '系统' && node.label != '菜单管理' && !data.isLock"
+                    >
                         启用
                     </el-button>
-                    <el-button type="text" size="mini" @click.stop="addMenu(data)">
+                    <el-button
+                        type="text"
+                        size="mini"
+                        @click.stop="addMenu(data)"
+                    >
                         新增
                     </el-button>
                 </span>
             </span>
         </el-tree>
 
-        <el-card class="box-card" v-loading="formLoad">
-            <div slot="header" class="clearfix">
+        <el-card
+            class="box-card"
+            v-loading="formLoad"
+        >
+            <div
+                slot="header"
+                class="clearfix"
+            >
                 <span>{{title}}</span>
-                <el-button style="float: right; padding: 3px 5px" type="text" @click="submit">提交
+                <el-button
+                    style="float: right; padding: 3px 5px"
+                    type="text"
+                    @click="submit"
+                >提交
                 </el-button>
-                <el-button style="float: right; padding: 3px 5px" type="text" @click="resetForm('SYSMENU')">重置
+                <el-button
+                    style="float: right; padding: 3px 5px"
+                    type="text"
+                    @click="resetForm('SYSMENU')"
+                >重置
                 </el-button>
             </div>
-            <el-form label-width="80px" :model="form" size="medium" :rules="rules" ref="SYSMENU">
-                <el-form-item label="ID" prop="menu_id" v-if="!isAdd">
-                    <el-input v-model="form.menu_id" disabled></el-input>
+            <el-form
+                label-width="80px"
+                :model="form"
+                size="medium"
+                :rules="rules"
+                ref="SYSMENU"
+            >
+                <el-form-item
+                    label="ID"
+                    prop="menu_id"
+                    v-if="!isAdd"
+                >
+                    <el-input
+                        v-model="form.menu_id"
+                        disabled
+                    ></el-input>
                 </el-form-item>
-                <el-form-item label="名称" prop="title">
+                <el-form-item
+                    label="名称"
+                    prop="title"
+                >
                     <el-input v-model="form.title"></el-input>
                 </el-form-item>
-                <el-form-item label="上级菜单" prop="parentId">
-                    <el-cascader :options="menuData" :props="menu_prop" :show-all-levels="false" v-model="form.parentId"
-                        clearable filterable></el-cascader>
+                <el-form-item
+                    label="上级菜单"
+                    prop="parentId"
+                >
+                    <el-cascader
+                        :options="menuData"
+                        :props="menu_prop"
+                        :show-all-levels="false"
+                        v-model="form.parentId"
+                        clearable
+                        filterable
+                    ></el-cascader>
                 </el-form-item>
-                <el-form-item label="路径" prop="path">
+                <el-form-item
+                    label="路径"
+                    prop="path"
+                >
                     <el-input v-model="form.path"></el-input>
                 </el-form-item>
-                <el-form-item label="图标" prop="icon">
-                    <d2-icon-select v-model="form.icon" :user-input="true" />
+                <el-form-item
+                    label="图标"
+                    prop="icon"
+                >
+                    <d2-icon-select
+                        v-model="form.icon"
+                        :user-input="true"
+                    />
                 </el-form-item>
-                <el-form-item label="排序" prop="sort">
+                <el-form-item
+                    label="排序"
+                    prop="sort"
+                >
                     <el-input v-model.number="form.sort"></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="类型" prop="type">

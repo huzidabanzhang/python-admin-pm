@@ -2,38 +2,82 @@
     <div class="page-login">
         <div class="page-login--layer page-login--layer-area">
             <ul class="circles">
-                <li v-for="n in 10" :key="n"></li>
+                <li
+                    v-for="n in 10"
+                    :key="n"
+                ></li>
             </ul>
         </div>
         <div class="page-login--layer">
-            <div class="page-login--content" flex="dir:top main:justify cross:stretch box:justify">
+            <div
+                class="page-login--content"
+                flex="dir:top main:justify cross:stretch box:justify"
+            >
                 <div class="page-login--content-header"></div>
-                <div class="page-login--content-main" flex="dir:top main:center cross:center">
+                <div
+                    class="page-login--content-main"
+                    flex="dir:top main:center cross:center"
+                >
                     <!-- logo -->
-                    <img class="page-login--logo" src="./image/logo.png">
+                    <img
+                        class="page-login--logo"
+                        src="./image/logo.png"
+                    >
                     <!-- form -->
                     <div class="page-login--form">
                         <el-card shadow="never">
-                            <el-form ref="loginForm" label-position="top" :rules="rules" :model="formLogin"
-                                size="default">
+                            <el-form
+                                ref="loginForm"
+                                label-position="top"
+                                :rules="rules"
+                                :model="formLogin"
+                                size="default"
+                            >
                                 <el-form-item prop="username">
-                                    <el-input type="text" v-model="formLogin.username" placeholder="用户名">
-                                        <i slot="prepend" class="fa fa-user-circle-o"></i>
+                                    <el-input
+                                        type="text"
+                                        v-model="formLogin.username"
+                                        placeholder="用户名"
+                                    >
+                                        <i
+                                            slot="prepend"
+                                            class="fa fa-user-circle-o"
+                                        ></i>
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item prop="password">
-                                    <el-input type="password" v-model="formLogin.password" placeholder="密码">
-                                        <i slot="prepend" class="fa fa-keyboard-o"></i>
+                                    <el-input
+                                        type="password"
+                                        v-model="formLogin.password"
+                                        placeholder="密码"
+                                    >
+                                        <i
+                                            slot="prepend"
+                                            class="fa fa-keyboard-o"
+                                        ></i>
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item prop="code">
-                                    <el-input type="text" v-model="formLogin.code" placeholder="验证码">
+                                    <el-input
+                                        type="text"
+                                        v-model="formLogin.code"
+                                        placeholder="验证码"
+                                    >
                                         <template slot="append">
-                                            <img class="login-code" :src="captcha" @click="refresh">
+                                            <img
+                                                class="login-code"
+                                                :src="captcha"
+                                                @click="refresh"
+                                            >
                                         </template>
                                     </el-input>
                                 </el-form-item>
-                                <el-button size="default" @click="submit" type="primary" class="button-login">
+                                <el-button
+                                    size="default"
+                                    @click="submit"
+                                    type="primary"
+                                    class="button-login"
+                                >
                                     登录
                                 </el-button>
                             </el-form>

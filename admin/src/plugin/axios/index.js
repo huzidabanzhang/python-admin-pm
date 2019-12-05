@@ -1,6 +1,7 @@
 import qs from 'qs'
 import axios from 'axios'
 import { Message } from 'element-ui'
+import { cloneDeep } from 'lodash'
 import util from '@/libs/util'
 import store from '@/store/index'
 
@@ -41,25 +42,17 @@ service.interceptors.request.use(
         // API接口权限判断
         let isCheck = true
 
-        if (config.headers.isCheck)  {
-            store.dispatch('d2admin/db/get', {
-                dbName: 'sys',
-                path: 'user.info.interfaces',
-                defaultValue: {},
-                user: true
-            }, { root: true }).then(res => {
-                isCheck = res.some((item) => {
-                    return '/API' + item.path == config.url
-                })
+        if (config.headers.isCheck) {
+            let interfaces = cloneDeep(store.state.d2admin.user.info.interfaces)
+            isCheck = interfaces.some((item) => {
+                return item.path == config.url
+            })
 
-                if (!isCheck) {
-                    return Promise.reject(Message({
-                        message: '无权限~',
-                        type: 'error',
-                        duration: 3 * 1000
-                    }))
-                }
-            }).catch(err => {})
+            if (!isCheck) return Promise.reject(Message({
+                message: '无权限~',
+                type: 'error',
+                duration: 3 * 1000
+            }))
         }
 
         // 在请求发送之前做一些处理
@@ -106,7 +99,6 @@ service.interceptors.response.use(
                 case 401:
                     // token 问题返回登录页面
                     errorCreate(dataAxios.msg)
-                    
                     break
                 case 403:
                     // 无权限访问 跳转到无权限页面

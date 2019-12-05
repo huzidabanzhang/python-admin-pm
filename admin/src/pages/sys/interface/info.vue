@@ -1,0 +1,227 @@
+<template>
+    <el-dialog
+        :title="title"
+        :visible.sync="Visible"
+        width="40%"
+        append-to-body
+        destroy-on-close
+        @closed="handleClosed"
+    >
+        <el-form
+            label-width="80px"
+            ref="adminForm"
+            :model="form"
+            :rules="rules"
+            size="medium"
+            v-loading="loading"
+        >
+            <el-form-item
+                label="名称"
+                prop="name"
+            >
+                <el-input v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item
+                label="路由"
+                prop="path"
+            >
+                <el-input v-model="form.path"></el-input>
+            </el-form-item>
+            <el-form-item
+                label="请求方式"
+                prop="method"
+            >
+                <el-select
+                    v-model="form.method"
+                    placeholder="请选择请求方式"
+                >
+                    <el-option
+                        v-for="item in methodOption"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item
+                label="描述"
+                prop="description"
+            >
+                <el-input v-model="form.description"></el-input>
+            </el-form-item>
+            <el-form-item
+                label="标识"
+                prop="identification"
+            >
+                <el-input v-model="form.identification"></el-input>
+            </el-form-item>
+            <el-form-item
+                label="所属菜单"
+                prop="menu_id"
+            >
+                <el-select
+                    v-model="form.menu_id"
+                    placeholder="请选择所属菜单"
+                >
+                    <el-option
+                        v-for="item in menuOption"
+                        :key="item.id"
+                        :label="item.title"
+                        :value="item.id"
+                    >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <span
+            slot="footer"
+            class="dialog-footer"
+        >
+            <el-button
+                @click="handleClosed"
+                size="medium"
+            >取 消</el-button>
+            <el-button
+                type="primary"
+                @click="handelInfo"
+                :loading="isSubmit"
+                size="medium"
+            >确 定</el-button>
+        </span>
+    </el-dialog>
+</template>
+
+<script>
+import { CreateInterface, ModifyInterface } from '@api/sys.interface'
+import { cloneDeep } from 'lodash'
+// 获取缓存菜单需要
+import util from '@/libs/util.js'
+export default {
+    props: {
+        title: String,
+        params: Object,
+        role: Array,
+        centerDialogVisible: Boolean
+    },
+    data() {
+        return {
+            Visible: this.centerDialogVisible,
+            form: {
+                name: '',
+                path: '',
+                method: 'GET',
+                description: '',
+                identification: '',
+                menu_id: ''
+            },
+            rules: {
+                name: [
+                    { required: true, message: '请输入名称', trigger: 'blur' }
+                ],
+                path: [
+                    { required: true, message: '请输入路由', trigger: 'blur' }
+                ],
+                method: [
+                    { required: true, message: '请选择请求方式', trigger: 'change' }
+                ],
+                description: [
+                    { required: true, message: '请输入描述', trigger: 'blur' }
+                ],
+                identification: [
+                    { required: true, message: '请输入标识', trigger: 'blur' }
+                ],
+                menu_id: [
+                    { required: true, message: '请选择所属菜单', trigger: 'change' }
+                ]
+            },
+            isSubmit: false,
+            loading: false,
+            methodOption: [
+                { label: 'GET', value: 'GET' },
+                { label: 'POST', value: 'POST' },
+                { label: 'PUT', value: 'PUT' },
+                { label: 'DELETE', value: 'DELETE' }
+            ],
+            menuOption: []
+        }
+    },
+    watch: {
+        centerDialogVisible(newVal) {
+            this.Visible = newVal
+            if (newVal) {
+                // 菜单遍历
+                let menus = util.getMenuTree()
+                this.menuOption = []
+                this.pushMenu(menus)
+
+                this.form = cloneDeep(this.params)
+            }
+        }
+    },
+    methods: {
+        pushMenu(ary) {
+            ary.map((i) => {
+                if (i.children && i.children.length > 0) {
+                    this.pushMenu(i.children)
+                } else this.menuOption.push(i)
+            });
+        },
+        handelInfo() {
+            let isError = false
+            this.$refs.adminForm.validate((valid) => {
+                if (!valid) {
+                    isError = true
+                    return false
+                }
+            })
+            if (isError) return true
+
+            this.isSubmit = true
+            let params = this.form
+
+            if (this.form.interface_id) {
+                ModifyInterface(params)
+                    .then(async res => {
+                        this.$store.state.d2admin.user.info.interfaces.map((i) => {
+                            if (i.interface_id == this.form.interface_id) 
+                                return i = params
+                        })
+                        this.handleInitParent(1)
+                    })
+                    .catch(() => {
+                        this.isSubmit = false
+                    })
+            } else {
+                CreateInterface(params)
+                    .then(async res => {
+                        this.$store.state.d2admin.user.info.interfaces.push(res.data)
+                        this.handleInitParent(2)
+                    })
+                    .catch(() => {
+                        this.isSubmit = false
+                    })
+            }
+        },
+        handleInitParent(type) {
+            this.$message({
+                message: type == 1 ? '接口编辑成功' : '接口创建成功',
+                type: 'success',
+                duration: 3 * 1000
+            })
+            this.$emit('callback', true)
+            this.isSubmit = false
+        },
+        handleClosed() {
+            this.$emit('handleClose', false)
+        }
+    }
+}
+</script>
+
+<style>
+.el-form-width {
+    width: 50%;
+    display: inline-grid;
+}
+</style>

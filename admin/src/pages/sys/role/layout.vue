@@ -1,42 +1,122 @@
 <template>
     <d2-container>
-        <el-form :inline="true" slot="header" size="mini">
+        <el-form
+            :inline="true"
+            slot="header"
+            size="mini"
+        >
             <el-form-item>
-                <el-select v-model="value" placeholder="请选择" clearable size="mini" :clear="clearStatus">
-                    <el-option v-for="item in statusOption" :key="item.value" :label="item.label" :value="item.value">
+                <el-select
+                    v-model="value"
+                    placeholder="请选择"
+                    clearable
+                    size="mini"
+                    :clear="clearStatus"
+                >
+                    <el-option
+                        v-for="item in statusOption"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    >
                     </el-option>
                 </el-select>
-                <el-button icon="el-icon-search" size="mini" type="primary" @click="changeStatus"></el-button>
+                <el-button
+                    icon="el-icon-search"
+                    size="mini"
+                    type="primary"
+                    @click="changeStatus"
+                ></el-button>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="addRole">新增</el-button>
+                <el-button
+                    type="primary"
+                    size="mini"
+                    icon="el-icon-circle-plus-outline"
+                    @click="addRole"
+                >新增</el-button>
             </el-form-item>
         </el-form>
 
-        <el-table :data="roleData" style="width: 100%" size="mini" type="ghost" v-loading="loading">
-            <el-table-column prop="name" label="角色名" align="center">
+        <el-table
+            :data="roleData"
+            style="width: 100%"
+            size="mini"
+            type="ghost"
+            v-loading="loading"
+        >
+            <el-table-column
+                prop="name"
+                label="角色名"
+                align="center"
+            >
             </el-table-column>
-            <el-table-column prop="isLock" label="状态" align="center">
+            <el-table-column
+                prop="isLock"
+                label="状态"
+                align="center"
+            >
                 <template slot-scope="scope">
-                    <el-tag size="medium" type="success" v-if="scope.row.isLock">启用</el-tag>
-                    <el-tag size="medium" type="info" v-else>禁用</el-tag>
+                    <el-tag
+                        size="medium"
+                        type="success"
+                        v-if="scope.row.isLock"
+                    >启用</el-tag>
+                    <el-tag
+                        size="medium"
+                        type="info"
+                        v-else
+                    >禁用</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="content" label="操作" align="center">
-                <template slot-scope="scope" v-if="scope.row.id != 1">
-                    <el-button icon="el-icon-edit" v-if="scope.row.isLock" size="mini" circle
-                        @click.native="editRole(scope.row)" title="编辑"></el-button>
-                    <el-button type="danger" v-if="scope.row.isLock" icon="el-icon-delete" size="mini" circle
-                        @click.native="lockRole([scope.row.role_id], false)" title="禁用"></el-button>
-                    <el-button v-if="!scope.row.isLock" type="primary" icon="el-icon-circle-check" size="mini" circle
-                        @click.native="lockRole([scope.row.role_id], true)" title="启用">
+            <el-table-column
+                prop="content"
+                label="操作"
+                align="center"
+            >
+                <template
+                    slot-scope="scope"
+                    v-if="scope.row.id != 1"
+                >
+                    <el-button
+                        icon="el-icon-edit"
+                        v-if="scope.row.isLock"
+                        size="mini"
+                        circle
+                        @click.native="editRole(scope.row)"
+                        title="编辑"
+                    ></el-button>
+                    <el-button
+                        type="danger"
+                        v-if="scope.row.isLock"
+                        icon="el-icon-delete"
+                        size="mini"
+                        circle
+                        @click.native="lockRole([scope.row.role_id], false)"
+                        title="禁用"
+                    ></el-button>
+                    <el-button
+                        v-if="!scope.row.isLock"
+                        type="primary"
+                        icon="el-icon-circle-check"
+                        size="mini"
+                        circle
+                        @click.native="lockRole([scope.row.role_id], true)"
+                        title="启用"
+                    >
                     </el-button>
                 </template>
             </el-table-column>
         </el-table>
 
-        <Info ref="roleInfo" :title="title" :params="params" :centerDialogVisible="centerDialogVisible"
-            @handleClose="handleClose" @callback="init"></Info>
+        <Info
+            ref="roleInfo"
+            :title="title"
+            :params="params"
+            :centerDialogVisible="centerDialogVisible"
+            @handleClose="handleClose"
+            @callback="init"
+        ></Info>
     </d2-container>
 </template>
 

@@ -1,7 +1,13 @@
 <template>
-    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-        :current-page="page" :page-sizes="[20, 50, 100]" :page-size="size"
-        layout="total, sizes, prev, pager, next, jumper" :total="total">
+    <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="page"
+        :page-sizes="[20, 50, 100]"
+        :page-size="size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+    >
     </el-pagination>
 </template>
 

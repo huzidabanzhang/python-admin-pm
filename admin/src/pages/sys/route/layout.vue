@@ -1,62 +1,174 @@
 <template>
     <d2-container>
-        <el-form :inline="true" slot="header" size="mini">
+        <el-form
+            :inline="true"
+            slot="header"
+            size="mini"
+        >
             <el-form-item>
-                <el-select v-model="lock" placeholder="请选择" clearable size="mini" :clear="clearLock">
-                    <el-option v-for="item in lockOption" :key="item.value" :label="item.label" :value="item.value">
+                <el-select
+                    v-model="lock"
+                    placeholder="请选择"
+                    clearable
+                    size="mini"
+                    :clear="clearLock"
+                >
+                    <el-option
+                        v-for="item in lockOption"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    >
                     </el-option>
                 </el-select>
-                <el-button icon="el-icon-search" size="mini" type="primary" @click="changeLock"></el-button>
+                <el-button
+                    icon="el-icon-search"
+                    size="mini"
+                    type="primary"
+                    @click="changeLock"
+                ></el-button>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="addRoute">新增
+                <el-button
+                    type="primary"
+                    size="mini"
+                    icon="el-icon-circle-plus-outline"
+                    @click="addRoute"
+                >新增
                 </el-button>
             </el-form-item>
             <el-form-item>
-                <el-button type="danger" size="mini" icon="el-icon-close" @click="lockRoute(route_id)">禁用</el-button>
+                <el-button
+                    type="danger"
+                    size="mini"
+                    icon="el-icon-close"
+                    @click="lockRoute(route_id)"
+                >禁用</el-button>
             </el-form-item>
         </el-form>
 
-        <el-table :data="routeData" style="width: 100%" size="mini" type="ghost" v-loading="loading"
-            :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="id" @select="changeSelect"
-            @select-all="changeSelect">
-            <el-table-column type="selection" width="55">
+        <el-table
+            :data="routeData"
+            style="width: 100%"
+            size="mini"
+            type="ghost"
+            v-loading="loading"
+            :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+            row-key="id"
+            @select="changeSelect"
+            @select-all="changeSelect"
+        >
+            <el-table-column
+                type="selection"
+                width="55"
+            >
             </el-table-column>
-            <el-table-column prop="title" label="路由名称" align="center">
+            <el-table-column
+                prop="title"
+                label="路由名称"
+                align="center"
+            >
             </el-table-column>
-            <el-table-column prop="path" label="路径" align="center">
+            <el-table-column
+                prop="path"
+                label="路径"
+                align="center"
+            >
             </el-table-column>
-            <el-table-column prop="component" label="组件" align="center">
+            <el-table-column
+                prop="component"
+                label="组件"
+                align="center"
+            >
             </el-table-column>
-            <el-table-column prop="componentPath" label="组件路径" align="center">
+            <el-table-column
+                prop="componentPath"
+                label="组件路径"
+                align="center"
+            >
             </el-table-column>
-            <el-table-column prop="cache" label="是否缓存" align="center">
+            <el-table-column
+                prop="cache"
+                label="是否缓存"
+                align="center"
+            >
                 <template slot-scope="scope">
-                    <el-tag size="medium" type="success" v-if="scope.row.cache">是</el-tag>
-                    <el-tag size="medium" type="info" v-else>否</el-tag>
+                    <el-tag
+                        size="medium"
+                        type="success"
+                        v-if="scope.row.cache"
+                    >是</el-tag>
+                    <el-tag
+                        size="medium"
+                        type="info"
+                        v-else
+                    >否</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="isLock" label="状态" align="center">
+            <el-table-column
+                prop="isLock"
+                label="状态"
+                align="center"
+            >
                 <template slot-scope="scope">
-                    <el-tag size="medium" type="success" v-if="scope.row.isLock">启用</el-tag>
-                    <el-tag size="medium" type="info" v-else>禁用</el-tag>
+                    <el-tag
+                        size="medium"
+                        type="success"
+                        v-if="scope.row.isLock"
+                    >启用</el-tag>
+                    <el-tag
+                        size="medium"
+                        type="info"
+                        v-else
+                    >禁用</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="content" label="操作" align="center">
+            <el-table-column
+                prop="content"
+                label="操作"
+                align="center"
+            >
                 <template slot-scope="scope">
-                    <el-button icon="el-icon-edit" v-if="scope.row.isLock" size="mini" circle
-                        @click.native="editRoute(scope.row)" title="编辑"></el-button>
-                    <el-button type="danger" v-if="scope.row.isLock" icon="el-icon-close" size="mini" circle
-                        @click.native="lockRoute([scope.row.route_id], false)" title="禁用"></el-button>
-                    <el-button v-else type="primary" icon="el-icon-check" size="mini" circle
-                        @click.native="lockRoute([scope.row.route_id], true)" title="启用">
+                    <el-button
+                        icon="el-icon-edit"
+                        v-if="scope.row.isLock"
+                        size="mini"
+                        circle
+                        @click.native="editRoute(scope.row)"
+                        title="编辑"
+                    ></el-button>
+                    <el-button
+                        type="danger"
+                        v-if="scope.row.isLock"
+                        icon="el-icon-close"
+                        size="mini"
+                        circle
+                        @click.native="lockRoute([scope.row.route_id], false)"
+                        title="禁用"
+                    ></el-button>
+                    <el-button
+                        v-else
+                        type="primary"
+                        icon="el-icon-check"
+                        size="mini"
+                        circle
+                        @click.native="lockRoute([scope.row.route_id], true)"
+                        title="启用"
+                    >
                     </el-button>
                 </template>
             </el-table-column>
         </el-table>
 
-        <Info ref="routeInfo" :title="title" :params="params" :centerDialogVisible="centerDialogVisible"
-            :parent="routeData" @handleClose="handleClose" @callback="init"></Info>
+        <Info
+            ref="routeInfo"
+            :title="title"
+            :params="params"
+            :centerDialogVisible="centerDialogVisible"
+            :parent="routeData"
+            @handleClose="handleClose"
+            @callback="init"
+        ></Info>
     </d2-container>
 </template>
 
