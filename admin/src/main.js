@@ -46,6 +46,15 @@ Vue.use(VCharts)
 // Vue.component('SplitPane', SplitPane)
 // Vue.component('VueUeditorWrap', VueUeditorWrap)
 
+// 按钮权限判断指令
+Vue.directive('premissions', {
+    bind: function (el, binding, vnode) {
+        let identification = binding.arg
+
+        console.log(store)
+    }
+})
+
 new Vue({
     router,
     store,

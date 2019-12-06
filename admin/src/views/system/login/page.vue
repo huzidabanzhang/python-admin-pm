@@ -1,5 +1,8 @@
 <template>
-    <div class="page-login">
+    <div
+        class="page-login"
+        @keyup.enter="submit"
+    >
         <div class="page-login--layer page-login--layer-area">
             <ul class="circles">
                 <li
@@ -84,7 +87,21 @@
                         </el-card>
                     </div>
                 </div>
-                <div class="page-login--content-footer"></div>
+                <div class="page-login--content-footer">
+                    <p class="page-login--content-footer-copyright">
+                        Copyright
+                        <d2-icon name="copyright" />
+                        2019 章胖胖
+                        <a href="https://github.com/huzidabanzhang/python-admin-pm/tree/master/admin">
+                            @huzidabanzhang
+                        </a>
+                    </p>
+                    <p class="page-login--content-footer-options">
+                        <a href="#">帮助</a>
+                        <a href="#">隐私</a>
+                        <a href="#">条款</a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -166,7 +183,10 @@ export default {
                         })
                 } else {
                     // 登录表单校验失败
-                    this.$message.error('表单校验失败，请检查')
+                    this.$message({
+                        message: '用户名、密码或者验证码不能为空',
+                        type: 'error'
+                    })
                 }
             })
         }
@@ -215,7 +235,7 @@ export default {
     }
     // main
     .page-login--logo {
-        width: 64px;
+        width: 80px;
         margin-bottom: 1em;
         margin-top: -1em;
     }
