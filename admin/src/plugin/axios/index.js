@@ -62,16 +62,12 @@ service.interceptors.request.use(
         let isCheck = true
 
         if (config.headers.isCheck) {
-            let interfaces = cloneDeep(store.state.d2admin.user.info.interfaces)
+            let interfaces = cloneDeep(store.getters['d2admin/user/interfaces'])
             isCheck = interfaces.some((item) => {
                 return item.path == config.url
             })
 
-            if (!isCheck) return Promise.reject(Message({
-                message: '无权限~',
-                type: 'error',
-                duration: 3 * 1000
-            }))
+            if (!isCheck) return Promise.reject({ message: '无权限~'})
         }
 
          // 在HTTP请求前取消前面的所有请求

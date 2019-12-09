@@ -80,19 +80,13 @@ util.initRoute = function (r, type, isAll = false) {
     ])
 
     if (isAll && type != 1) {
-        store.dispatch('d2admin/db/get', {
-            dbName: 'sys',
-            path: 'user.info',
-            defaultValue: {},
-            user: true
-        }, { root: true }).then(res => {
-            store.dispatch('d2admin/user/set', {
-                info: res.info,
-                menus: res.menus,
-                routes: r,
-                interfaces: res.interface
-            }, { root: true })
-        })
+        let info = store.getters['d2admin/user/info']
+        store.dispatch('d2admin/user/set', {
+            info: info.info,
+            menus: res.menus,
+            routes: r,
+            interfaces: res.interface
+        }, { root: true })
     }
 }
 
@@ -113,20 +107,28 @@ util.initMenu = function (m, type, isAll = false) {
     let data = cloneDeep(m), menu = util.dealData(data, 1, true)
     store.commit('d2admin/menu/asideSet', menu)
     if (isAll && type != 1) {
-        store.dispatch('d2admin/db/get', {
-            dbName: 'sys',
-            path: 'user.info',
-            defaultValue: {},
-            user: true
-        }, { root: true }).then(res => {
-            store.dispatch('d2admin/user/set', {
-                info: res.info,
-                menus: m,
-                routes: res.routes,
-                interfaces: res.interface
-            }, { root: true })
-        })
+        let info = store.getters['d2admin/user/info']
+        store.dispatch('d2admin/user/set', {
+            info: info.info,
+            menus: m,
+            routes: info.routes,
+            interfaces: res.interface
+        }, { root: true })
     }
+}
+
+/**
+ * @description 更新接口列表
+ * @param {Object} m 菜单
+ */
+util.initInterface = function (f) {
+    let info = store.getters['d2admin/user/info']
+    store.dispatch('d2admin/user/set', {
+        info: info.info,
+        menus: info.menus,
+        routes: info.routes,
+        interfaces: f
+    }, { root: true })
 }
 
 /**
@@ -134,7 +136,7 @@ util.initMenu = function (m, type, isAll = false) {
  * @param {Object} params 数据
  */
 util.getMenuTree = function () {
-    let menus = cloneDeep(store.state.d2admin.user.info.menus)
+    let menus = cloneDeep(store.getters['d2admin/user/menus'])
     return util.dealData(menus, 1, true)
 }
 

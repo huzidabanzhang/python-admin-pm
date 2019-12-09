@@ -33,6 +33,27 @@ export function CreateDrop() {
 }
 
 /**
+ * 初始化数据库和原始数据(新建后想重新初始化)
+ */
+export function AgainCreateDrop() {
+    return request({
+        url: '/v1/Admin/AgainCreateDrop',
+        method: 'get',
+        headers: { isCheck: true }
+    })
+}
+
+/**
+ * 初始化数据库和原始数据
+ */
+export function checkDb() {
+    return request({
+        url: '/v1/Admin/checkDb',
+        method: 'get'
+    })
+}
+
+/**
  * 新建管理员用户
  * @param {*} data 
  */

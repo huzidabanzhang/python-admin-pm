@@ -178,15 +178,16 @@ export default {
             if (isError) return true
 
             this.isSubmit = true
-            let params = this.form
+            let params = this.form, interfaces = cloneDeep(this.$store.getters['d2admin/user/interfaces'])
 
             if (this.form.interface_id) {
                 ModifyInterface(params)
                     .then(async res => {
-                        this.$store.state.d2admin.user.info.interfaces.map((i) => {
+                        interfaces.map((i) => {
                             if (i.interface_id == this.form.interface_id) 
                                 return i = params
                         })
+                        util.initInterface(interfaces)
                         this.handleInitParent(1)
                     })
                     .catch(() => {
@@ -195,7 +196,8 @@ export default {
             } else {
                 CreateInterface(params)
                     .then(async res => {
-                        this.$store.state.d2admin.user.info.interfaces.push(res.data)
+                        interfaces.push(res.data)
+                        util.initInterface(interfaces)
                         this.handleInitParent(2)
                     })
                     .catch(() => {

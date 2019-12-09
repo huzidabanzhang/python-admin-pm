@@ -27,6 +27,19 @@ export function DelDocument(data) {
 }
 
 /**
+ * 回收 文档
+ * @param {*} data 
+ */
+export function RetrieveDocument(data) {
+    return request({
+        url: '/v1/Document/RetrieveDocument',
+        method: 'post',
+        data,
+        headers: { isCheck: true }
+    })
+}
+
+/**
  * 下载文档
  * @param {*} data 
  */

@@ -26,6 +26,8 @@ export default {
         Vue.prototype.$version = process.env.VUE_APP_VERSION
         // 构建时间
         Vue.prototype.$buildTime = process.env.VUE_APP_BUILD_TIME
+        // 判断是否初始化
+        Vue.prototype.$isInit = false
         // 加载框
         Vue.prototype.loadOption = (title) => {
             return {

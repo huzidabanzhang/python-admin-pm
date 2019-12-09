@@ -164,6 +164,8 @@ export default {
          */
         // 提交登录信息
         submit() {
+            if (!this.$isInit) return true
+
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
                     let loadingInstance = this.$loading(this.loadOption('正在登陆中.....'))

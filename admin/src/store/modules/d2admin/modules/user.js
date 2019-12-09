@@ -4,6 +4,36 @@ export default {
         // 用户信息
         info: {}
     },
+    getters: {
+        /**
+         * @description 返回菜单数据
+         * @param {*} state vuex state
+         */
+        menus(state) {
+            return state.info.menus
+        },
+        /**
+         * @description 返回接口数据
+         * @param {*} state vuex state
+         */
+        interfaces(state) {
+            return state.info.interfaces
+        },
+        /**
+         * @description 返回路由数据
+         * @param {*} state vuex state
+         */
+        routes(state) {
+            return state.info.routers
+        },
+        /**
+         * @description 返回用户数据
+         * @param {*} state vuex state
+         */
+        info(state) {
+            return state.info
+        }
+    },
     actions: {
         /**
          * @description 设置用户数据

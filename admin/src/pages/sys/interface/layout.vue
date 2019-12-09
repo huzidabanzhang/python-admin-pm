@@ -178,8 +178,10 @@
 
 <script>
 import { QueryInterfaceByParam, LockInterface } from '@api/sys.interface'
+import { cloneDeep } from 'lodash'
 import Pagination from '@/pages/pagination/index.vue'
 import Info from './info.vue'
+import util from '@/libs/util.js'
 export default {
     name: 'sys-interface',
     components: { Pagination, Info },
@@ -289,7 +291,7 @@ export default {
         Lock(keys, isLock) {
             let id = keys.map((i) => {
                 return i.interface_id
-            }), interfaces = this.$store.state.d2admin.user.info.interfaces
+            }), interfaces = cloneDeep(this.$store.getters['d2admin/user/interfaces'])
 
             LockInterface({
                 interface_id: id,
@@ -310,6 +312,7 @@ export default {
                         }
                     })
                 }
+                util.initInterface(interfaces)
             })
         }
     }

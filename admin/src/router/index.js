@@ -64,7 +64,7 @@ router.beforeEach(async (to, from, next) => {
         // 这里暂时将cookie里是否存有token作为验证是否登录的条件
         // 请根据自身业务需要修改
         const token = util.cookies.get('token')
-        const user_info = store.state.d2admin.user.info
+        const user_info = store.getters['d2admin/user/info']
         if (token && token !== 'undefined' && JSON.stringify(user_info) != '{}') {
             if (to.path == '/index') RouteFresh = true
             ResetRoute(to, next)
