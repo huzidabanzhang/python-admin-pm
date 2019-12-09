@@ -164,7 +164,7 @@ export default {
          */
         // 提交登录信息
         submit() {
-            if (!this.$isInit) return true
+            if (!this.$store.getters['d2admin/user/isInit']) return true
 
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {

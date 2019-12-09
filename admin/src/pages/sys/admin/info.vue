@@ -90,7 +90,7 @@
                         :key="item.value"
                         :label="item.label"
                         :value="item.value"
-                        :disabled="item.vlaue == 1"
+                        :disabled="item.disabled"
                     >
                     </el-option>
                 </el-select>
@@ -171,7 +171,10 @@ export default {
         centerDialogVisible(newVal) {
             this.Visible = newVal
             if (newVal) {
-                this.roleOption = this.role
+                this.roleOption = this.role.map((i) => {
+                    if (i.value == 1) i.disabled = true
+                    return i
+                })
                 this.form = cloneDeep(this.params)
                 if (this.form.avatarUrl != '') {
                     this.avatarUrl = this.API + this.form.avatarUrl

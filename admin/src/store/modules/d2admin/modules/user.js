@@ -2,7 +2,8 @@ export default {
     namespaced: true,
     state: {
         // 用户信息
-        info: {}
+        info: {},
+        isInit: false
     },
     getters: {
         /**
@@ -32,6 +33,13 @@ export default {
          */
         info(state) {
             return state.info
+        },
+        /**
+         * @description 返回是否初始化
+         * @param {*} state vuex state
+         */
+        isInit(state) {
+            return state.isInit
         }
     },
     actions: {
@@ -71,6 +79,15 @@ export default {
                 // end
                 resolve()
             })
+        }
+    },
+    mutations: {
+        /**
+         * @description 修改是否初始化
+         * @param {Object} state state
+         */
+        setInit(state, isInit) {
+            state.isInit = isInit
         }
     }
 }

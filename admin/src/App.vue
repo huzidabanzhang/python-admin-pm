@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { checkDb } from '@api/sys.user'
+import { checkDb, CreateDrop } from '@api/sys.user'
 import util from '@/libs/util'
 export default {
     name: 'app',
@@ -18,12 +18,45 @@ export default {
     },
     methods: {
         isInit() {
-            if (!this.$isInit) {
+            if (!this.$store.getters['d2admin/user/isInit']) {
                 checkDb({})
                     .then(async res => {
-                        this.$isInit = res
+                        this.$store.commit('d2admin/user/setInit', res)
+
+                        if (!res) this.$alert('系统暂不能正常使用, 是否初始化数据库', '重要提示', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                this.init()
+                            }
+                        })
                     })
             }
+        },
+        init() {
+            let loadingInstance = this.$loading(this.loadOption('系统初始化中，请耐心等待.....'))
+
+            CreateDrop({})
+                .then(async res => {
+                    loadingInstance.close()
+                    this.$store.commit('d2admin/user/setInit', true)
+                    this.$notify.success({
+                        title: '初始化数据库成功',
+                        offset: 100,
+                        duration: 0,
+                        dangerouslyUseHTMLString: true,
+                        message: '<div>管理员: ' + res.username + '<div><div>初始密码：' + res.password + '<div>',
+                        showClose: false
+                    })
+                })
+                .catch(() => {
+                    loadingInstance.close()
+                    this.$alert('初始化失败，点击重新初始化', '错误提示', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            this.init()
+                        }
+                    })
+                })
         },
         i18nHandle(val, oldVal) {
             util.cookies.set('lang', val)
