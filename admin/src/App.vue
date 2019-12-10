@@ -25,6 +25,7 @@ export default {
 
                         if (!res) this.$alert('系统暂不能正常使用, 是否初始化数据库', '重要提示', {
                             confirmButtonText: '确定',
+                            showClose: false,
                             callback: action => {
                                 this.init()
                             }
@@ -42,7 +43,7 @@ export default {
                     this.$notify.success({
                         title: '初始化数据库成功',
                         offset: 100,
-                        duration: 0,
+                        duration: 5000,
                         dangerouslyUseHTMLString: true,
                         message: '<div>管理员: ' + res.username + '<div><div>初始密码：' + res.password + '<div>',
                         showClose: false
@@ -52,6 +53,7 @@ export default {
                     loadingInstance.close()
                     this.$alert('初始化失败，点击重新初始化', '错误提示', {
                         confirmButtonText: '确定',
+                        showClose: false,
                         callback: action => {
                             this.init()
                         }
@@ -68,4 +70,8 @@ export default {
 
 <style lang="scss">
 @import "~@/assets/style/public-class.scss";
+
+.el-scrollbar__wrap {
+    overflow: auto !important;
+}
 </style>

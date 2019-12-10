@@ -8,6 +8,7 @@ import store from '@/store/index'
 import layoutHeaderAside from '@/layout/header-aside'
 import { cloneDeep } from 'lodash'
 import { frameInRoutes } from '@/router/routes'
+import { Notification } from 'element-ui'
 
 const util = {
     cookies,
@@ -80,6 +81,12 @@ util.initRoute = function (r, type, isAll = false) {
     ])
 
     if (isAll && type != 1) {
+        Notification({
+            title: '提示',
+            message: '动态加载路由成功',
+            type: 'success',
+            offset: 100
+        })
         let info = store.getters['d2admin/user/info']
         store.dispatch('d2admin/user/set', {
             info: info.info,
@@ -104,9 +111,15 @@ let getMenuInfo = (params) => {
  * @param {Object} m 菜单
  */
 util.initMenu = function (m, type, isAll = false) {
-    let data = cloneDeep(m), menu = util.dealData(data, 1, true)
+    let data = cloneDeep(m), menu = util.dealData(data, 3, true)
     store.commit('d2admin/menu/asideSet', menu)
     if (isAll && type != 1) {
+        Notification({
+            title: '提示',
+            message: '动态加载菜单成功',
+            type: 'success',
+            offset: 100
+        })
         let info = store.getters['d2admin/user/info']
         store.dispatch('d2admin/user/set', {
             info: info.info,
