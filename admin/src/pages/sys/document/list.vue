@@ -9,6 +9,7 @@
                 <el-button
                     type="primary"
                     size="mini"
+                    @click="centerDialogVisible = true"
                 >上传<i class="el-icon-upload el-icon--right"></i></el-button>
             </el-form-item>
         </el-form>
@@ -40,14 +41,18 @@
                         <span>好吃的汉堡</span>
                         <div class="bottom clearfix">
                             <span>1.1MB</span>
-                            <i
-                                class="fa fa-search"
-                                aria-hidden="true"
-                            ></i>
-                            <i
-                                class="fa fa-cloud-download"
-                                aria-hidden="true"
-                            ></i>
+                            <div class="button">
+                                <i
+                                    class="fa fa-search"
+                                    aria-hidden="true"
+                                    title="预览"
+                                ></i>
+                                <i
+                                    class="fa fa-cloud-download"
+                                    aria-hidden="true"
+                                    title="下载"
+                                ></i>
+                            </div>
                         </div>
                     </div>
                 </el-card>
@@ -63,13 +68,19 @@
             @handleSize="handleSize"
             @handleCurrent="handleCurrent"
         ></Pagination>
+
+        <Upload
+            :centerDialogVisible="centerDialogVisible"
+            @handleClose="handleClose"
+        ></Upload>
     </d2-container>
 </template>
 
 <script>
-import { CreateDocument, DelDocument, RetrieveDocument, DownDocument, QueryDocumentByParam } from '@api/sys.document'
+import { DelDocument, RetrieveDocument, DownDocument, QueryDocumentByParam } from '@api/sys.document'
 import { cloneDeep } from 'lodash'
 import Pagination from '@/pages/pagination/index.vue'
+import Upload from '@/pages/upload/index.vue'
 // 获取缓存菜单需要
 import util from '@/libs/util.js'
 export default {
@@ -78,7 +89,7 @@ export default {
         type: Number, // 列表查询 1：全部 2：不包括回收
         visible: Boolean
     },
-    components: { Pagination },
+    components: { Pagination, Upload },
     data() {
         return {
             list: [],
@@ -87,7 +98,8 @@ export default {
             size: 20,
             loading: false,
             isShow: false,
-            isDel: 0
+            isDel: 0,
+            centerDialogVisible: false
         }
     },
     watch: {
@@ -123,6 +135,9 @@ export default {
         handleCurrent(page) {
             this.page = page
             this.init()
+        },
+        handleClose() {
+            this.centerDialogVisible = false
         }
     }
 }
@@ -140,9 +155,9 @@ export default {
 }
 
 .bottom {
-    margin-top: 13px;
+    margin-top: 10px;
     line-height: 12px;
-    font-size: 13px;
+    font-size: 12px;
     color: #999;
 }
 
@@ -164,5 +179,13 @@ export default {
 
 .clearfix:after {
     clear: both;
+}
+
+.fa {
+    cursor: pointer;
+}
+
+.fa-search {
+    padding-right: 5px;
 }
 </style>
