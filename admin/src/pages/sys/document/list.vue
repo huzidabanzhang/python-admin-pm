@@ -21,14 +21,14 @@
                 :md="4"
                 :lg="4"
                 :xl="3"
-                v-for="(item, index) in 6"
+                v-for="(item, index) in list"
                 :key="item"
             >
                 <el-card :body-style="{ padding: '0px' }">
                     <el-image
                         lazy
                         class="image"
-                        :src="'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png'"
+                        :src="src + item.path"
                     >
                         <div
                             slot="error"
@@ -38,9 +38,9 @@
                         </div>
                     </el-image>
                     <div style="padding: 5px;">
-                        <span>好吃的汉堡</span>
+                        <span>{{item.name}}</span>
                         <div class="bottom clearfix">
-                            <span>1.1MB</span>
+                            <span>{{item.size}}</span>
                             <div class="button">
                                 <i
                                     class="fa fa-search"
@@ -57,7 +57,7 @@
                     </div>
                 </el-card>
             </el-col>
-            <!-- <el-col class="empty" v-if="list.length == 0">暂无数据</el-col> -->
+            <el-col class="empty" v-if="list.length == 0">暂无数据</el-col>
         </el-row>
 
         <Pagination
@@ -99,7 +99,8 @@ export default {
             loading: false,
             isShow: false,
             isDel: 0,
-            centerDialogVisible: false
+            centerDialogVisible: false,
+            src: '/API/v1/Document/GetDocument/'
         }
     },
     watch: {

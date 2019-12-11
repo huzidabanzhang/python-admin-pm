@@ -234,15 +234,15 @@ export default {
                 return false
             }
             let self = this, formData = new FormData()
-            formData.append('document', params.file)
+            formData.append('document', [params.file])
             formData.append('admin_id', util.cookies.get('uuid'))
             formData.append('type', 1)
 
             this.img_load = true
             CreateDocument(formData)
                 .then(async res => {
-                    this.avatarUrl = this.API + res
-                    this.form.avatarUrl = res
+                    this.avatarUrl = this.API + res[0].src
+                    this.form.avatarUrl = res[0].src
                     this.$refs.avatarUrl.uploadFiles = []
                     this.$message.success('上传头像成功')
                     this.img_load = false

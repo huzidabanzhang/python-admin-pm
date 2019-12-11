@@ -4,12 +4,16 @@ import request from '@/plugin/axios'
  * 上传文档
  * @param {*} data 
  */
-export function CreateDocument(data) {
+export function CreateDocument(data, progressEvent) {
     return request({
         url: '/v1/Document/CreateDocument',
         method: 'post',
         data,
-        headers: { 'content-type': 'multipart/form-data', isCheck: true }
+        headers: { 'content-type': 'multipart/form-data', isCheck: true },
+        onUploadProgress: res => {
+            const percentCompleted = Math.floor((res.loaded * 100) / res.total)
+            progressEvent({ percent: percentCompleted })
+        }
     })
 }
 
