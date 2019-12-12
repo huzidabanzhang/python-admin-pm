@@ -8,8 +8,11 @@ export default {
     components: { Docment },
     data() {
         return {
-            visible: true
+            visible: false
         }
+    },
+    created() {
+        this.visible = true
     }
 }
 </script>

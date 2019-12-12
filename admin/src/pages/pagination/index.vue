@@ -3,7 +3,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="page"
-        :page-sizes="[20, 50, 100]"
+        :page-sizes="pageList"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -16,7 +16,13 @@ export default {
     props: {
         size: Number,
         total: Number,
-        page: Number
+        page: Number,
+        pageList: {
+            type: Array,
+            default: function () {
+                return [20, 50, 100]
+            }
+        }
     },
     methods: {
         handleSizeChange(val) {

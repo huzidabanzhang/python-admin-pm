@@ -183,10 +183,11 @@ export default {
             if (this.form.interface_id) {
                 ModifyInterface(params)
                     .then(async res => {
-                        interfaces.map((i) => {
-                            if (i.interface_id == this.form.interface_id) 
-                                return i = params
+                        interfaces.map((i, index) => {
+                            if (i.interface_id == params.interface_id) 
+                                return interfaces[index] = params
                         })
+                        console.log(interfaces)
                         util.initInterface(interfaces)
                         this.handleInitParent(1)
                     })

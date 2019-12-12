@@ -13,7 +13,7 @@
             action="1"
             multiple
             ref="upload"
-            :limit="5"
+            :limit="maxLimit"
             :http-request="addUpload"
             :before-upload="beforeUpload"
             :on-exceed="handleExceed"
@@ -24,7 +24,7 @@
             <div
                 class="el-upload__tip"
                 slot="tip"
-            >最多上传5个文件，且单文件不超过5MB</div>
+            >最多上传{{maxLimit}}个文件，且单文件不超过{{maxSize}}MB</div>
         </el-upload>
 
         <span
@@ -32,12 +32,19 @@
             class="dialog-footer"
         >
             <el-button
-                @click="Visible = false"
+                type="primary"
+                @click="CreateUpload"
+                size="mini"
+                :loading="loading"
+                style="float: left"
+            >上 传</el-button>
+            <el-button
+                @click="handleClosed"
                 size="mini"
             >取 消</el-button>
             <el-button
                 type="primary"
-                @click="CreateUpload"
+                @click="handleClosed"
                 size="mini"
             >确 定</el-button>
         </span>
@@ -54,7 +61,10 @@ export default {
     data() {
         return {
             Visible: this.centerDialogVisible,
-            fileList: {}
+            fileList: {},
+            loading: false,
+            maxLimit: 5,
+            maxSize: 5
         }
     },
     watch: {
@@ -65,25 +75,51 @@ export default {
     },
     methods: {
         handleClosed() {
-            this.$emit('handleClose', false)
+            let count = 0
+            for (let i in this.fileList) {
+                if (this.fileList[i].type == 'ready') count++
+            }
+
+            if (!this.loading) {
+                if (count == 0) this.close()
+                else this.$confirm(`还有` + count + `个文件未上传，确定关闭嘛？`, '提醒', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                    .then(() => {
+                        this.close()
+                    })
+                    .catch(() => { })
+            }
+        },
+        close() {
+            this.$emit('handleClose', {
+                data: this.fileList,
+                change: false
+            })
         },
         handleExceed(files, fileList) {
-            console.log(files)
+            let count = this.maxLimit - fileList.length
+            this.$message.warning(`您一次选择的文件过多，还能选择` + count + `个文件`)
         },
-        handleRemove(file, fileList) {
-            console.log(file)
+        handleRemove(file) {
+            if (this.fileList[file.uid]) delete this.fileList[file.uid]
         },
         beforeUpload(file) {
-            console.log(file)
-            // return false
+            if (file.size > 1024 * 1024 * this.maxSize) {
+                this.$message.warning(`文件` + file.name + `超过了` + this.maxSize + `MB`)
+                return false
+            }
         },
         addUpload(params) {
-            console.log(params)
             this.fileList[params.file.uid] = {
                 file: params.file,
                 onSuccess: params.onSuccess,
                 onProgress: params.onProgress,
-                onError: params.onError
+                onError: params.onError,
+                uid: params.file.uid,
+                type: 'ready'
             }
         },
         handelProgress(params) {
@@ -94,23 +130,34 @@ export default {
         CreateUpload() {
             let self = this, formData = new FormData()
             for (let i in this.fileList) {
-                formData.append('document', this.fileList[i].file)
+                if (this.fileList[i].type == 'ready') {
+                    formData.append('document', this.fileList[i].file)
+                    formData.append('uid', this.fileList[i].uid)
+                }
             }
             formData.append('admin_id', util.cookies.get('uuid'))
             formData.append('type', 1)
 
-            this.img_load = true
+            if (formData.get('uid') == null) return this.$message.error('请选择上传文件')
+
+            this.loading = true
             CreateDocument(formData, this.handelProgress)
                 .then(async res => {
-                    
-                    // this.avatarUrl = this.API + res
-                    // this.form.avatarUrl = res
-                    // this.$refs.avatarUrl.uploadFiles = []
-                    // this.$message.success('上传头像成功')
-                    // this.img_load = false
+                    res.map(i => {
+                        if (i.res == 1) {
+                            this.fileList[i.uid].onSuccess()
+                            this.fileList[i.uid].type = 'success'
+                        }
+
+                        if (i.res == 2) {
+                            this.fileList[i.uid].onError()
+                            this.fileList[i.uid].type = 'error'
+                        }
+                    })
+                    this.loading = false
                 })
                 .catch(() => {
-                    // this.img_load = false
+                    this.loading = false
                 })
         }
     }

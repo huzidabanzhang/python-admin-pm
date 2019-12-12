@@ -47,11 +47,13 @@ export function RetrieveDocument(data) {
  * 下载文档
  * @param {*} data 
  */
-export function DownDocument(params) {
+export function DownDocument(data) {
     return request({
-        url: '/v1/Document/DownDocument' + params,
+        url: '/v1/Document/DownDocument',
         method: 'get',
-        headers: {isCheck: true}
+        data,
+        headers: {isCheck: true, isGet: true},
+        responseType: 'blob'
     })
 }
 

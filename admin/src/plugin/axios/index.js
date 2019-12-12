@@ -60,7 +60,6 @@ service.interceptors.request.use(
     config => {
         // API接口权限判断
         let isCheck = true
-
         if (config.headers.isCheck) {
             let interfaces = cloneDeep(store.getters['d2admin/user/interfaces'])
             isCheck = interfaces.some((item) => {
@@ -90,9 +89,16 @@ service.interceptors.request.use(
             username: token,
             password: password
         }
-        if (!config.headers['content-type']) {
-            config.headers['content-type'] = 'application/x-www-form-urlencoded'
-            config.data = qs.stringify(config.data, { arrayFormat: 'brackets' }) // 传数组到后端接收为 type[] = xxx
+
+        if (config.headers.isGet) {
+            for (let i in config.data) {
+                config.url += '/' + config.data[i]
+            }
+        } else {
+            if (!config.headers['content-type']) {
+                config.headers['content-type'] = 'application/x-www-form-urlencoded'
+                config.data = qs.stringify(config.data, { arrayFormat: 'brackets' }) // 传数组到后端接收为 type[] = xxx
+            }
         }
         return config
     },
@@ -171,13 +177,13 @@ service.interceptors.response.use(
                     case 505: error.message = 'HTTP版本不受支持'; break
                     default: break
                 }
+
+                setTimeout(() => {
+                    // 请求成功后删除记录（延时是为了防止短时间内重复请求）
+                    removePending(error.config)
+                }, 500)
             }
             errorLog(error)
-
-            setTimeout(() => {
-                // 请求成功后删除记录（延时是为了防止短时间内重复请求）
-                removePending(error.config)
-            }, 500)
         }
 
         return Promise.reject(error)
