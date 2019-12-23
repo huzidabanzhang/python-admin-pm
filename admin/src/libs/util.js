@@ -166,12 +166,12 @@ util.dealData = function (params, type, isAll) {
                 i--
                 continue
             }
-            if (params[i].parentId == 0) {
+            if (params[i].parent_id == 0) {
                 data.push(type == 1 ? (params[i].menu_id ? getMenuInfo(params[i]) : getRouteInfo(params[i])) : params[i])
                 params.splice(i, 1)
                 i--
             } else {
-                let index = data.findIndex(item => (type == 1 ? item.id : (type == 2 ? item.route_id : item.menu_id)) === params[i].parentId)
+                let index = data.findIndex(item => (type == 1 ? item.id : (type == 2 ? item.route_id : item.menu_id)) === params[i].parent_id)
                 if (index == -1) continue
                 if (!data[index]['children']) data[index]['children'] = []
                 data[index]['children'].push(type == 1 ? (params[i].menu_id ? getMenuInfo(params[i]) : getRouteInfo(params[i])) : params[i])

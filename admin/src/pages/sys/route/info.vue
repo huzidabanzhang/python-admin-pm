@@ -31,7 +31,7 @@
                     :options="parent"
                     :props="prop"
                     :show-all-levels="false"
-                    v-model="form.parentId"
+                    v-model="form.parent_id"
                     clearable
                     filterable
                 ></el-cascader>
@@ -130,7 +130,7 @@ export default {
     methods: {
         handelInfo() {
             this.isSubmit = true
-            if (this.form.parentId == null) this.form.parentId = '0'
+            if (this.form.parent_id == null) this.form.parent_id = '0'
             if (this.form.route_id) {
                 ModifyRoute(this.form)
                     .then(async res => {
