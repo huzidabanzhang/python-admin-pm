@@ -186,6 +186,10 @@ export default {
 </script>
 
 <style scoped>
+.container-component {
+    left: 300px !important;
+}
+
 .empty {
     color: #909399;
     text-align: center;

@@ -305,3 +305,10 @@ export default {
     }
 }
 </style>
+
+<style>
+.el-tree-node__content {
+    line-height: 35px;
+    height: 35px;
+}
+</style>
