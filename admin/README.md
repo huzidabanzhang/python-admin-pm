@@ -7,6 +7,6 @@
 ## 计划
 * 按钮权限
 * 文档文件夹
-* 下星期要订婚 最近有点忙
+* 代码优化
 
   Python服务器端代码 GIT地址: https://github.com/huzidabanzhang/python-admin
