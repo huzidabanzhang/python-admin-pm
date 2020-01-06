@@ -8,7 +8,7 @@
         @closed="handleClosed"
     >
         <el-form
-            label-width="80px"
+            label-width="100px"
             :model="form"
             :rules="rules"
             size="medium"
@@ -55,21 +55,11 @@
                 <el-input v-model="form.componentPath"></el-input>
             </el-form-item>
             <el-form-item
-                label="是否缓存"
+                label="keep-alive"
                 prop="cache"
             >
-                <el-select
-                    placeholder="请选择"
-                    v-model="form.cache"
-                >
-                    <el-option
-                        v-for="item in cacheOption"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    >
-                    </el-option>
-                </el-select>
+                <el-switch v-model="form.cache">
+                </el-switch>
             </el-form-item>
         </el-form>
         <span
@@ -110,12 +100,8 @@ export default {
                 path: [{ required: true, message: '请输入路径', trigger: 'blur' }],
                 component: [{ required: true, message: '请输入组件', trigger: 'blur' }],
                 componentPath: [{ required: true, message: '请输入组件路径', trigger: 'blur' }],
-                cache: [{ required: true, message: '请选择是否缓存', trigger: 'blur' }]
+                cache: [{ required: true, message: '请选择是否keep-alive', trigger: 'blur' }]
             },
-            cacheOption: [
-                { label: '启用', value: true },
-                { label: '禁用', value: false }
-            ],
             isSubmit: false,
             loading: false,
             prop: { checkStrictly: true, value: 'route_id', label: 'title', emitPath: false }

@@ -170,6 +170,10 @@ export default {
 </script>
 
 <style scoped>
+.el-select {
+    width: 120px;
+}
+
 .el-form-item--mini.el-form-item {
     margin-bottom: 0;
 }

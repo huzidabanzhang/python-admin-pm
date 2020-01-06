@@ -12,6 +12,17 @@
                     @click="centerDialogVisible = true"
                 >上传<i class="el-icon-upload el-icon--right"></i></el-button>
             </el-form-item>
+
+            <el-form-item>
+                <el-button
+                    type="primary"
+                    size="mini"
+                    icon="el-icon-circle-plus-outline"
+                    @click="addFolder"
+                >新建文件夹
+                </el-button>
+            </el-form-item>
+
         </el-form>
 
         <el-row v-loading="loading">
@@ -24,7 +35,8 @@
                 v-for="(item, index) in list"
                 :key="index"
             >
-                <el-card :body-style="{ padding: '0px' }">
+                <el-card :body-style="{ padding: '5px' }">
+                    <el-checkbox v-model="index"></el-checkbox>
                     <el-image
                         lazy
                         class="image"
@@ -55,14 +67,20 @@
                         >{{item.name}}</div>
                         <div class="bottom clearfix">
                             <span>{{bytesToSize(item.size)}}</span>
-                            <div class="button">
-                                <i
-                                    class="fa fa-cloud-download"
-                                    aria-hidden="true"
-                                    title="下载"
-                                    @click="down(item.path, item.name)"
-                                ></i>
-                            </div>
+                            <el-dropdown
+                                class="button"
+                                trigger="click"
+                                size="mini"
+                                placement="bottom-start"
+                            >
+                                <span class="el-dropdown-link">
+                                    <i class="fa fa-ellipsis-v"></i>
+                                </span>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item>下载</el-dropdown-item>
+                                    <el-dropdown-item>删除</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
                         </div>
                     </div>
                 </el-card>
@@ -92,6 +110,7 @@
 
 <script>
 import { DelDocument, RetrieveDocument, DownDocument, QueryDocumentByParam } from '@api/sys.document'
+import { DelFolder, CreateFolder, ModifyFolder, QueryFolderByParam } from '@api/sys.folder'
 import { cloneDeep } from 'lodash'
 import Pagination from '@/pages/pagination/index.vue'
 import Upload from '@/pages/upload/index.vue'
@@ -107,6 +126,7 @@ export default {
     data() {
         return {
             list: [],
+            checked: [],
             page: 1,
             total: 0,
             size: 40,
@@ -180,16 +200,15 @@ export default {
                 i = Math.floor(Math.log(bytes) / Math.log(k))
 
             return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
+        },
+        addFolder() {
+
         }
     }
 }
 </script>
 
 <style scoped>
-.container-component {
-    left: 300px !important;
-}
-
 .empty {
     color: #909399;
     text-align: center;
@@ -201,7 +220,7 @@ export default {
 }
 
 .bottom {
-    margin-top: 10px;
+    margin-top: 5px;
     line-height: 12px;
     font-size: 12px;
     color: #999;
@@ -210,6 +229,7 @@ export default {
 .button {
     padding: 0;
     float: right;
+    color: #999;
 }
 
 .image {
@@ -228,8 +248,10 @@ export default {
     clear: both;
 }
 
-.fa {
+.fa.fa-ellipsis-v {
     cursor: pointer;
+    width: 10px;
+    text-align: right;
 }
 
 .name {
@@ -239,6 +261,11 @@ export default {
     font-size: 13px;
     padding: 5px 0px;
 }
+
+.el-dropdown-menu--mini .el-dropdown-menu__item {
+    min-width: 40px;
+    text-align: center;
+}
 </style>
 
 <style>
@@ -247,7 +274,6 @@ export default {
     justify-content: center;
     align-items: center;
     width: 100%;
-    background: #f5f7fa;
     color: #909399;
     font-size: 30px;
     height: 150px;

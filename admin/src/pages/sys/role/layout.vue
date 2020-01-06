@@ -21,6 +21,8 @@
                     >
                     </el-option>
                 </el-select>
+            </el-form-item>
+            <el-form-item>
                 <el-button
                     icon="el-icon-search"
                     size="mini"
@@ -214,7 +216,7 @@ export default {
 
 <style scoped>
 .el-select {
-    padding-right: 5px;
+    width: 120px;
 }
 
 .el-form-item--mini.el-form-item {

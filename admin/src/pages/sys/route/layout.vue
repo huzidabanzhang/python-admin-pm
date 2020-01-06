@@ -21,6 +21,8 @@
                     >
                     </el-option>
                 </el-select>
+            </el-form-item>
+            <el-form-item>
                 <el-button
                     icon="el-icon-search"
                     size="mini"
@@ -89,13 +91,13 @@
             </el-table-column>
             <el-table-column
                 prop="cache"
-                label="是否缓存"
+                label="keep-alive"
                 align="center"
             >
                 <template slot-scope="scope">
                     <el-tag
                         size="medium"
-                        type="success"
+                        type="primary"
                         v-if="scope.row.cache"
                     >是</el-tag>
                     <el-tag
@@ -277,7 +279,7 @@ export default {
 
 <style scoped>
 .el-select {
-    padding-right: 5px;
+    width: 120px;
 }
 
 .el-form-item--mini.el-form-item {

@@ -13,6 +13,8 @@
                     :clear="clear(name)"
                 >
                 </el-input>
+            </el-form-item>
+            <el-form-item>
                 <el-select
                     v-model="lock"
                     placeholder="请选择"
@@ -28,6 +30,8 @@
                     >
                     </el-option>
                 </el-select>
+            </el-form-item>
+            <el-form-item>
                 <el-select
                     v-model="method"
                     placeholder="请选择"
@@ -43,6 +47,8 @@
                     >
                     </el-option>
                 </el-select>
+            </el-form-item>
+            <el-form-item>
                 <el-button
                     icon="el-icon-search"
                     size="mini"
@@ -321,12 +327,11 @@ export default {
 
 <style scoped>
 .el-select {
-    padding-right: 5px;
+    width: 120px;
 }
 
 .el-input--mini {
     width: 200px;
-    padding-right: 5px;
 }
 
 .el-form-item--mini.el-form-item {
