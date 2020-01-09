@@ -35,8 +35,29 @@
                 v-for="(item, index) in list"
                 :key="index"
             >
-                <el-card :body-style="{ padding: '5px' }">
-                    <el-checkbox v-model="index"></el-checkbox>
+                <el-card :body-style="{ padding: '10px' }">
+                    <div>
+                        <el-checkbox v-model="index">
+                            <div
+                                class="name"
+                                :title="item.name"
+                            >{{item.name}}</div>
+                        </el-checkbox>
+                        <el-dropdown
+                            class="button"
+                            trigger="click"
+                            size="mini"
+                            placement="bottom-start"
+                        >
+                            <span class="el-dropdown-link">
+                                <i class="fa fa-ellipsis-v"></i>
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item>下载</el-dropdown-item>
+                                <el-dropdown-item>删除</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </div>
                     <el-image
                         lazy
                         class="image"
@@ -58,29 +79,6 @@
                     >
                         <div class="image-slot">
                             <i class="fa fa-file"></i>
-                        </div>
-                    </div>
-                    <div style="padding: 5px;">
-                        <div
-                            class="name"
-                            :title="item.name"
-                        >{{item.name}}</div>
-                        <div class="bottom clearfix">
-                            <span>{{bytesToSize(item.size)}}</span>
-                            <el-dropdown
-                                class="button"
-                                trigger="click"
-                                size="mini"
-                                placement="bottom-start"
-                            >
-                                <span class="el-dropdown-link">
-                                    <i class="fa fa-ellipsis-v"></i>
-                                </span>
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item>下载</el-dropdown-item>
-                                    <el-dropdown-item>删除</el-dropdown-item>
-                                </el-dropdown-menu>
-                            </el-dropdown>
                         </div>
                     </div>
                 </el-card>
@@ -126,6 +124,7 @@ export default {
     data() {
         return {
             list: [],
+            folder: [],
             checked: [],
             page: 1,
             total: 0,
@@ -133,13 +132,15 @@ export default {
             loading: false,
             isDel: 0,
             centerDialogVisible: false,
+            prev_id: 0,
+            next_id: 0,
             src: '/API/v1/Document/GetDocument/'
         }
     },
     watch: {
         visible: {
             handler: function (val) {
-                if (val) this.init()
+                if (val) this.getFolder(this.next_id)
             },
             immediate: true, //关键
             deep: true
@@ -159,6 +160,20 @@ export default {
                     this.total = res.total
                     this.list = res.data
                     this.loading = false
+                })
+                .catch(() => {
+                    this.loading = false
+                })
+        },
+        getFolder(parent_id) {
+            this.loading = true
+            QueryFolderByParam({
+                parent_id: parent_id
+            })
+                .then(async res => {
+                    this.folder = res
+                    this.page = 1
+                    this.init()
                 })
                 .catch(() => {
                     this.loading = false
@@ -202,7 +217,33 @@ export default {
             return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
         },
         addFolder() {
-
+            this.$prompt('', '新建文件夹', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                inputPlaceholder: '请输入文件夹名',
+                beforeClose: (action, instance, done) => {
+                    if (action === 'confirm') {
+                        instance.confirmButtonLoading = true
+                        instance.confirmButtonText = '提交中...'
+                        CreateFolder({
+                            name: instance.inputValue,
+                            parent_id: this.prev_id
+                        })
+                            .then(async res => {
+                                instance.confirmButtonLoading = false
+                                this.folder.push(res)
+                                done()
+                            })
+                            .catch(() => {
+                                instance.confirmButtonLoading = false
+                            })
+                    } else {
+                        done()
+                    }
+                }
+            }).then(() => {
+                this.$message.success('新建成功')
+            }).catch()
         }
     }
 }
@@ -227,9 +268,10 @@ export default {
 }
 
 .button {
-    padding: 0;
     float: right;
+    line-height: 15px;
     color: #999;
+    font-size: 13px;
 }
 
 .image {
@@ -259,12 +301,30 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: 13px;
-    padding: 5px 0px;
+    width: calc(100% - 5px);
+    line-height: 15px;
 }
 
 .el-dropdown-menu--mini .el-dropdown-menu__item {
     min-width: 40px;
     text-align: center;
+}
+
+.el-checkbox {
+    width: calc(100% - 10px);
+    padding-bottom: 5px;
+}
+
+.el-checkbox >>> .el-checkbox__input {
+    line-height: 15px;
+}
+
+.el-checkbox >>> .el-checkbox__inner {
+    top: -3px;
+}
+
+.el-checkbox >>> .el-checkbox__label {
+    padding-left: 5px;
 }
 </style>
 
