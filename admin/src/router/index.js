@@ -68,7 +68,7 @@ router.beforeEach(async (to, from, next) => {
         if (token && token !== 'undefined' && JSON.stringify(user_info) != '{}') {
             if (to.path == '/index') RouteFresh = true
             ResetRoute(to, next)
-            if (to.matched.some(r => r.meta.isLock == false )) { 
+            if (to.matched.some(r => r.meta.is_disabled == false )) { 
                 next({
                     name: 'page403',
                     query: {

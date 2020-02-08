@@ -101,7 +101,7 @@
                 </template>
             </el-table-column>
             <el-table-column
-                prop="isLock"
+                prop="is_disabled"
                 label="状态"
                 align="center"
             >
@@ -109,7 +109,7 @@
                     <el-tag
                         size="medium"
                         type="success"
-                        v-if="scope.row.isLock"
+                        v-if="scope.row.is_disabled"
                     >启用</el-tag>
                     <el-tag
                         size="medium"
@@ -141,7 +141,7 @@
                 >
                     <el-button
                         icon="el-icon-edit"
-                        v-if="scope.row.isLock"
+                        v-if="scope.row.is_disabled"
                         size="mini"
                         circle
                         @click.native="editAdmin(scope.row)"
@@ -149,7 +149,7 @@
                     ></el-button>
                     <el-button
                         type="danger"
-                        v-if="scope.row.isLock"
+                        v-if="scope.row.is_disabled"
                         icon="el-icon-close"
                         size="mini"
                         circle
@@ -206,7 +206,7 @@ export default {
             total: 0,
             size: 20,
             lock: '',
-            isLock: '',
+            is_disabled: '',
             role: '',
             isRole: '',
             roleOption: [],
@@ -231,7 +231,7 @@ export default {
                 page: this.page,
                 page_size: this.size
             }
-            if (this.isLock != '') params['isLock'] = this.isLock
+            if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
             if (this.isRole != '') params['role_id'] = this.isRole
 
             this.loading = true
@@ -247,7 +247,7 @@ export default {
         },
         getRoleList() {
             QueryRoleByParam({
-                isLock: true
+                is_disabled: true
             })
                 .then(async res => {
                     this.roleOption = res.map((i) => {
@@ -272,7 +272,7 @@ export default {
             this.init()
         },
         changeAdmin() {
-            this.isLock = this.lock
+            this.is_disabled = this.lock
             this.isRole = this.role
             this.init()
         },
@@ -284,7 +284,7 @@ export default {
         },
         isSelect(row, index) {
             if (row.id == 1) return false
-            return row.isLock
+            return row.is_disabled
         },
         handleClose() {
             this.centerDialogVisible = false
@@ -311,22 +311,22 @@ export default {
             this.params = params
             this.centerDialogVisible = true
         },
-        lockAdmin(keys, isLock) {
-            this.$confirm(!isLock ? '确定要禁用吗' : '确定要启用吗',
-                !isLock ? '禁用管理员' : '启用管理员',
+        lockAdmin(keys, is_disabled) {
+            this.$confirm(!is_disabled ? '确定要禁用吗' : '确定要启用吗',
+                !is_disabled ? '禁用管理员' : '启用管理员',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    this.Lock(keys, isLock)
+                    this.Lock(keys, is_disabled)
                 })
         },
-        Lock(keys, isLock) {
+        Lock(keys, is_disabled) {
             LockAdmin({
                 admin_id: keys,
-                isLock: isLock
+                is_disabled: is_disabled
             }).then(async res => {
                 this.init()
             })

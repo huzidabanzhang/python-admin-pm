@@ -10,7 +10,7 @@
             v-loading="loading"
         >
             <span
-                :class="data.isLock ? '' : 'disabled'"
+                :class="data.is_disabled ? '' : 'disabled'"
                 class="custom-tree-node"
                 slot-scope="{ node, data }"
             >
@@ -20,7 +20,7 @@
                         type="text"
                         size="mini"
                         @click.stop="remove(node, data)"
-                        v-if="node.label != '系统' && node.label != '菜单管理' && data.isLock"
+                        v-if="node.label != '系统' && node.label != '菜单管理' && data.is_disabled"
                     >
                         禁用
                     </el-button>
@@ -28,7 +28,7 @@
                         type="text"
                         size="mini"
                         @click.stop="remove(node, data)"
-                        v-if="node.label != '系统' && node.label != '菜单管理' && !data.isLock"
+                        v-if="node.label != '系统' && node.label != '菜单管理' && !data.is_disabled"
                     >
                         启用
                     </el-button>
@@ -142,7 +142,7 @@ export default {
             loading: false,
             form: {},
             lock: '',
-            isLock: '',
+            is_disabled: '',
             tree_prop: {
                 label: 'title',
                 children: 'children'
@@ -170,7 +170,7 @@ export default {
         init(isTrue) {
             this.addMenu()
             let params = {}
-            if (this.isLock != '') params['isLock'] = this.isLock
+            if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
             this.loading = true
             QueryMenuByParam(params)
                 .then(async res => {
@@ -225,20 +225,20 @@ export default {
                 icon: '',
                 sort: 1,
                 type: 1,
-                isLock: true
+                is_disabled: true
             }
             this.isAdd = true
             this.title = '新建菜单'
         },
         getMenuItem(data) {
-            if (!data.isLock) return true
+            if (!data.is_disabled) return true
             this.form = cloneDeep(data)
             this.isAdd = false
             this.title = '编辑菜单'
         },
         remove(node, data) {
-            this.$confirm(data.isLock ? '确定要禁用吗' : '确定要启用吗',
-                data.isLock ? '禁用菜单' : '启用菜单',
+            this.$confirm(data.is_disabled ? '确定要禁用吗' : '确定要启用吗',
+                data.is_disabled ? '禁用菜单' : '启用菜单',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -251,7 +251,7 @@ export default {
         Lock(data) {
             LockMenu({
                 menu_id: data.menu_id,
-                isLock: !data.isLock
+                is_disabled: !data.is_disabled
             }).then(async res => {
                 this.init(true)
             })

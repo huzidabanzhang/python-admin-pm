@@ -47,7 +47,7 @@ let getRouteInfo = (data) => {
             title: data.title,
             cache: data.cache,
             auth: true,
-            isLock: data.isLock
+            is_disabled: data.is_disabled
         },
         id: data.route_id
     }
@@ -161,7 +161,7 @@ util.dealData = function (params, type, isAll) {
     let data = []
     while (params.length > 0) {
         for (let i = 0; i < params.length; i++) {
-            if (isAll && !params[i].isLock && type == 3) {
+            if (isAll && !params[i].is_disabled && type == 3) {
                 params.splice(i, 1)
                 i--
                 continue

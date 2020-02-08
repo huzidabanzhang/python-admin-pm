@@ -112,7 +112,7 @@ export default {
         getMenuList() {
             this.loading = true
             QueryMenuByParam({
-                isLock: true
+                is_disabled: true
             })
                 .then(async res => {
                     this.dealData(res, 'menu')
@@ -128,7 +128,7 @@ export default {
         getRouteList() {
             this.loading = true
             QueryRouteByParam({
-                isLock: true
+                is_disabled: true
             })
                 .then(async res => {
                     this.dealData(res, 'route')

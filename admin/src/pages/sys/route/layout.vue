@@ -108,7 +108,7 @@
                 </template>
             </el-table-column>
             <el-table-column
-                prop="isLock"
+                prop="is_disabled"
                 label="状态"
                 align="center"
             >
@@ -116,7 +116,7 @@
                     <el-tag
                         size="medium"
                         type="success"
-                        v-if="scope.row.isLock"
+                        v-if="scope.row.is_disabled"
                     >启用</el-tag>
                     <el-tag
                         size="medium"
@@ -133,7 +133,7 @@
                 <template slot-scope="scope">
                     <el-button
                         icon="el-icon-edit"
-                        v-if="scope.row.isLock"
+                        v-if="scope.row.is_disabled"
                         size="mini"
                         circle
                         @click.native="editRoute(scope.row)"
@@ -141,7 +141,7 @@
                     ></el-button>
                     <el-button
                         type="danger"
-                        v-if="scope.row.isLock"
+                        v-if="scope.row.is_disabled"
                         icon="el-icon-close"
                         size="mini"
                         circle
@@ -186,7 +186,7 @@ export default {
         return {
             routeData: [],
             lock: '',
-            isLock: '',
+            is_disabled: '',
             lockOption: [
                 { label: '启用', value: 'true' },
                 { label: '禁用', value: 'false' }
@@ -205,7 +205,7 @@ export default {
         init(isTrue) {
             if (isTrue) this.centerDialogVisible = false
             let params = {}
-            if (this.isLock != '') params['isLock'] = this.isLock
+            if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
 
             this.loading = true
             QueryRouteByParam(params)
@@ -221,7 +221,7 @@ export default {
                 })
         },
         changeLock() {
-            this.isLock = this.lock
+            this.is_disabled = this.lock
             this.init()
         },
         clearLock() {
@@ -253,22 +253,22 @@ export default {
             this.params = params
             this.centerDialogVisible = true
         },
-        lockRoute(keys, isLock) {
-            this.$confirm(!isLock ? '确定要禁用吗' : '确定要启用吗',
-                !isLock ? '禁用路由' : '启用路由',
+        lockRoute(keys, is_disabled) {
+            this.$confirm(!is_disabled ? '确定要禁用吗' : '确定要启用吗',
+                !is_disabled ? '禁用路由' : '启用路由',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    this.Lock(keys, isLock)
+                    this.Lock(keys, is_disabled)
                 })
         },
-        Lock(keys, isLock) {
+        Lock(keys, is_disabled) {
             LockRoute({
                 route_id: keys,
-                isLock: isLock
+                is_disabled: is_disabled
             }).then(async res => {
                 this.init(true)
             })
