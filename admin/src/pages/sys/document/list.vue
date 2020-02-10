@@ -165,10 +165,10 @@ export default {
                     this.loading = false
                 })
         },
-        getFolder(parent_id) {
+        getFolder(pid) {
             this.loading = true
             QueryFolderByParam({
-                parent_id: parent_id
+                pid: pid
             })
                 .then(async res => {
                     this.folder = res
@@ -227,7 +227,7 @@ export default {
                         instance.confirmButtonText = '提交中...'
                         CreateFolder({
                             name: instance.inputValue,
-                            parent_id: this.prev_id
+                            pid: this.prev_id
                         })
                             .then(async res => {
                                 instance.confirmButtonLoading = false

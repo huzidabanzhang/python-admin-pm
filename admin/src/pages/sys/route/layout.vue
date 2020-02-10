@@ -238,7 +238,7 @@ export default {
         addRoute() {
             this.title = '新建路由'
             this.params = {
-                parent_id: '0',
+                pid: '0',
                 name: '',
                 title: '',
                 path: '',

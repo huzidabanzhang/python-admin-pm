@@ -145,15 +145,15 @@ export default {
             while (data.length > 0) {
                 for (let i = 0; i < data.length; i++) {
                     data[i].children = []
-                    if (data[i].parent_id == '0') {
+                    if (data[i].pid == '0') {
                         if (type == 'menu') this.menu.push(data[i])
                         else this.route.push(data[i])
                         data.splice(i, 1)
                         i--
                     } else {
                         let index = type == 'menu' ?
-                            this.menu.findIndex(item => item.menu_id == data[i].parent_id) :
-                            this.route.findIndex(item => item.route_id == data[i].parent_id)
+                            this.menu.findIndex(item => item.menu_id == data[i].pid) :
+                            this.route.findIndex(item => item.route_id == data[i].pid)
                         if (index == -1) continue
                         if (type == 'menu') this.menu[index].children.push(data[i])
                         else this.route[index].children.push(data[i])

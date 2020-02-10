@@ -90,13 +90,13 @@
                 </el-form-item>
                 <el-form-item
                     label="上级菜单"
-                    prop="parent_id"
+                    prop="pid"
                 >
                     <el-cascader
                         :options="menuData"
                         :props="menu_prop"
                         :show-all-levels="false"
-                        v-model="form.parent_id"
+                        v-model="form.pid"
                         clearable
                         filterable
                     ></el-cascader>
@@ -186,7 +186,7 @@ export default {
         },
         submit() {
             this.formLoad = true
-            if (this.form.parent_id == null) this.form.parent_id = '0'
+            if (this.form.pid == null) this.form.pid = '0'
             if (this.form.menu_id) {
                 ModifyMenu(this.form)
                     .then(async res => {
@@ -219,7 +219,7 @@ export default {
         },
         addMenu(data) {
             this.form = {
-                parent_id: data ? data.menu_id : '0',
+                pid: data ? data.menu_id : '0',
                 title: '',
                 path: '',
                 icon: '',

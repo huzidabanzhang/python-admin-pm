@@ -36,7 +36,7 @@ function ResetRoute(to, next) {
 
             util.initRoute(r, 1, true)
             util.initMenu(m, 1, true)
-
+            
             if (to.path != '/login') RouteFresh = false
             next({ ...to, replace: true })
         }).catch(err => {
@@ -68,7 +68,7 @@ router.beforeEach(async (to, from, next) => {
         if (token && token !== 'undefined' && JSON.stringify(user_info) != '{}') {
             if (to.path == '/index') RouteFresh = true
             ResetRoute(to, next)
-            if (to.matched.some(r => r.meta.is_disabled == false )) { 
+            if (to.matched.some(r => r.meta.is_disabled == true )) { 
                 next({
                     name: 'page403',
                     query: {
