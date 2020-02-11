@@ -61,6 +61,12 @@
                 <el-input v-model="form.nickname"></el-input>
             </el-form-item>
             <el-form-item
+                label="邮箱"
+                prop="email"
+            >
+                <el-input v-model="form.email"></el-input>
+            </el-form-item>
+            <el-form-item
                 label="性别"
                 prop="sex"
             >
@@ -87,9 +93,9 @@
                 >
                     <el-option
                         v-for="item in roleOption"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
+                        :key="item.role_id"
+                        :label="item.name"
+                        :value="item.role_id"
                         :disabled="item.disabled"
                     >
                     </el-option>
@@ -135,6 +141,7 @@ export default {
                 username: '',
                 nickname: '',
                 password: '',
+                email: '',
                 sex: 1,
                 role_id: '',
                 avatarUrl: ''
@@ -148,6 +155,9 @@ export default {
                 password: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
                     { min: 4, max: 32, message: '长度在 4 到 32 个字之间', trigger: 'blur' }
+                ],
+                email: [
+                    { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
                 ],
                 sex: [
                     { required: true, message: '请选择性别', trigger: 'change' }
@@ -172,7 +182,7 @@ export default {
             this.Visible = newVal
             if (newVal) {
                 this.roleOption = this.role.map((i) => {
-                    if (i.value == 1) i.disabled = true
+                    if (i.mark == 'SYS_ADMIN') i.disabled = true
                     return i
                 })
                 this.form = cloneDeep(this.params)

@@ -1,5 +1,5 @@
 <template>
-    <d2-container>
+    <d2-container v-loading="loading">
         <el-form
             :inline="true"
             slot="header"
@@ -40,76 +40,11 @@
             </el-form-item>
         </el-form>
 
-        <el-table
-            :data="roleData"
-            style="width: 100%"
-            size="mini"
-            type="ghost"
-            v-loading="loading"
-        >
-            <el-table-column
-                prop="name"
-                label="角色名"
-                align="center"
-            >
-            </el-table-column>
-            <el-table-column
-                prop="is_disabled"
-                label="状态"
-                align="center"
-            >
-                <template slot-scope="scope">
-                    <el-tag
-                        size="medium"
-                        type="success"
-                        v-if="scope.row.is_disabled"
-                    >启用</el-tag>
-                    <el-tag
-                        size="medium"
-                        type="info"
-                        v-else
-                    >禁用</el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="content"
-                label="操作"
-                align="center"
-            >
-                <template
-                    slot-scope="scope"
-                    v-if="scope.row.id != 1"
-                >
-                    <el-button
-                        icon="el-icon-edit"
-                        v-if="scope.row.is_disabled"
-                        size="mini"
-                        circle
-                        @click.native="editRole(scope.row)"
-                        title="编辑"
-                    ></el-button>
-                    <el-button
-                        type="danger"
-                        v-if="scope.row.is_disabled"
-                        icon="el-icon-delete"
-                        size="mini"
-                        circle
-                        @click.native="lockRole([scope.row.role_id], false)"
-                        title="禁用"
-                    ></el-button>
-                    <el-button
-                        v-if="!scope.row.is_disabled"
-                        type="primary"
-                        icon="el-icon-circle-check"
-                        size="mini"
-                        circle
-                        @click.native="lockRole([scope.row.role_id], true)"
-                        title="启用"
-                    >
-                    </el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+        <div v-for="(item, key) in roleData" class="role-group">
+            <i class="fa fa-group role-icon"></i>
+            <i class="icon el-icon-check role-top"></i>
+            <span>{{item.name}}</span>
+        </div>
 
         <Info
             ref="roleInfo"
@@ -221,5 +156,31 @@ export default {
 
 .el-form-item--mini.el-form-item {
     margin-bottom: 0;
+}
+
+.role-group {
+    position: relative;
+    max-width: 100px;
+    display: inline-block;
+    padding: 7px 15px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 12px;
+}
+
+.role-icon {
+    font-size: 24px;
+    color: #999;
+    display: block;
+    padding-bottom: 5px;
+}
+
+.role-top {
+    position: absolute;
+    top: 0;
 }
 </style>

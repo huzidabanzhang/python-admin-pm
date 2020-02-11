@@ -49,6 +49,13 @@
             </el-form-item>
             <el-form-item>
                 <el-button
+                    icon="el-icon-refresh-right"
+                    size="mini"
+                    @click="init"
+                ></el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button
                     type="primary"
                     size="mini"
                     icon="el-icon-circle-plus-outline"
@@ -109,7 +116,7 @@
                     <el-tag
                         size="medium"
                         type="success"
-                        v-if="scope.row.is_disabled"
+                        v-if="!scope.row.is_disabled"
                     >启用</el-tag>
                     <el-tag
                         size="medium"
@@ -137,11 +144,11 @@
             >
                 <template
                     slot-scope="scope"
-                    v-if="scope.row.role_id != 1"
+                    v-if="scope.row.username != 'Admin'"
                 >
                     <el-button
                         icon="el-icon-edit"
-                        v-if="scope.row.is_disabled"
+                        v-if="!scope.row.is_disabled"
                         size="mini"
                         circle
                         @click.native="editAdmin(scope.row)"
@@ -149,20 +156,20 @@
                     ></el-button>
                     <el-button
                         type="danger"
-                        v-if="scope.row.is_disabled"
+                        v-if="!scope.row.is_disabled"
                         icon="el-icon-close"
                         size="mini"
                         circle
-                        @click.native="lockAdmin([scope.row.admin_id], false)"
+                        @click.native="lockAdmin([scope.row.admin_id], true)"
                         title="禁用"
                     ></el-button>
                     <el-button
                         v-else
-                        type="primary"
+                        type="success"
                         icon="el-icon-check"
                         size="mini"
                         circle
-                        @click.native="lockAdmin([scope.row.admin_id], true)"
+                        @click.native="lockAdmin([scope.row.admin_id], false)"
                         title="启用"
                     >
                     </el-button>
@@ -183,7 +190,7 @@
             ref="adminData"
             :title="title"
             :params="params"
-            :role="roleOption"
+            :role="roleParams"
             :centerDialogVisible="centerDialogVisible"
             @handleClose="handleClose"
             @callback="init"
@@ -210,9 +217,10 @@ export default {
             role: '',
             isRole: '',
             roleOption: [],
+            roleParams: [],
             lockOption: [
-                { label: '启用', value: 'true' },
-                { label: '禁用', value: 'false' }
+                { label: '启用', value: 'false' },
+                { label: '禁用', value: 'true' }
             ],
             loading: false,
             title: '',
@@ -247,11 +255,12 @@ export default {
         },
         getRoleList() {
             QueryRoleByParam({
-                is_disabled: true
+                is_disabled: false
             })
                 .then(async res => {
+                    this.roleParams = res
                     this.roleOption = res.map((i) => {
-                        return { label: i.name, value: i.id }
+                        return { label: i.name, value: i.role_id }
                     })
                     this.init()
                 })
@@ -260,7 +269,7 @@ export default {
             let item = this.roleOption.find((i) => {
                 return i.value == role_id
             })
-            return item ? item.label : '~~~~~未知'
+            return item ? item.label : '未知'
         },
         handleSize(size) {
             this.size = size
@@ -283,7 +292,7 @@ export default {
             this.role = ''
         },
         isSelect(row, index) {
-            if (row.id == 1) return false
+            if (row.username == 'Admin') return false
             return row.is_disabled
         },
         handleClose() {
@@ -300,6 +309,7 @@ export default {
                 username: '',
                 password: '',
                 nickname: '',
+                email: '',
                 sex: 1,
                 role_id: '',
                 avatarUrl: ''
@@ -312,8 +322,8 @@ export default {
             this.centerDialogVisible = true
         },
         lockAdmin(keys, is_disabled) {
-            this.$confirm(!is_disabled ? '确定要禁用吗' : '确定要启用吗',
-                !is_disabled ? '禁用管理员' : '启用管理员',
+            this.$confirm(is_disabled ? '确定要禁用吗' : '确定要启用吗',
+                is_disabled ? '禁用管理员' : '启用管理员',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
