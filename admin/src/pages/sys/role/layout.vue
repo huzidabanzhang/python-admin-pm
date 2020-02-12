@@ -48,9 +48,12 @@
         </el-form>
 
         <ul v-loading="loading" class="role-ul">
-            <li v-for="(item, key) in roleData" :key="key" class="role-group">
+            <li v-for="(item, key) in roleData" :key="key" class="role-group" @dblclick="editRole(item)">
                 <i class="fa fa-group role-icon"></i>
-                <i class="icon el-icon-check role-top" :class="item.is_disabled ? 'disabled' : ''"></i>
+                <i class="icon role-top" 
+                    :class="item.is_disabled ? 'el-icon-close disabled' : 'el-icon-check'"
+                    @click="lockRole([item.role_id], !item.is_disabled)"
+                ></i>
                 <span>{{item.name}}</span>
             </li>
         </ul>
@@ -123,17 +126,15 @@ export default {
                 mark: ''
             }
             this.centerDialogVisible = true
-            this.$refs.roleInfo.getMenuList()
         },
         editRole(params) {
             this.title = '编辑角色'
             this.params = params
             this.centerDialogVisible = true
-            this.$refs.roleInfo.getAllList()
         },
         lockRole(keys, is_disabled) {
-            this.$confirm(!is_disabled ? '确定要禁用吗' : '确定要启用吗',
-                !is_disabled ? '禁用角色' : '启用角色',
+            this.$confirm(is_disabled ? '确定要禁用吗' : '确定要启用吗',
+                is_disabled ? '禁用角色' : '启用角色',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -185,6 +186,10 @@ export default {
     font-size: 12px;
 }
 
+.role-group:hover {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
 .role-icon {
     font-size: 24px;
     color: #999;
@@ -194,7 +199,7 @@ export default {
 
 .role-top {
     position: absolute;
-    top: 0;
+    top: 5px;
     color: white;
     padding: 1px;
     border-radius: 50%;

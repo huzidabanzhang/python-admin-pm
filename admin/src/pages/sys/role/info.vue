@@ -70,6 +70,7 @@
 import { QueryMenuByParam } from '@api/sys.menu'
 import { QueryInterfaceByParam } from '@api/sys.interface'
 import { CreateRole, ModifyRole } from '@api/sys.role'
+import { cloneDeep } from 'lodash'
 export default {
     props: {
         title: String,
@@ -101,7 +102,10 @@ export default {
     watch: {
         centerDialogVisible(newVal) {
             this.Visible = newVal
-            if (newVal) this.form = this.params
+            if (newVal) {
+                this.form = cloneDeep(this.params)
+                this.getMenuList()
+            }
         }
     },
     methods: {
@@ -109,16 +113,19 @@ export default {
             this.menu = []
             this.interface = []
 
-            this.loading = true
-            QueryMenuByParam({
+            let params = {
                 is_disabled: false,
                 is_interface: true
-            })
+            }
+            if (this.params.role_id) params['role_id'] = this.params.role_id
+
+            this.loading = true
+            QueryMenuByParam(params)
                 .then(async res => {
-                    this.dealData(res)
-                    // this.$nextTick(() => {
-                    //     this.$refs.treeMenu.setCheckedKeys(this.params.checkKey.menu)
-                    // })
+                    this.dealData(res.data)
+                    this.$nextTick(() => {
+                        this.$refs.treeMenu.setCheckedKeys(res.select, false)
+                    })
                     this.loading = false
                 })
                 .catch(() => {
