@@ -1,5 +1,5 @@
 <template>
-    <d2-container v-loading="loading">
+    <d2-container>
         <el-form
             :inline="true"
             slot="header"
@@ -8,7 +8,7 @@
             <el-form-item>
                 <el-select
                     v-model="value"
-                    placeholder="请选择"
+                    placeholder="请选择状态"
                     clearable
                     size="mini"
                     :clear="clearStatus"
@@ -32,6 +32,13 @@
             </el-form-item>
             <el-form-item>
                 <el-button
+                    icon="el-icon-refresh-right"
+                    size="mini"
+                    @click="init"
+                ></el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button
                     type="primary"
                     size="mini"
                     icon="el-icon-circle-plus-outline"
@@ -40,11 +47,13 @@
             </el-form-item>
         </el-form>
 
-        <div v-for="(item, key) in roleData" class="role-group">
-            <i class="fa fa-group role-icon"></i>
-            <i class="icon el-icon-check role-top"></i>
-            <span>{{item.name}}</span>
-        </div>
+        <ul v-loading="loading" class="role-ul">
+            <li v-for="(item, key) in roleData" :key="key" class="role-group">
+                <i class="fa fa-group role-icon"></i>
+                <i class="icon el-icon-check role-top" :class="item.is_disabled ? 'disabled' : ''"></i>
+                <span>{{item.name}}</span>
+            </li>
+        </ul>
 
         <Info
             ref="roleInfo"
@@ -83,7 +92,7 @@ export default {
     },
     methods: {
         init(isTrue) {
-            if (isTrue) this.centerDialogVisible = false
+            if (isTrue == true) this.centerDialogVisible = false
             let params = {}
             if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
 
@@ -111,13 +120,10 @@ export default {
             this.title = '新建角色'
             this.params = {
                 name: '',
-                checkKey: {
-                    route: [],
-                    menu: []
-                }
+                mark: ''
             }
             this.centerDialogVisible = true
-            this.$refs.roleInfo.getAllList()
+            this.$refs.roleInfo.getMenuList()
         },
         editRole(params) {
             this.title = '编辑角色'
@@ -158,9 +164,16 @@ export default {
     margin-bottom: 0;
 }
 
+.role-ul {
+    margin: 0;
+    height: 100%;
+    padding: 0;
+}
+
 .role-group {
     position: relative;
     max-width: 100px;
+    min-width: 60px;
     display: inline-block;
     padding: 7px 15px;
     text-align: center;
@@ -182,5 +195,14 @@ export default {
 .role-top {
     position: absolute;
     top: 0;
+    color: white;
+    padding: 1px;
+    border-radius: 50%;
+    background: #67C23A;
+    right: 5px;
+}
+
+.role-top.disabled {
+    background: #F56C6C;
 }
 </style>

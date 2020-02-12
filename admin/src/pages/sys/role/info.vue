@@ -21,8 +21,13 @@
                 <el-input v-model="form.name"></el-input>
             </el-form-item>
             <el-form-item
+                label="标识"
+                prop="mark"
+            >
+                <el-input v-model="form.mark"></el-input>
+            </el-form-item>
+            <el-form-item
                 label="菜单"
-                class="el-form-width"
             >
                 <el-tree
                     ref="treeMenu"
@@ -32,20 +37,14 @@
                     show-checkbox
                     default-expand-all
                 >
-                </el-tree>
-            </el-form-item>
-            <el-form-item
-                label="路由"
-                class="el-form-width"
-            >
-                <el-tree
-                    ref="treeRoute"
-                    :data="route"
-                    :props="prop"
-                    node-key="route_id"
-                    show-checkbox
-                    default-expand-all
-                >
+                    <span
+                        class="custom-tree-node"
+                        slot-scope="{ node, data }"
+                    >
+                        <span>
+                            ({{data.type == 'MENU' ? `菜单` : `接口`}}) {{ data.title }}
+                        </span>
+                    </span>
                 </el-tree>
             </el-form-item>
         </el-form>
@@ -69,7 +68,7 @@
 
 <script>
 import { QueryMenuByParam } from '@api/sys.menu'
-import { QueryRouteByParam } from '@api/sys.route'
+import { QueryInterfaceByParam } from '@api/sys.interface'
 import { CreateRole, ModifyRole } from '@api/sys.role'
 export default {
     props: {
@@ -84,11 +83,14 @@ export default {
             rules: {
                 name: [
                     { required: true, message: '请输入角色名', trigger: 'blur' }
+                ],
+                mark: [
+                    { required: true, message: '请输入标识', trigger: 'blur' }
                 ]
             },
             isSubmit: false,
             menu: [],
-            route: [],
+            interface: [],
             loading: false,
             prop: {
                 label: 'title',
@@ -99,64 +101,41 @@ export default {
     watch: {
         centerDialogVisible(newVal) {
             this.Visible = newVal
-            if (newVal) this.form.name = this.params.name
+            if (newVal) this.form = this.params
         }
     },
     methods: {
-        getAllList() {
-            this.menu = []
-            this.route = []
-            this.getMenuList()
-            this.getRouteList()
-        },
         getMenuList() {
+            this.menu = []
+            this.interface = []
+
             this.loading = true
             QueryMenuByParam({
-                is_disabled: true
+                is_disabled: false,
+                is_interface: true
             })
                 .then(async res => {
-                    this.dealData(res, 'menu')
-                    this.$nextTick(() => {
-                        this.$refs.treeMenu.setCheckedKeys(this.params.checkKey.menu)
-                    })
+                    this.dealData(res)
+                    // this.$nextTick(() => {
+                    //     this.$refs.treeMenu.setCheckedKeys(this.params.checkKey.menu)
+                    // })
                     this.loading = false
                 })
                 .catch(() => {
                     this.loading = false
                 })
         },
-        getRouteList() {
-            this.loading = true
-            QueryRouteByParam({
-                is_disabled: true
-            })
-                .then(async res => {
-                    this.dealData(res, 'route')
-                    this.$nextTick(() => {
-                        this.$refs.treeRoute.setCheckedKeys(this.params.checkKey.route)
-                    })
-                    this.loading = false
-                })
-                .catch(() => {
-                    this.loading = false
-                })
-        },
-        dealData(data, type) {
+        dealData(data) {
             while (data.length > 0) {
                 for (let i = 0; i < data.length; i++) {
-                    data[i].children = []
                     if (data[i].pid == '0') {
-                        if (type == 'menu') this.menu.push(data[i])
-                        else this.route.push(data[i])
+                        this.menu.push(data[i])
                         data.splice(i, 1)
                         i--
                     } else {
-                        let index = type == 'menu' ?
-                            this.menu.findIndex(item => item.menu_id == data[i].pid) :
-                            this.route.findIndex(item => item.route_id == data[i].pid)
+                        let index = this.menu.findIndex(item => item.menu_id == data[i].pid)
                         if (index == -1) continue
-                        if (type == 'menu') this.menu[index].children.push(data[i])
-                        else this.route[index].children.push(data[i])
+                        this.menu[index].children.push(data[i])
                         data.splice(i, 1)
                         i--
                     }
@@ -164,39 +143,32 @@ export default {
             }
         },
         handelInfo() {
-            let menu_id = [], route_id = [], checkKey = {
-                menu: [],
-                route: []
-            }
+            let menu_id = [], interface_id = []
             this.$refs.treeMenu.getCheckedNodes().map((i) => {
-                checkKey['menu'].push(i.menu_id)
-                return menu_id.push(i.menu_id)
+                return i.type == 'MENU' ? menu_id.push(i.menu_id) : interface_id.push(i.menu_id)
             })
             this.$refs.treeMenu.getHalfCheckedNodes().map((i) => {
-                return menu_id.push(i.menu_id)
+                return i.type == 'MENU' ? menu_id.push(i.menu_id) : interface_id.push(i.menu_id)
             })
-            this.$refs.treeRoute.getCheckedNodes().map((i) => {
-                checkKey['route'].push(i.route_id)
-                return route_id.push(i.route_id)
+
+            if (this.form.name == '') return this.$message({
+                message: '请输入角色名',
+                type: 'error',
+                duration: 3 * 1000
             })
-            this.$refs.treeRoute.getHalfCheckedNodes().map((i) => {
-                return route_id.push(i.route_id)
+
+            if (this.form.mark == '') return this.$message({
+                message: '请输入标识',
+                type: 'error',
+                duration: 3 * 1000
             })
-            if (this.form.name == '') {
-                this.$message({
-                    message: '请输入角色名',
-                    type: 'error',
-                    duration: 3 * 1000
-                })
-                return true
-            }
 
             this.isSubmit = true
             let params = {
                 menu_id: menu_id,
-                route_id: route_id,
+                interface_id: interface_id,
                 name: this.form.name,
-                checkKey: JSON.stringify(checkKey)
+                mark: this.form.mark
             }
 
             if (this.params.role_id) {
@@ -235,8 +207,19 @@ export default {
 </script>
 
 <style scoped>
-.el-form-width {
-    width: 50%;
-    display: inline-grid;
+.custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    padding-right: 8px;
+}
+</style>
+
+<style>
+.el-tree-node__content {
+    line-height: 30px;
+    height: 30px;
 }
 </style>
