@@ -27,6 +27,19 @@ export function LockRole(data) {
 }
 
 /**
+ * 删除权限
+ * @param {*} data 
+ */
+export function DelRole(data) {
+    return request({
+        url: '/v1/Role/DelRole',
+        method: 'post',
+        data,
+        headers: {isCheck: true}
+    })
+}
+
+/**
  * 修改权限信息
  * @param {*} data 
  */

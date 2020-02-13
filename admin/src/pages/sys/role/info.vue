@@ -53,6 +53,14 @@
             class="dialog-footer"
         >
             <el-button
+                type="danger"
+                icon="el-icon-delete"
+                @click="delRole"
+                size="medium"
+                style="float: left;"
+                v-if="params.role_id"
+            ></el-button>
+            <el-button
                 @click="handleClosed"
                 size="medium"
             >取 消</el-button>
@@ -68,8 +76,7 @@
 
 <script>
 import { QueryMenuByParam } from '@api/sys.menu'
-import { QueryInterfaceByParam } from '@api/sys.interface'
-import { CreateRole, ModifyRole } from '@api/sys.role'
+import { CreateRole, ModifyRole, DelRole } from '@api/sys.role'
 import { cloneDeep } from 'lodash'
 export default {
     props: {
@@ -208,6 +215,26 @@ export default {
         },
         handleClosed() {
             this.$emit('handleClose', false)
+        },
+        delRole() {
+            this.$confirm('确定要删除该角色吗', '删除角色',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    DelRole({
+                        role_id: [this.params.role_id]
+                    }).then(async res => {
+                        this.$message({
+                            message: '删除角色成功',
+                            type: 'success',
+                            duration: 3 * 1000
+                        })
+                        this.$emit('callback', true)
+                    })
+                })
         }
     }
 }

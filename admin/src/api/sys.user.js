@@ -80,6 +80,19 @@ export function LockAdmin(data) {
 }
 
 /**
+ * 删除管理员用户
+ * @param {*} data 
+ */
+export function DelAdmin(data) {
+    return request({
+        url: '/v1/Admin/DelAdmin',
+        method: 'post',
+        data,
+        headers: {isCheck: true}
+    })
+}
+
+/**
  * 修改管理员用户信息
  * @param {*} data 
  */

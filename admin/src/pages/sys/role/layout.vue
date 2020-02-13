@@ -45,10 +45,24 @@
                     @click="addRole"
                 >新增</el-button>
             </el-form-item>
+            <el-form-item>
+                <el-button
+                    type="danger"
+                    icon="el-icon-delete"
+                    size="mini"
+                    @click="delRole"
+                ></el-button>
+            </el-form-item>
         </el-form>
 
         <ul v-loading="loading" class="role-ul">
-            <li v-for="(item, key) in roleData" :key="key" class="role-group" @dblclick="editRole(item)">
+            <li v-for="(item, key) in roleData" 
+                :key="key" 
+                class="role-group" 
+                :class="select.role_id == item.role_id ? 'select' : ''" 
+                @dblclick="editRole(item)"
+                @click="select = item"
+            >
                 <i class="fa fa-group role-icon"></i>
                 <i class="icon role-top" 
                     :class="item.is_disabled ? 'el-icon-close disabled' : 'el-icon-check'"
@@ -70,7 +84,7 @@
 </template>
 
 <script>
-import { QueryRoleByParam, LockRole } from '@api/sys.role'
+import { QueryRoleByParam, LockRole, DelRole } from '@api/sys.role'
 import Info from './info.vue'
 export default {
     name: 'sys-role',
@@ -86,6 +100,9 @@ export default {
             ],
             loading: false,
             title: '',
+            select: {
+                role_id: null
+            },
             params: {},
             centerDialogVisible: false
         }
@@ -133,7 +150,7 @@ export default {
             this.centerDialogVisible = true
         },
         lockRole(keys, is_disabled) {
-            this.$confirm(is_disabled ? '确定要禁用吗' : '确定要启用吗',
+            this.$confirm(is_disabled ? '确定要禁用该角色吗' : '确定要启用该角色吗',
                 is_disabled ? '禁用角色' : '启用角色',
                 {
                     confirmButtonText: '确定',
@@ -150,6 +167,32 @@ export default {
                 is_disabled: is_disabled
             }).then(async res => {
                 this.init()
+            })
+        },
+        delRole() {
+            if (this.select != null && this.select.mark != 'SYS_ADMIN') {
+                this.$confirm('确定要删除该角色吗', '删除角色',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    })
+                    .then(() => {
+                        DelRole({
+                            role_id: [this.select.role_id]
+                        }).then(async res => {
+                            this.$message({
+                                message: '删除角色成功',
+                                type: 'success',
+                                duration: 3 * 1000
+                            })
+                            this.init()
+                        })
+                    })
+            } else this.$message({
+                message: '请选择角色',
+                type: 'warning',
+                duration: 3 * 1000
             })
         }
     }
@@ -184,6 +227,10 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: 12px;
+}
+
+.role-group.select {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
 .role-group:hover {
