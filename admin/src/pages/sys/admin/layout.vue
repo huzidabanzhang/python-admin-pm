@@ -8,7 +8,7 @@
             <el-form-item>
                 <el-select
                     v-model="lock"
-                    placeholder="请选择"
+                    placeholder="请选择状态"
                     clearable
                     size="mini"
                     :clear="clearLock"
@@ -25,7 +25,7 @@
             <el-form-item>
                 <el-select
                     v-model="role"
-                    placeholder="请选择"
+                    placeholder="请选择角色"
                     clearable
                     size="mini"
                     :clear="clearRole"
@@ -65,11 +65,19 @@
             </el-form-item>
             <el-form-item>
                 <el-button
-                    type="danger"
+                    type="info"
                     size="mini"
                     icon="el-icon-close"
                     @click="lockAdmin(admin_id)"
                 >禁用</el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button
+                    type="danger"
+                    size="mini"
+                    icon="el-icon-delete"
+                    @click="delAdmin(admins)"
+                >删除</el-button>
             </el-form-item>
         </el-form>
 
@@ -155,7 +163,7 @@
                         title="编辑"
                     ></el-button>
                     <el-button
-                        type="danger"
+                        type="info"
                         v-if="!scope.row.is_disabled"
                         icon="el-icon-close"
                         size="mini"
@@ -171,6 +179,15 @@
                         circle
                         @click.native="lockAdmin([scope.row.admin_id], false)"
                         title="启用"
+                    >
+                    </el-button>
+                    <el-button
+                        type="danger"
+                        icon="el-icon-delete"
+                        size="mini"
+                        circle
+                        @click.native="delAdmin([scope.row], false)"
+                        title="删除"
                     >
                     </el-button>
                 </template>
@@ -199,7 +216,7 @@
 </template>
 
 <script>
-import { QueryAdminByParam, LockAdmin } from '@api/sys.user'
+import { QueryAdminByParam, LockAdmin, DelAdmin } from '@api/sys.user'
 import { QueryRoleByParam } from '@api/sys.role'
 import Info from './info.vue'
 import Pagination from '@/pages/pagination/index.vue'
@@ -226,7 +243,8 @@ export default {
             title: '',
             params: {},
             centerDialogVisible: false,
-            admin_id: []
+            admin_id: [],
+            admins: []
         }
     },
     created() {
@@ -269,7 +287,7 @@ export default {
             let item = this.roleOption.find((i) => {
                 return i.value == role_id
             })
-            return item ? item.label : '未知'
+            return item ? item.label : '未选择角色'
         },
         handleSize(size) {
             this.size = size
@@ -293,7 +311,7 @@ export default {
         },
         isSelect(row, index) {
             if (row.username == 'Admin') return false
-            return row.is_disabled
+            return !row.is_disabled
         },
         handleClose() {
             this.centerDialogVisible = false
@@ -301,6 +319,14 @@ export default {
         changeSelect(selection) {
             this.admin_id = selection.map((i) => {
                 return i.admin_id
+            })
+
+            this.admins = []
+            selection.forEach(i => {
+                this.admins.push({
+                    role_id: i.role_id,
+                    admin_id: i.admin_id
+                })
             })
         },
         addAdmin() {
@@ -322,7 +348,7 @@ export default {
             this.centerDialogVisible = true
         },
         lockAdmin(keys, is_disabled) {
-            this.$confirm(is_disabled ? '确定要禁用吗' : '确定要启用吗',
+            this.$confirm(is_disabled ? '确定要禁用该管理员吗' : '确定要启用该管理员吗',
                 is_disabled ? '禁用管理员' : '启用管理员',
                 {
                     confirmButtonText: '确定',
@@ -340,6 +366,26 @@ export default {
             }).then(async res => {
                 this.init()
             })
+        },
+        delAdmin(admins) {
+            this.$confirm('确定要删除该管理员吗', '删除管理员',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    DelAdmin({
+                        admins: JSON.stringify(admins)
+                    }).then(async res => {
+                        this.$message({
+                            message: '删除管理员成功',
+                            type: 'success',
+                            duration: 3 * 1000
+                        })
+                        this.init()
+                    })
+                })
         }
     }
 }

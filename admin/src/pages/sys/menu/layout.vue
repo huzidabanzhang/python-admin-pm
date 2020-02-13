@@ -20,7 +20,7 @@
                         type="text"
                         size="mini"
                         @click.stop="remove(node, data)"
-                        v-if="node.label != '系统' && node.label != '菜单管理' && data.is_disabled"
+                        v-if="data.path != '/system' && data.path != '/system/menu' && !data.is_disabled"
                     >
                         禁用
                     </el-button>
@@ -28,9 +28,17 @@
                         type="text"
                         size="mini"
                         @click.stop="remove(node, data)"
-                        v-if="node.label != '系统' && node.label != '菜单管理' && !data.is_disabled"
+                        v-if="data.path != '/system' && data.path != '/system/menu' && data.is_disabled"
                     >
                         启用
+                    </el-button>
+                    <el-button
+                        type="text"
+                        size="mini"
+                        @click.stop="addMenu(data)"
+                        v-if="data.path != '/system' && data.path != '/system/menu'"
+                    >
+                        删除
                     </el-button>
                     <el-button
                         type="text"
@@ -122,9 +130,6 @@
                 >
                     <el-input v-model.number="form.sort"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="类型" prop="type">
-                    <el-input v-model="form.type"></el-input>
-                </el-form-item> -->
             </el-form>
         </el-card>
     </d2-container>
