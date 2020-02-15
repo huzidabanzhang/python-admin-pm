@@ -180,7 +180,7 @@ export default {
             QueryMenuByParam(params)
                 .then(async res => {
                     let data = cloneDeep(res)
-                    this.menuData = util.dealData(res, 3, false)
+                    this.menuData = util.dealData(res, 3)
                     this.loading = false
                     // 更新当前路由
                     if (isTrue) util.initMenu(data, 3, true)

@@ -27,6 +27,32 @@ export function LockMenu(data) {
 }
 
 /**
+ * 删除菜单
+ * @param {*} data 
+ */
+export function DelMenu(data) {
+    return request({
+        url: '/v1/Menu/DelMenu',
+        method: 'post',
+        data,
+        headers: {isCheck: true}
+    })
+}
+
+/**
+ * 获取菜单下级联的API接口
+ * @param {*} data 
+ */
+export function GetMenuToInterface(data) {
+    return request({
+        url: '/v1/Menu/GetMenuToInterface',
+        method: 'get',
+        data,
+        headers: {isCheck: true}
+    })
+}
+
+/**
  * 修改菜单信息
  * @param {*} data 
  */

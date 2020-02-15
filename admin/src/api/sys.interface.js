@@ -27,6 +27,19 @@ export function LockInterface(data) {
 }
 
 /**
+ * 删除接口
+ * @param {*} data 
+ */
+export function v(data) {
+    return request({
+        url: '/v1/Interface/DelInterface',
+        method: 'post',
+        data,
+        headers: {isCheck: true}
+    })
+}
+
+/**
  * 修改接口信息
  * @param {*} data 
  */

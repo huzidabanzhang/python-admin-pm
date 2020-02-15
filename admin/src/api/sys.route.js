@@ -27,6 +27,19 @@ export function LockRoute(data) {
 }
 
 /**
+ * 删除路由
+ * @param {*} data 
+ */
+export function DelRoute(data) {
+    return request({
+        url: '/v1/Route/DelRoute',
+        method: 'post',
+        data,
+        headers: {isCheck: true}
+    })
+}
+
+/**
  * 修改路由信息
  * @param {*} data 
  */

@@ -72,7 +72,7 @@ util.initRoute = function (r, type, isAll = false) {
         { path: '*', redirect: '/404', hidden: true }
     ]
 
-    let routes = route.concat(util.dealData(data, 1, true))
+    let routes = route.concat(util.dealData(data, 1))
     router.$addRoutes(routes)
     // 更新标签页池
     store.commit('d2admin/page/init', [
@@ -88,11 +88,12 @@ util.initRoute = function (r, type, isAll = false) {
             offset: 100
         })
         let info = store.getters['d2admin/user/info']
+        console.log(info)
         store.dispatch('d2admin/user/set', {
             info: info.info,
-            menus: res.menus,
+            menus: info.menus,
             routes: r,
-            interfaces: res.interface
+            interfaces: info.interfaces
         }, { root: true })
     }
 }
@@ -106,13 +107,29 @@ let getMenuInfo = (params) => {
     }
 }
 
+let getPowerMenu = (menu, data) => {
+    for (let i = 0; i < menu.length; i++) {
+        if (menu[i].is_disabled == true) {
+            menu.splice(i)
+            i--
+            continue
+        }
+
+        data.push(menu[i])
+        if (menu[i].children) {
+            data.children = []
+            getMenuInfo(menu[i], data.children)
+        }
+    } 
+}
+
 /**
  * @description 动态加载菜单
  * @param {Object} m 菜单
  */
 util.initMenu = function (m, type, isAll = false) {
-    let data = cloneDeep(m), menu = util.dealData(data, 3, true)
-    store.commit('d2admin/menu/asideSet', menu)
+    let data = cloneDeep(m), menus = [], menu = getPowerMenu(util.dealData(data, 3), menus)
+    store.commit('d2admin/menu/asideSet', menus)
     if (isAll && type != 1) {
         Notification({
             title: '提示',
@@ -125,7 +142,7 @@ util.initMenu = function (m, type, isAll = false) {
             info: info.info,
             menus: m,
             routes: info.routes,
-            interfaces: res.interface
+            interfaces: info.interfaces
         }, { root: true })
     }
 }
@@ -150,22 +167,17 @@ util.initInterface = function (f) {
  */
 util.getMenuTree = function () {
     let menus = cloneDeep(store.getters['d2admin/user/menus'])
-    return util.dealData(menus, 1, true)
+    return util.dealData(menus, 1)
 }
 
 /**
  * @description 菜单处理
  * @param {Object} params 数据
  */
-util.dealData = function (params, type, isAll) {
+util.dealData = function (params, type) {
     let data = []
     while (params.length > 0) {
         for (let i = 0; i < params.length; i++) {
-            if (isAll && params[i].is_disabled && type == 3) {
-                params.splice(i, 1)
-                i--
-                continue
-            }
             if (params[i].pid == 0) {
                 data.push(type == 1 ? (params[i].menu_id ? getMenuInfo(params[i]) : getRouteInfo(params[i])) : params[i])
                 params.splice(i, 1)
