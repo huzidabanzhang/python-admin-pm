@@ -63,7 +63,7 @@ service.interceptors.request.use(
         if (config.headers.isCheck) {
             let interfaces = cloneDeep(store.getters['d2admin/user/interfaces'])
             isCheck = interfaces.some((item) => {
-                return item.path == config.url
+                return item.path == config.url && !item.is_disabled
             })
 
             if (!isCheck) return Promise.reject({ message: '无权限~'})

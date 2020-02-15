@@ -7,7 +7,7 @@
         >
             <el-form-item>
                 <el-input
-                    placeholder="请输入内容"
+                    placeholder="请输入路由名称"
                     v-model="name"
                     clearable
                     :clear="clear(name)"
@@ -17,7 +17,7 @@
             <el-form-item>
                 <el-select
                     v-model="lock"
-                    placeholder="请选择"
+                    placeholder="请选择状态"
                     clearable
                     size="mini"
                     :clear="clear(lock)"
@@ -34,7 +34,7 @@
             <el-form-item>
                 <el-select
                     v-model="method"
-                    placeholder="请选择"
+                    placeholder="请求方式"
                     clearable
                     size="mini"
                     :clear="clear(method)"
@@ -58,11 +58,34 @@
             </el-form-item>
             <el-form-item>
                 <el-button
+                    icon="el-icon-refresh-right"
+                    size="mini"
+                    @click="init"
+                ></el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button
                     type="primary"
                     size="mini"
                     icon="el-icon-circle-plus-outline"
                     @click="addInterface"
                 >新增</el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button
+                    type="info"
+                    size="mini"
+                    icon="el-icon-close"
+                    @click="lockInterface(interface_id)"
+                >禁用</el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button
+                    type="danger"
+                    size="mini"
+                    icon="el-icon-delete"
+                    @click="delInterface(interface_id)"
+                >删除</el-button>
             </el-form-item>
         </el-form>
 
@@ -72,11 +95,14 @@
             size="mini"
             type="ghost"
             v-loading="loading"
+            @select="changeSelect"
+            @select-all="changeSelect"
         >
             <el-table-column
                 prop="name"
                 label="名称"
                 align="left"
+                width="200"
             >
             </el-table-column>
             <el-table-column
@@ -99,12 +125,12 @@
             >
             </el-table-column>
             <el-table-column
-                prop="identification"
+                prop="mark"
                 label="标识"
                 align="left"
             >
                 <template slot-scope="scope">
-                    <el-tag size="medium">{{scope.row.identification}}</el-tag>
+                    <el-tag size="medium">{{scope.row.mark}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -116,7 +142,7 @@
                     <el-tag
                         size="medium"
                         type="success"
-                        v-if="scope.row.is_disabled"
+                        v-if="!scope.row.is_disabled"
                     >启用</el-tag>
                     <el-tag
                         size="medium"
@@ -133,29 +159,38 @@
                 <template slot-scope="scope">
                     <el-button
                         icon="el-icon-edit"
-                        v-if="scope.row.is_disabled"
+                        v-if="!scope.row.is_disabled"
                         size="mini"
                         circle
                         @click.native="editInterface(scope.row)"
                         title="编辑"
                     ></el-button>
                     <el-button
-                        type="danger"
-                        v-if="scope.row.is_disabled"
-                        icon="el-icon-delete"
+                        type="info"
+                        v-if="!scope.row.is_disabled"
+                        icon="el-icon-close"
                         size="mini"
                         circle
-                        @click.native="lockInterface([scope.row], false)"
+                        @click.native="lockInterface([scope.row.interface_id], true)"
                         title="禁用"
                     ></el-button>
                     <el-button
-                        v-if="!scope.row.is_disabled"
+                        v-else
                         type="primary"
-                        icon="el-icon-circle-check"
+                        icon="el-icon-check"
                         size="mini"
                         circle
-                        @click.native="lockInterface([scope.row], true)"
+                        @click.native="lockInterface([scope.row.interface_id], false)"
                         title="启用"
+                    >
+                    </el-button>
+                    <el-button
+                        type="danger"
+                        icon="el-icon-delete"
+                        size="mini"
+                        circle
+                        @click.native="delInterface([scope.row.interface_id], false)"
+                        title="删除"
                     >
                     </el-button>
                 </template>
@@ -183,7 +218,7 @@
 </template>
 
 <script>
-import { QueryInterfaceByParam, LockInterface } from '@api/sys.interface'
+import { QueryInterfaceByParam, LockInterface, DelInterface } from '@api/sys.interface'
 import { cloneDeep } from 'lodash'
 import Pagination from '@/pages/pagination/index.vue'
 import Info from './info.vue'
@@ -216,7 +251,8 @@ export default {
             loading: false,
             title: '',
             params: {},
-            centerDialogVisible: false
+            centerDialogVisible: false,
+            interface_id: []
         }
     },
     created() {
@@ -272,7 +308,7 @@ export default {
                 path: '',
                 method: 'GET',
                 description: '',
-                identification: '',
+                mark: '',
                 menu_id: ''
             }
             this.centerDialogVisible = true
@@ -282,9 +318,14 @@ export default {
             this.params = params
             this.centerDialogVisible = true
         },
+        changeSelect(selection) {
+            this.interface_id = selection.map((i) => {
+                return i.interface_id
+            })
+        },
         lockInterface(keys, is_disabled) {
-            this.$confirm(!is_disabled ? '确定要禁用吗' : '确定要启用吗',
-                !is_disabled ? '禁用接口' : '启用接口',
+            this.$confirm(is_disabled ? '确定要禁用该接口吗' : '确定要启用该接口吗',
+                is_disabled ? '禁用接口' : '启用接口',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -294,31 +335,50 @@ export default {
                     this.Lock(keys, is_disabled)
                 })
         },
-        Lock(keys, is_disabled) {
-            let id = keys.map((i) => {
-                return i.interface_id
-            }), interfaces = cloneDeep(this.$store.getters['d2admin/user/interfaces'])
+        delInterface (interface_id) {
+            this.$confirm('确定要删除该接口吗', '删除接口',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    DelInterface({
+                        interface_id: interface_id
+                    }).then(async res => {
+                        this.getInterfaceInfo(interface_id, 1)
+                        this.init()
+                    })
+                })
+        },
+        getInterfaceInfo(interface_id, type, is_disabled) {
+            let interfaces = cloneDeep(this.$store.getters['d2admin/user/interfaces'])
+            interface_id.map((i) => {
+                for (let j = 0; j < interfaces.length; j++) {
+                    if (i == interfaces[j].interface_id) {
+                        if (type == 1) {
+                            interfaces.splice(j)
+                            j--
+                        }
 
+                        if (type == 2) {
+                            interfaces[j].is_disabled = is_disabled
+                        }
+
+                        break
+                    }
+                }
+            })
+
+            util.initInterface(interfaces)
+        },
+        Lock(keys, is_disabled) {
             LockInterface({
-                interface_id: id,
+                interface_id: keys,
                 is_disabled: is_disabled
             }).then(async res => {
+                this.getInterfaceInfo(keys, 2, is_disabled)
                 this.init()
-                if (is_disabled) {
-                    keys.map((i) => {
-                        interfaces.push(i)
-                    })
-                } else {
-                    keys.map((item) => {
-                        for (let i = 0; i < interfaces.length; i++) {
-                            if (interfaces[i].interface_id == item.interface_id) {
-                                interfaces.splice(i, 1)
-                                break
-                            }
-                        }
-                    })
-                }
-                util.initInterface(interfaces)
             })
         }
     }

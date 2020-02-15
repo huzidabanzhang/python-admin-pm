@@ -121,7 +121,6 @@ export default {
             this.interface = []
 
             let params = {
-                is_disabled: false,
                 is_interface: true
             }
             if (this.params.role_id) params['role_id'] = this.params.role_id

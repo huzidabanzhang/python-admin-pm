@@ -32,6 +32,13 @@
             </el-form-item>
             <el-form-item>
                 <el-button
+                    icon="el-icon-refresh-right"
+                    size="mini"
+                    @click="init"
+                ></el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button
                     type="primary"
                     size="mini"
                     icon="el-icon-circle-plus-outline"

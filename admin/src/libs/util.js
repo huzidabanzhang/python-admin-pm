@@ -88,7 +88,6 @@ util.initRoute = function (r, type, isAll = false) {
             offset: 100
         })
         let info = store.getters['d2admin/user/info']
-        console.log(info)
         store.dispatch('d2admin/user/set', {
             info: info.info,
             menus: info.menus,
