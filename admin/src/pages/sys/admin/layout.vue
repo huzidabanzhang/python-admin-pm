@@ -1,85 +1,97 @@
 <template>
     <d2-container>
-        <el-form
-            :inline="true"
-            slot="header"
-            size="mini"
-        >
-            <el-form-item>
-                <el-select
-                    v-model="lock"
-                    placeholder="请选择状态"
-                    clearable
-                    size="mini"
-                    :clear="clearLock"
-                >
-                    <el-option
-                        v-for="item in lockOption"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
+        <div slot="header">
+            <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-plus"
+                circle
+                @click="addAdmin"
+                title="新增"
+            >
+            </el-button>
+            <el-button
+                type="success"
+                icon="el-icon-check"
+                size="mini"
+                circle
+                @click="lockAdmin(admin_id, false)"
+                title="启用"
+            >
+            </el-button>
+            <el-button
+                type="info"
+                size="mini"
+                icon="el-icon-close"
+                circle
+                @click="lockAdmin(admin_id, true)"
+                title="禁用"
+            ></el-button>
+            <el-button
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                circle
+                @click="delAdmin(admins)"
+                title="删除"
+            ></el-button>
+            <el-button
+                icon="el-icon-refresh-right"
+                size="mini"
+                @click="init"
+                circle
+                title="刷新"
+            ></el-button>
+
+            <el-form
+                :inline="true"
+                size="mini"
+                class="form-right"
+            >
+                <el-form-item>
+                    <el-select
+                        v-model="lock"
+                        placeholder="管理员状态"
+                        clearable
+                        size="mini"
+                        :clear="clearLock"
                     >
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-select
-                    v-model="role"
-                    placeholder="请选择角色"
-                    clearable
-                    size="mini"
-                    :clear="clearRole"
-                >
-                    <el-option
-                        v-for="item in roleOption"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
+                        <el-option
+                            v-for="item in lockOption"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-select
+                        v-model="role"
+                        placeholder="角色"
+                        clearable
+                        size="mini"
+                        :clear="clearRole"
                     >
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    icon="el-icon-search"
-                    size="mini"
-                    type="primary"
-                    @click="changeAdmin"
-                ></el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    icon="el-icon-refresh-right"
-                    size="mini"
-                    @click="init"
-                ></el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="primary"
-                    size="mini"
-                    icon="el-icon-circle-plus-outline"
-                    @click="addAdmin"
-                >新增
-                </el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="info"
-                    size="mini"
-                    icon="el-icon-close"
-                    @click="lockAdmin(admin_id)"
-                >禁用</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="danger"
-                    size="mini"
-                    icon="el-icon-delete"
-                    @click="delAdmin(admins)"
-                >删除</el-button>
-            </el-form-item>
-        </el-form>
+                        <el-option
+                            v-for="item in roleOption"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button
+                        icon="el-icon-search"
+                        size="mini"
+                        type="primary"
+                        @click="changeAdmin"
+                    >搜索</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
 
         <el-table
             :data="adminData"
@@ -156,7 +168,6 @@
                 >
                     <el-button
                         icon="el-icon-edit"
-                        v-if="!scope.row.is_disabled"
                         size="mini"
                         circle
                         @click.native="editAdmin(scope.row)"
@@ -348,6 +359,12 @@ export default {
             this.centerDialogVisible = true
         },
         lockAdmin(keys, is_disabled) {
+            if (keys.length == 0) return this.$message({
+                message: '未选择任何记录',
+                type: 'warning',
+                duration: 3 * 1000
+            })
+
             this.$confirm(is_disabled ? '确定要禁用该管理员吗' : '确定要启用该管理员吗',
                 is_disabled ? '禁用管理员' : '启用管理员',
                 {
@@ -364,10 +381,17 @@ export default {
                 admin_id: keys,
                 is_disabled: is_disabled
             }).then(async res => {
+                this.admin_id == []
                 this.init()
             })
         },
         delAdmin(admins) {
+            if (admins.length == 0) return this.$message({
+                message: '未选择任何记录',
+                type: 'warning',
+                duration: 3 * 1000
+            })
+
             this.$confirm('确定要删除该管理员吗', '删除管理员',
                 {
                     confirmButtonText: '确定',
@@ -383,6 +407,7 @@ export default {
                             type: 'success',
                             duration: 3 * 1000
                         })
+                        this.admins = []
                         this.init()
                     })
                 })
@@ -398,5 +423,13 @@ export default {
 
 .el-form-item--mini.el-form-item {
     margin-bottom: 0;
+}
+
+.el-form--inline .el-form-item:last-child {
+    margin-right: 0;
+}
+
+.form-right {
+    float: right;
 }
 </style>

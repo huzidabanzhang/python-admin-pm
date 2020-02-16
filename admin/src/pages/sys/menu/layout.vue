@@ -10,44 +10,11 @@
             v-loading="loading"
         >
             <span
-                :class="data.is_disabled ? '' : 'disabled'"
+                :class="!data.is_disabled ? '' : 'disabled'"
                 class="custom-tree-node"
                 slot-scope="{ node, data }"
             >
                 <span class="label"><i :class="'fa fa-' + data.icon"></i>{{ node.label }}</span>
-                <span>
-                    <el-button
-                        type="text"
-                        size="mini"
-                        @click.stop="remove(node, data)"
-                        v-if="data.path != '/system' && data.path != '/system/menu' && !data.is_disabled"
-                    >
-                        禁用
-                    </el-button>
-                    <el-button
-                        type="text"
-                        size="mini"
-                        @click.stop="remove(node, data)"
-                        v-if="data.path != '/system' && data.path != '/system/menu' && data.is_disabled"
-                    >
-                        启用
-                    </el-button>
-                    <el-button
-                        type="text"
-                        size="mini"
-                        @click.stop="addMenu(data)"
-                        v-if="data.path != '/system' && data.path != '/system/menu'"
-                    >
-                        删除
-                    </el-button>
-                    <el-button
-                        type="text"
-                        size="mini"
-                        @click.stop="addMenu(data)"
-                    >
-                        新增
-                    </el-button>
-                </span>
             </span>
         </el-tree>
 
@@ -59,7 +26,7 @@
                 slot="header"
                 class="clearfix"
             >
-                <span>{{title}}</span>
+                <span>{{isAdd == true ? '新建菜单' : '编辑菜单'}}</span>
                 <el-button
                     style="float: right; padding: 3px 5px"
                     type="text"
@@ -233,13 +200,11 @@ export default {
                 is_disabled: true
             }
             this.isAdd = true
-            this.title = '新建菜单'
         },
         getMenuItem(data) {
-            if (!data.is_disabled) return true
+            if (data.is_disabled) return true
             this.form = cloneDeep(data)
             this.isAdd = false
-            this.title = '编辑菜单'
         },
         remove(node, data) {
             this.$confirm(data.is_disabled ? '确定要禁用吗' : '确定要启用吗',

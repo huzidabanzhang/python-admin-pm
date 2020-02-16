@@ -1,68 +1,80 @@
 <template>
     <d2-container>
-        <el-form
-            :inline="true"
-            slot="header"
-            size="mini"
-        >
-            <el-form-item>
-                <el-select
-                    v-model="lock"
-                    placeholder="请选择状态"
-                    clearable
-                    size="mini"
-                    :clear="clearLock"
-                >
-                    <el-option
-                        v-for="item in lockOption"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
+        <div slot="header">
+            <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-plus"
+                circle
+                @click="addRoute"
+                title="新增"
+            >
+            </el-button>
+            <el-button
+                type="success"
+                icon="el-icon-check"
+                size="mini"
+                circle
+                @click="lockRoute(route_id, false)"
+                title="启用"
+            >
+            </el-button>
+            <el-button
+                type="info"
+                size="mini"
+                icon="el-icon-close"
+                circle
+                @click="lockRoute(route_id, true)"
+                title="禁用"
+            ></el-button>
+            <el-button
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                circle
+                @click="delRoute(route_id)"
+                title="删除"
+            ></el-button>
+            <el-button
+                icon="el-icon-refresh-right"
+                size="mini"
+                @click="init"
+                circle
+                title="刷新"
+            ></el-button>
+
+            <el-form
+                :inline="true"
+                size="mini"
+                class="form-right"
+            >
+                <el-form-item label="路由状态">
+                    <el-select
+                        v-model="lock"
+                        placeholder="路由状态"
+                        clearable
+                        size="mini"
+                        :clear="clearLock"
                     >
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    icon="el-icon-search"
-                    size="mini"
-                    type="primary"
-                    @click="changeLock"
-                ></el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    icon="el-icon-refresh-right"
-                    size="mini"
-                    @click="init"
-                ></el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="primary"
-                    size="mini"
-                    icon="el-icon-circle-plus-outline"
-                    @click="addRoute"
-                >新增
-                </el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="info"
-                    size="mini"
-                    icon="el-icon-close"
-                    @click="lockRoute(route_id)"
-                >禁用</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="danger"
-                    size="mini"
-                    icon="el-icon-delete"
-                    @click="delRoute(route_id)"
-                >删除</el-button>
-            </el-form-item>
-        </el-form>
+                        <el-option
+                            v-for="item in lockOption"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button
+                        icon="el-icon-search"
+                        size="mini"
+                        type="primary"
+                        @click="changeLock"
+                    >搜索</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
 
         <el-table
             :data="routeData"
@@ -148,7 +160,6 @@
                 <template slot-scope="scope">
                     <el-button
                         icon="el-icon-edit"
-                        v-if="!scope.row.is_disabled"
                         size="mini"
                         circle
                         @click.native="editRoute(scope.row)"
@@ -165,7 +176,7 @@
                     ></el-button>
                     <el-button
                         v-else
-                        type="primary"
+                        type="success"
                         icon="el-icon-check"
                         size="mini"
                         circle
@@ -278,6 +289,12 @@ export default {
             this.centerDialogVisible = true
         },
         lockRoute(keys, is_disabled) {
+            if (keys.length == 0) return this.$message({
+                message: '未选择任何记录',
+                type: 'warning',
+                duration: 3 * 1000
+            })
+
             this.$confirm(is_disabled ? '确定要禁用该路由吗' : '确定要启用该路由吗',
                 is_disabled ? '禁用路由' : '启用路由',
                 {
@@ -294,10 +311,17 @@ export default {
                 route_id: keys,
                 is_disabled: is_disabled
             }).then(async res => {
+                this.route_id = []
                 this.init(true)
             })
         },
         delRoute(route_id) {
+            if (route_id.length == 0) return this.$message({
+                message: '未选择任何记录',
+                type: 'warning',
+                duration: 3 * 1000
+            })
+
             this.$confirm('确定要删除该路由吗', '删除路由',
                 {
                     confirmButtonText: '确定',
@@ -313,6 +337,7 @@ export default {
                             type: 'success',
                             duration: 3 * 1000
                         })
+                        this.route_id = []
                         this.init()
                     })
                 })
@@ -328,5 +353,13 @@ export default {
 
 .el-form-item--mini.el-form-item {
     margin-bottom: 0;
+}
+
+.el-form--inline .el-form-item:last-child {
+    margin-right: 0;
+}
+
+.form-right {
+    float: right;
 }
 </style>

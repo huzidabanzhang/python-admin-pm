@@ -1,93 +1,106 @@
 <template>
     <d2-container>
-        <el-form
-            :inline="true"
-            slot="header"
-            size="mini"
-        >
-            <el-form-item>
-                <el-input
-                    placeholder="请输入路由名称"
-                    v-model="name"
-                    clearable
-                    :clear="clear(name)"
-                >
-                </el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-select
-                    v-model="lock"
-                    placeholder="请选择状态"
-                    clearable
-                    size="mini"
-                    :clear="clear(lock)"
-                >
-                    <el-option
-                        v-for="item in lockOption"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
+        <div slot="header">
+            <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-plus"
+                circle
+                @click="addInterface"
+                title="新增"
+            >
+            </el-button>
+            <el-button
+                type="success"
+                icon="el-icon-check"
+                size="mini"
+                circle
+                @click="lockInterface(interface_id, false)"
+                title="启用"
+            >
+            </el-button>
+            <el-button
+                type="info"
+                size="mini"
+                icon="el-icon-close"
+                circle
+                @click="lockInterface(interface_id, true)"
+                title="禁用"
+            ></el-button>
+            <el-button
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                circle
+                @click="delInterface(interface_id)"
+                title="删除"
+            ></el-button>
+            <el-button
+                icon="el-icon-refresh-right"
+                size="mini"
+                @click="init"
+                circle
+                title="刷新"
+            ></el-button>
+
+            <el-form
+                :inline="true"
+                size="mini"
+                class="form-right"
+            >
+                <el-form-item>
+                    <el-input
+                        placeholder="路由名称"
+                        v-model="name"
+                        clearable
+                        :clear="clear(name)"
                     >
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-select
-                    v-model="method"
-                    placeholder="请求方式"
-                    clearable
-                    size="mini"
-                    :clear="clear(method)"
-                >
-                    <el-option
-                        v-for="item in methodOption"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-select
+                        v-model="lock"
+                        placeholder="接口状态"
+                        clearable
+                        size="mini"
+                        :clear="clear(lock)"
                     >
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    icon="el-icon-search"
-                    size="mini"
-                    type="primary"
-                    @click="changeAll"
-                ></el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    icon="el-icon-refresh-right"
-                    size="mini"
-                    @click="init"
-                ></el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="primary"
-                    size="mini"
-                    icon="el-icon-circle-plus-outline"
-                    @click="addInterface"
-                >新增</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="info"
-                    size="mini"
-                    icon="el-icon-close"
-                    @click="lockInterface(interface_id)"
-                >禁用</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="danger"
-                    size="mini"
-                    icon="el-icon-delete"
-                    @click="delInterface(interface_id)"
-                >删除</el-button>
-            </el-form-item>
-        </el-form>
+                        <el-option
+                            v-for="item in lockOption"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-select
+                        v-model="method"
+                        placeholder="请求方式"
+                        clearable
+                        size="mini"
+                        :clear="clear(method)"
+                    >
+                        <el-option
+                            v-for="item in methodOption"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button
+                        icon="el-icon-search"
+                        size="mini"
+                        type="primary"
+                        @click="changeAll"
+                    >搜索</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
 
         <el-table
             :data="interfaceData"
@@ -98,6 +111,11 @@
             @select="changeSelect"
             @select-all="changeSelect"
         >
+            <el-table-column
+                type="selection"
+                width="55"
+            >
+            </el-table-column>
             <el-table-column
                 prop="name"
                 label="名称"
@@ -159,7 +177,6 @@
                 <template slot-scope="scope">
                     <el-button
                         icon="el-icon-edit"
-                        v-if="!scope.row.is_disabled"
                         size="mini"
                         circle
                         @click.native="editInterface(scope.row)"
@@ -176,7 +193,7 @@
                     ></el-button>
                     <el-button
                         v-else
-                        type="primary"
+                        type="success"
                         icon="el-icon-check"
                         size="mini"
                         circle
@@ -324,6 +341,12 @@ export default {
             })
         },
         lockInterface(keys, is_disabled) {
+            if (keys.length == 0) return this.$message({
+                message: '未选择任何记录',
+                type: 'warning',
+                duration: 3 * 1000
+            })
+
             this.$confirm(is_disabled ? '确定要禁用该接口吗' : '确定要启用该接口吗',
                 is_disabled ? '禁用接口' : '启用接口',
                 {
@@ -336,6 +359,12 @@ export default {
                 })
         },
         delInterface (interface_id) {
+            if (interface_id.length == 0) return this.$message({
+                message: '未选择任何记录',
+                type: 'warning',
+                duration: 3 * 1000
+            })
+
             this.$confirm('确定要删除该接口吗', '删除接口',
                 {
                     confirmButtonText: '确定',
@@ -347,6 +376,7 @@ export default {
                         interface_id: interface_id
                     }).then(async res => {
                         this.getInterfaceInfo(interface_id, 1)
+                        this.interface_id = []
                         this.init()
                     })
                 })
@@ -378,6 +408,7 @@ export default {
                 is_disabled: is_disabled
             }).then(async res => {
                 this.getInterfaceInfo(keys, 2, is_disabled)
+                this.interface_id = []
                 this.init()
             })
         }
@@ -391,10 +422,18 @@ export default {
 }
 
 .el-input--mini {
-    width: 200px;
+    width: 120px;
 }
 
 .el-form-item--mini.el-form-item {
     margin-bottom: 0;
+}
+
+.el-form--inline .el-form-item:last-child {
+    margin-right: 0;
+}
+
+.form-right {
+    float: right;
 }
 </style>

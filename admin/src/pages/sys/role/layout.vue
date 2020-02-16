@@ -1,59 +1,63 @@
 <template>
     <d2-container>
-        <el-form
-            :inline="true"
-            slot="header"
-            size="mini"
-        >
-            <el-form-item>
-                <el-select
-                    v-model="value"
-                    placeholder="请选择状态"
-                    clearable
-                    size="mini"
-                    :clear="clearStatus"
-                >
-                    <el-option
-                        v-for="item in statusOption"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
+        <div slot="header">
+            <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-plus"
+                circle
+                @click="addRole"
+                title="新增"
+            >
+            </el-button>
+            <el-button
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                circle
+                @click="delRole"
+                title="删除"
+            ></el-button>
+            <el-button
+                icon="el-icon-refresh-right"
+                size="mini"
+                @click="init"
+                circle
+                title="刷新"
+            ></el-button>
+
+            <el-form
+                :inline="true"
+                size="mini"
+                class="form-right"
+            >
+                <el-form-item>
+                    <el-select
+                        v-model="value"
+                        placeholder="角色状态"
+                        clearable
+                        size="mini"
+                        :clear="clearStatus"
                     >
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    icon="el-icon-search"
-                    size="mini"
-                    type="primary"
-                    @click="changeStatus"
-                ></el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    icon="el-icon-refresh-right"
-                    size="mini"
-                    @click="init"
-                ></el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="primary"
-                    size="mini"
-                    icon="el-icon-circle-plus-outline"
-                    @click="addRole"
-                >新增</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="danger"
-                    icon="el-icon-delete"
-                    size="mini"
-                    @click="delRole"
-                ></el-button>
-            </el-form-item>
-        </el-form>
+                        <el-option
+                            v-for="item in statusOption"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button
+                        icon="el-icon-search"
+                        size="mini"
+                        type="primary"
+                        @click="changeStatus"
+                    >搜索</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
 
         <ul v-loading="loading" class="role-ul">
             <li v-for="(item, key) in roleData" 
@@ -150,6 +154,12 @@ export default {
             this.centerDialogVisible = true
         },
         lockRole(keys, is_disabled) {
+            if (keys.length == 0) return this.$message({
+                message: '未选择任何记录',
+                type: 'warning',
+                duration: 3 * 1000
+            })
+
             this.$confirm(is_disabled ? '确定要禁用该角色吗' : '确定要启用该角色吗',
                 is_disabled ? '禁用角色' : '启用角色',
                 {
@@ -166,11 +176,12 @@ export default {
                 role_id: keys,
                 is_disabled: is_disabled
             }).then(async res => {
+                this.select = {role_id: null}
                 this.init()
             })
         },
         delRole() {
-            if (this.select != null && this.select.mark != 'SYS_ADMIN') {
+            if (this.select.role_id != null && this.select.mark != 'SYS_ADMIN') {
                 this.$confirm('确定要删除该角色吗', '删除角色',
                     {
                         confirmButtonText: '确定',
@@ -186,11 +197,12 @@ export default {
                                 type: 'success',
                                 duration: 3 * 1000
                             })
+                            this.select = {role_id: null}
                             this.init()
                         })
                     })
             } else this.$message({
-                message: '请选择角色',
+                message: '未选择任何记录',
                 type: 'warning',
                 duration: 3 * 1000
             })
@@ -256,5 +268,13 @@ export default {
 
 .role-top.disabled {
     background: #F56C6C;
+}
+
+.el-form--inline .el-form-item:last-child {
+    margin-right: 0;
+}
+
+.form-right {
+    float: right;
 }
 </style>

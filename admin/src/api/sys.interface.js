@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-03 08:30:59
+ * @LastEditTime: 2020-02-16 10:45:45
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \admin\src\api\sys.interface.js
+ */
 import request from '@/plugin/axios'
 
 /**
@@ -30,7 +38,7 @@ export function LockInterface(data) {
  * 删除接口
  * @param {*} data 
  */
-export function v(data) {
+export function DelInterface(data) {
     return request({
         url: '/v1/Interface/DelInterface',
         method: 'post',

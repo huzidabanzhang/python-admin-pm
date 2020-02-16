@@ -6,7 +6,13 @@
             size="mini"
         >
             <el-form-item>
-                <!-- <el-button icon="el-icon-search" size="mini" type="primary" @click="changeStatus"></el-button> -->
+                <el-button
+                    icon="el-icon-refresh-right"
+                    size="mini"
+                    @click="init"
+                    circle
+                    title="刷新"
+                ></el-button>
             </el-form-item>
         </el-form>
 
