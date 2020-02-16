@@ -48,7 +48,7 @@ export function GetMenuToInterface(data) {
         url: '/v1/Menu/GetMenuToInterface',
         method: 'get',
         data,
-        headers: {isCheck: true}
+        headers: {isCheck: true, isGet: true}
     })
 }
 

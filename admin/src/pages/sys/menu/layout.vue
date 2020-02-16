@@ -1,5 +1,24 @@
 <template>
     <d2-container>
+        <div slot="header">
+            <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-plus"
+                circle
+                @click="addMenu"
+                title="新增"
+            >
+            </el-button>
+            <el-button
+                icon="el-icon-refresh-right"
+                size="mini"
+                @click="init"
+                circle
+                title="刷新"
+            ></el-button>
+        </div>
+
         <el-tree
             :data="menuData"
             :props="tree_prop"
@@ -97,13 +116,98 @@
                 >
                     <el-input v-model.number="form.sort"></el-input>
                 </el-form-item>
+                <el-form-item v-if="!isAdd">
+                    <el-button
+                        icon="el-icon-position"
+                        @click="getMenuToInterface(form.title, form.menu_id)"
+                    >关联接口</el-button>
+                    <el-button 
+                        v-if="form.is_disabled == false"
+                        type="info" 
+                        icon="el-icon-close"
+                        @click="lockMenu(form.menu_id, true)"
+                    >禁用</el-button>
+                    <el-button
+                        v-else
+                        type="success" 
+                        icon="el-icon-check"
+                        @click="lockMenu(form.menu_id, false)"
+                    >启用</el-button>
+                    <el-button 
+                        type="danger"
+                        icon="el-icon-delete"
+                        @click="delMenu(form.menu_id)"
+                    >删除</el-button>
+                </el-form-item>
             </el-form>
         </el-card>
+
+        <el-dialog 
+            :title="dialogTitle" 
+            :visible.sync="dialogTableVisible" 
+            v-loading="dialogLoading"
+            size="mini"
+            width="800px"
+        >
+            <el-table :data="interfaceData">
+                <el-table-column
+                    prop="name"
+                    label="名称"
+                    align="left"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="path"
+                    label="路由"
+                    align="left"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="method"
+                    label="请求方式"
+                    align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="description"
+                    label="描述"
+                    align="left"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="mark"
+                    label="标识"
+                    align="left"
+                >
+                    <template slot-scope="scope">
+                        <el-tag size="medium">{{scope.row.mark}}</el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="is_disabled"
+                    label="状态"
+                    align="center"
+                >
+                    <template slot-scope="scope">
+                        <el-tag
+                            size="medium"
+                            type="success"
+                            v-if="!scope.row.is_disabled"
+                        >启用</el-tag>
+                        <el-tag
+                            size="medium"
+                            type="info"
+                            v-else
+                        >禁用</el-tag>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-dialog>
     </d2-container>
 </template>
 
 <script>
-import { QueryMenuByParam, CreateMenu, ModifyMenu, LockMenu } from '@api/sys.menu'
+import { QueryMenuByParam, CreateMenu, ModifyMenu, LockMenu, DelMenu, GetMenuToInterface } from '@api/sys.menu'
 import { cloneDeep } from 'lodash'
 import util from '@/libs/util.js'
 export default {
@@ -132,7 +236,11 @@ export default {
                 icon: [{ required: true, message: '请选择图标', trigger: 'blur' }]
             },
             formLoad: false,
-            isSubmit: false
+            isSubmit: false,
+            dialogTableVisible: false,
+            interfaceData: [],
+            dialogTitle: '',
+            dialogLoading: false
         }
     },
     created() {
@@ -150,7 +258,7 @@ export default {
                     this.menuData = util.dealData(res, 3)
                     this.loading = false
                     // 更新当前路由
-                    if (isTrue) util.initMenu(data, 3, true)
+                    if (isTrue == true) util.initMenu(data, 3, true)
                 })
                 .catch(() => {
                     this.loading = false
@@ -202,28 +310,55 @@ export default {
             this.isAdd = true
         },
         getMenuItem(data) {
-            if (data.is_disabled) return true
             this.form = cloneDeep(data)
             this.isAdd = false
         },
-        remove(node, data) {
-            this.$confirm(data.is_disabled ? '确定要禁用吗' : '确定要启用吗',
-                data.is_disabled ? '禁用菜单' : '启用菜单',
+        lockMenu(menu_id, is_disabled) {
+            this.$confirm(is_disabled ? '确定要禁用该菜单吗' : '确定要启用该菜单吗',
+                is_disabled ? '禁用菜单' : '启用菜单',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    this.Lock(data)
+                    this.Lock(menu_id, is_disabled)
                 })
         },
-        Lock(data) {
+        Lock(menu_id, is_disabled) {
             LockMenu({
-                menu_id: data.menu_id,
-                is_disabled: !data.is_disabled
+                menu_id: menu_id,
+                is_disabled: is_disabled
             }).then(async res => {
                 this.init(true)
+            })
+        },
+        delMenu(menu_id) {
+            this.$confirm('删除后子菜单将自动到根菜单下，确定删除该菜单吗', '删除菜单',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    DelMenu({
+                        menu_id: menu_id
+                    }).then(async res => {
+                        this.init(true)
+                    })
+                })
+        },
+        getMenuToInterface(title, menu_id) {
+            this.dialogTitle = title + '关联接口'
+            this.dialogTableVisible = true
+            this.dialogLoading = true
+            GetMenuToInterface({
+                menu_id: menu_id
+            }).then(async res => {
+                this.interfaceData = res
+                this.dialogLoading = false
+            }).catch(() => {
+                this.dialogLoading = false
             })
         }
     }
@@ -269,7 +404,6 @@ export default {
     opacity: 0.8;
 }
 .disabled {
-    cursor: not-allowed;
     .label {
         opacity: 0.25;
     }
