@@ -15,6 +15,7 @@
                 size="mini"
                 icon="el-icon-delete"
                 circle
+                :disabled="select.role_id == null || select.mark == 'SYS_ADMIN'"
                 @click="delRole"
                 title="删除"
             ></el-button>

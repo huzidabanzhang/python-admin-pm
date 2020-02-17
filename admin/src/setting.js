@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-03 08:30:59
+ * @LastEditTime: 2020-02-17 10:09:35
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \admin\src\setting.js
+ */
 export default {
     // 快捷键
     // 支持快捷键 例如 ctrl+shift+s
@@ -53,5 +61,7 @@ export default {
     // 是否默认开启页面切换动画
     transition: {
         active: true
-    }
+    },
+    // 禁止删除的菜单项
+    // 禁止禁用的菜单项
 }

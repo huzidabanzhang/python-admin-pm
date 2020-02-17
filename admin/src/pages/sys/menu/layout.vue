@@ -87,7 +87,7 @@
                     prop="pid"
                 >
                     <el-cascader
-                        :options="menuData"
+                        :options="treeData"
                         :props="menu_prop"
                         :show-all-levels="false"
                         v-model="form.pid"
@@ -215,6 +215,7 @@ export default {
     data() {
         return {
             menuData: [],
+            treeData: [],
             loading: false,
             form: {},
             lock: '',
@@ -225,7 +226,7 @@ export default {
             },
             title: '新建菜单',
             isAdd: true,
-            menu_prop: { checkStrictly: true, value: 'menu_id', label: 'title', emitPath: false },
+            menu_prop: { value: 'menu_id', label: 'title', emitPath: false },
             rules: {
                 title: [{ required: true, message: '请输入名称', trigger: 'blur' }],
                 path: [{ required: true, message: '请输入路径', trigger: 'blur' }],
@@ -311,7 +312,16 @@ export default {
         },
         getMenuItem(data) {
             this.form = cloneDeep(data)
+            this.treeData = cloneDeep(this.menuData)
+            this.disabledMenu(this.form, this.treeData)
+            console.log(this.treeData)
             this.isAdd = false
+        },
+        disabledMenu(item, data) {
+            data.map((i) => {
+                if (i.menu_id == item.menu_id) i.disabled = true
+                if (i.children) this.disabledMenu(item, i.children)
+            })
         },
         lockMenu(menu_id, is_disabled) {
             this.$confirm(is_disabled ? '确定要禁用该菜单吗' : '确定要启用该菜单吗',

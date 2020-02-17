@@ -15,6 +15,7 @@
                 icon="el-icon-check"
                 size="mini"
                 circle
+                :disabled="route_id.length == 0"
                 @click="lockRoute(route_id, false)"
                 title="启用"
             >
@@ -24,6 +25,7 @@
                 size="mini"
                 icon="el-icon-close"
                 circle
+                :disabled="route_id.length == 0"
                 @click="lockRoute(route_id, true)"
                 title="禁用"
             ></el-button>
@@ -32,6 +34,7 @@
                 size="mini"
                 icon="el-icon-delete"
                 circle
+                :disabled="route_id.length == 0"
                 @click="delRoute(route_id)"
                 title="删除"
             ></el-button>
