@@ -8,6 +8,11 @@
                 circle
                 @click="addMenu"
                 title="新增"
+                :disabled="mark_btn.add"
+                v-premissions="{
+                    mark: mark.menu.add,
+                    type: 'add'
+                }"
             >
             </el-button>
             <el-button
@@ -16,6 +21,11 @@
                 @click="init"
                 circle
                 title="刷新"
+                :disabled="mark_btn.list"
+                v-premissions="{
+                    mark: mark.menu.list,
+                    type: 'list'
+                }"
             ></el-button>
         </div>
 
@@ -50,6 +60,24 @@
                     style="float: right; padding: 3px 5px"
                     type="text"
                     @click="submit"
+                    v-show="isAdd"
+                    :disabled="mark_btn.add"
+                    v-premissions="{
+                        mark: mark.menu.add,
+                        type: 'add'
+                    }"
+                >提交
+                </el-button>
+                <el-button
+                    style="float: right; padding: 3px 5px; margin-left: 0;"
+                    type="text"
+                    @click="submit"
+                    v-show="!isAdd"
+                    :disabled="mark_btn.set"
+                    v-premissions="{
+                        mark: mark.menu.set,
+                        type: 'set'
+                    }"
                 >提交
                 </el-button>
                 <el-button
@@ -81,6 +109,15 @@
                     prop="title"
                 >
                     <el-input v-model="form.title"></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="标识"
+                    prop="mark"
+                >
+                    <el-input 
+                        v-model="form.mark"
+                        :disabled="!isAdd"
+                    ></el-input>
                 </el-form-item>
                 <el-form-item
                     label="上级菜单"
@@ -120,23 +157,43 @@
                     <el-button
                         icon="el-icon-position"
                         @click="getMenuToInterface(form.title, form.menu_id)"
+                        :disabled="mark_btn.inter"
+                        v-premissions="{
+                            mark: mark.menu.inter,
+                            type: 'inter'
+                        }"
                     >关联接口</el-button>
                     <el-button 
                         v-if="form.is_disabled == false"
                         type="info" 
                         icon="el-icon-close"
                         @click="lockMenu(form.menu_id, true)"
+                        :disabled="mark_btn.lock"
+                        v-premissions="{
+                            mark: mark.menu.lock,
+                            type: 'lock'
+                        }"
                     >禁用</el-button>
                     <el-button
                         v-else
                         type="success" 
                         icon="el-icon-check"
                         @click="lockMenu(form.menu_id, false)"
+                        :disabled="mark_btn.lock"
+                        v-premissions="{
+                            mark: mark.menu.lock,
+                            type: 'lock'
+                        }"
                     >启用</el-button>
                     <el-button 
                         type="danger"
                         icon="el-icon-delete"
                         @click="delMenu(form.menu_id)"
+                        :disabled="mark_btn.del"
+                        v-premissions="{
+                            mark: mark.menu.del,
+                            type: 'del'
+                        }"
                     >删除</el-button>
                 </el-form-item>
             </el-form>
@@ -210,6 +267,7 @@
 import { QueryMenuByParam, CreateMenu, ModifyMenu, LockMenu, DelMenu, GetMenuToInterface } from '@api/sys.menu'
 import { cloneDeep } from 'lodash'
 import util from '@/libs/util.js'
+import setting from '@/setting.js'
 export default {
     name: 'sys-menu',
     data() {
@@ -224,11 +282,11 @@ export default {
                 label: 'title',
                 children: 'children'
             },
-            title: '新建菜单',
             isAdd: true,
             menu_prop: { value: 'menu_id', label: 'title', emitPath: false },
             rules: {
                 title: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+                mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
                 path: [{ required: true, message: '请输入路径', trigger: 'blur' }],
                 sort: [
                     { required: true, message: '请输入排序', trigger: 'blur' },
@@ -241,7 +299,16 @@ export default {
             dialogTableVisible: false,
             interfaceData: [],
             dialogTitle: '',
-            dialogLoading: false
+            dialogLoading: false,
+            mark: setting.mark,
+            mark_btn: {
+                list: false,
+                add: false,
+                set: false,
+                inter: false,
+                del: false,
+                lock: false
+            }
         }
     },
     created() {
@@ -304,6 +371,7 @@ export default {
                 title: '',
                 path: '',
                 icon: '',
+                mark: '',
                 sort: 1,
                 type: 1,
                 is_disabled: true

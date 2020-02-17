@@ -53,7 +53,7 @@
             >
                 <el-form-item>
                     <el-input
-                        placeholder="路由名称"
+                        placeholder="接口名称"
                         v-model="name"
                         clearable
                         :clear="clear(name)"
@@ -117,6 +117,7 @@
             <el-table-column
                 type="selection"
                 width="55"
+                :selectable="isSelect"
             >
             </el-table-column>
             <el-table-column
@@ -130,7 +131,7 @@
                 prop="path"
                 label="路由"
                 align="left"
-                width="260"
+                width="200"
             >
             </el-table-column>
             <el-table-column
@@ -175,7 +176,7 @@
             <el-table-column
                 prop="content"
                 label="操作"
-                align="center"
+                align="left"
             >
                 <template slot-scope="scope">
                     <el-button
@@ -187,7 +188,7 @@
                     ></el-button>
                     <el-button
                         type="info"
-                        v-if="!scope.row.is_disabled"
+                        v-if="!scope.row.is_disabled && isSelect(scope.row)"
                         icon="el-icon-close"
                         size="mini"
                         circle
@@ -195,7 +196,7 @@
                         title="禁用"
                     ></el-button>
                     <el-button
-                        v-else
+                        v-if="isSelect(scope.row) && scope.row.is_disabled"
                         type="success"
                         icon="el-icon-check"
                         size="mini"
@@ -210,6 +211,7 @@
                         size="mini"
                         circle
                         @click.native="delInterface([scope.row.interface_id], false)"
+                        v-if="isSelect(scope.row)"
                         title="删除"
                     >
                     </el-button>
@@ -243,6 +245,7 @@ import { cloneDeep } from 'lodash'
 import Pagination from '@/pages/pagination/index.vue'
 import Info from './info.vue'
 import util from '@/libs/util.js'
+import setting from '@/setting.js'
 export default {
     name: 'sys-interface',
     components: { Pagination, Info },
@@ -272,7 +275,13 @@ export default {
             title: '',
             params: {},
             centerDialogVisible: false,
-            interface_id: []
+            interface_id: [],
+            mark: setting.mark,
+            mark_btn: {
+                list: false,
+                add: false,
+                set: false
+            }
         }
     },
     created() {
@@ -320,6 +329,11 @@ export default {
         },
         handleClose() {
             this.centerDialogVisible = false
+        },
+        isSelect(row) {
+            return !setting.lock_interface.some((i) => {
+                return i == row.mark
+            })
         },
         addInterface() {
             this.title = '新建接口'
@@ -380,6 +394,11 @@ export default {
                     }).then(async res => {
                         this.getInterfaceInfo(interface_id, 1)
                         this.interface_id = []
+                        this.$message({
+                            message: '接口删除成功',
+                            type: 'success',
+                            duration: 3 * 1000
+                        })
                         this.init()
                     })
                 })
@@ -412,6 +431,11 @@ export default {
             }).then(async res => {
                 this.getInterfaceInfo(keys, 2, is_disabled)
                 this.interface_id = []
+                this.$message({
+                    message: is_disabled ? '接口禁用成功' : '接口启用成功',
+                    type: 'success',
+                    duration: 3 * 1000
+                })
                 this.init()
             })
         }

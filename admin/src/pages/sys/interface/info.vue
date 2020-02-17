@@ -52,9 +52,12 @@
             </el-form-item>
             <el-form-item
                 label="标识"
-                prop="identification"
+                prop="mark"
             >
-                <el-input v-model="form.identification"></el-input>
+                <el-input 
+                    v-model="form.mark"
+                    :disabled="form.interface_id != undefined"
+                ></el-input>
             </el-form-item>
             <el-form-item
                 label="所属菜单"
@@ -112,7 +115,7 @@ export default {
                 path: '',
                 method: 'GET',
                 description: '',
-                identification: '',
+                mark: '',
                 menu_id: ''
             },
             rules: {
@@ -128,7 +131,7 @@ export default {
                 description: [
                     { required: true, message: '请输入描述', trigger: 'blur' }
                 ],
-                identification: [
+                mark: [
                     { required: true, message: '请输入标识', trigger: 'blur' }
                 ],
                 menu_id: [
@@ -187,7 +190,6 @@ export default {
                             if (i.interface_id == params.interface_id) 
                                 return interfaces[index] = params
                         })
-                        console.log(interfaces)
                         util.initInterface(interfaces)
                         this.handleInitParent(1)
                     })

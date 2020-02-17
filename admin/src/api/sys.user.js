@@ -38,8 +38,7 @@ export function CreateDrop() {
 export function AgainCreateDrop() {
     return request({
         url: '/v1/Admin/AgainCreateDrop',
-        method: 'get',
-        headers: { isCheck: true }
+        method: 'get'
     })
 }
 

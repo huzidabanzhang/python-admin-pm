@@ -323,9 +323,8 @@ export default {
         clearRole() {
             this.role = ''
         },
-        isSelect(row, index) {
-            if (row.username == 'Admin') return false
-            return !row.is_disabled
+        isSelect(row) {
+            return row.username == 'Admin'
         },
         handleClose() {
             this.centerDialogVisible = false

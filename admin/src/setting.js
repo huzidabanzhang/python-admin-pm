@@ -1,11 +1,3 @@
-/*
- * @Author: your name
- * @Date: 2020-02-03 08:30:59
- * @LastEditTime: 2020-02-17 10:09:35
- * @LastEditors: your name
- * @Description: In User Settings Edit
- * @FilePath: \admin\src\setting.js
- */
 export default {
     // 快捷键
     // 支持快捷键 例如 ctrl+shift+s
@@ -62,6 +54,61 @@ export default {
     transition: {
         active: true
     },
+    // 按钮接口标识
+    lock_interface: ['lock_interface', 'del_interface'],
+    mark: {
+        menu: {
+            add: 'add_menu',
+            del: 'del_menu',
+            set: 'set_menu',
+            lock: 'lock_menu',
+            list: 'get_menu_list',
+            inter: 'get_menu_to_interface'
+        },
+        route: {
+            add: 'add_router',
+            list: 'get_router_list',
+            set: 'set_router',
+            lock: 'lock_router',
+            del: 'del_router'
+        },
+        interface: {
+            add: 'add_interface',
+            list: 'get_interface_list',
+            set: 'set_interface'
+        },
+        file: {
+            add: 'add_document',
+            list: 'get_document_list',
+            down: 'down_document',
+            del: 'del_document',
+            retrieve: 'retrieve_document'
+        },
+        folder: {
+            add: 'create_folder',
+            del: 'del_folder',
+            set: 'modify_folder',
+            list: 'query_folder'
+        },
+        admin: {
+            add: 'add_admin',
+            list: 'get_admin_list',
+            set: 'set_admin',
+            lock: 'lock_admin',
+            del: 'del_admin',
+            init: 'init_admin'
+        },
+        role: {
+            add: 'add_role',
+            list: 'get_role_list',
+            set: 'set_role',
+            lock: 'lock_role',
+            del: 'del_role'
+        },
+        log: {
+            list: 'get_log_list'
+        }
+    }
     // 禁止删除的菜单项
     // 禁止禁用的菜单项
 }

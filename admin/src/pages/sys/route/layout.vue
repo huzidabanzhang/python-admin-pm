@@ -51,7 +51,7 @@
                 size="mini"
                 class="form-right"
             >
-                <el-form-item label="路由状态">
+                <el-form-item>
                     <el-select
                         v-model="lock"
                         placeholder="路由状态"
