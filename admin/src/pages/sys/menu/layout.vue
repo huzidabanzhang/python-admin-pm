@@ -382,7 +382,6 @@ export default {
             this.form = cloneDeep(data)
             this.treeData = cloneDeep(this.menuData)
             this.disabledMenu(this.form, this.treeData)
-            console.log(this.treeData)
             this.isAdd = false
         },
         disabledMenu(item, data) {

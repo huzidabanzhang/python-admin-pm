@@ -47,18 +47,17 @@ Vue.use(VCharts)
 // Vue.component('VueUeditorWrap', VueUeditorWrap)
 
 // 按钮权限判断指令
-Vue.directive('premissions', {
-    inserted: function (el, binding, node) {
-        let params = binding.value, data = store.getters['d2admin/user/info'].interfaces
-        if (data) {
-            let item  = data.filter((i) => {
-                return i.mark == params.mark
-            })
-            node.context.mark_btn[params.type] = item[0].is_disabled
+Vue.directive('premissions', function (el, binding, node) {
+    let params = binding.value, data = store.getters['d2admin/user/info'].interfaces
+    if (data) {
+        let item  = data.filter((i) => {
+            return i.mark == params.mark
+        })
+        if (item.length == 0) el.style.display = 'none'
+        else {
+            if (params.not_disabled == undefined || !params.not_disabled)
+                node.context.mark_btn[params.type] = item[0].is_disabled
         }
-
-        if (!node.context.mark_btn[params.type] && params.is_disabled != undefined) 
-            node.context.mark_btn[params.type] = params.is_disabled
     }
 })
 

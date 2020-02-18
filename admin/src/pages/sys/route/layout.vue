@@ -8,6 +8,11 @@
                 circle
                 @click="addRoute"
                 title="新增"
+                :disabled="mark_btn.add"
+                v-premissions="{
+                    mark: mark.route.add,
+                    type: 'add'
+                }"
             >
             </el-button>
             <el-button
@@ -15,9 +20,14 @@
                 icon="el-icon-check"
                 size="mini"
                 circle
-                :disabled="route_id.length == 0"
                 @click="lockRoute(route_id, false)"
                 title="启用"
+                :disabled="mark_btn.all_lock"
+                v-premissions="{
+                    mark: mark.route.all_lock,
+                    type: 'all_lock',
+                    not_disabled: true
+                }"
             >
             </el-button>
             <el-button
@@ -25,18 +35,28 @@
                 size="mini"
                 icon="el-icon-close"
                 circle
-                :disabled="route_id.length == 0"
                 @click="lockRoute(route_id, true)"
                 title="禁用"
+                :disabled="mark_btn.all_lock"
+                v-premissions="{
+                    mark: mark.route.all_lock,
+                    type: 'all_lock',
+                    not_disabled: true
+                }"
             ></el-button>
             <el-button
                 type="danger"
                 size="mini"
                 icon="el-icon-delete"
                 circle
-                :disabled="route_id.length == 0"
                 @click="delRoute(route_id)"
                 title="删除"
+                :disabled="mark_btn.all_del"
+                v-premissions="{
+                    mark: mark.route.all_del,
+                    type: 'all_del',
+                    not_disabled: true
+                }"
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
@@ -44,6 +64,11 @@
                 @click="init"
                 circle
                 title="刷新"
+                :disabled="mark_btn.list"
+                v-premissions="{
+                    mark: mark.route.list,
+                    type: 'list'
+                }"
             ></el-button>
 
             <el-form
@@ -74,6 +99,11 @@
                         size="mini"
                         type="primary"
                         @click="changeLock"
+                        :disabled="mark_btn.list"
+                        v-premissions="{
+                            mark: mark.route.list,
+                            type: 'list'
+                        }"
                     >搜索</el-button>
                 </el-form-item>
             </el-form>
@@ -167,6 +197,11 @@
                         circle
                         @click.native="editRoute(scope.row)"
                         title="编辑"
+                        :disabled="mark_btn.set"
+                        v-premissions="{
+                            mark: mark.route.set,
+                            type: 'set'
+                        }"
                     ></el-button>
                     <el-button
                         type="info"
@@ -176,6 +211,11 @@
                         circle
                         @click.native="lockRoute([scope.row.route_id], true)"
                         title="禁用"
+                        :disabled="mark_btn.lock"
+                        v-premissions="{
+                            mark: mark.route.lock,
+                            type: 'lock'
+                        }"
                     ></el-button>
                     <el-button
                         v-else
@@ -185,6 +225,11 @@
                         circle
                         @click.native="lockRoute([scope.row.route_id], false)"
                         title="启用"
+                        :disabled="mark_btn.lock"
+                        v-premissions="{
+                            mark: mark.route.lock,
+                            type: 'lock'
+                        }"
                     >
                     </el-button>
                     <el-button
@@ -194,6 +239,11 @@
                         circle
                         @click.native="delRoute([scope.row.route_id])"
                         title="删除"
+                        :disabled="mark_btn.del"
+                        v-premissions="{
+                            mark: mark.route.del,
+                            type: 'del'
+                        }"
                     >
                     </el-button>
                 </template>
@@ -217,6 +267,8 @@ import { QueryRouteByParam, LockRoute, DelRoute } from '@api/sys.route'
 import { cloneDeep } from 'lodash'
 import Info from './info.vue'
 import util from '@/libs/util.js'
+import setting from '@/setting.js'
+import store from '@/store/index'
 export default {
     name: 'sys-route',
     components: { Info },
@@ -233,7 +285,17 @@ export default {
             title: '',
             params: {},
             centerDialogVisible: false,
-            route_id: []
+            route_id: [],
+            mark: setting.mark,
+            mark_btn: {
+                list: false,
+                add: false,
+                set: false,
+                del: false,
+                lock: false,
+                all_del: true,
+                all_lock: true
+            }
         }
     },
     created() {
@@ -272,6 +334,18 @@ export default {
             this.route_id = selection.map((i) => {
                 return i.route_id
             })
+            let data = store.getters['d2admin/user/info'].interfaces
+            if (data) {
+                let del = data.filter((i) => {
+                    return i.mark == this.mark.route.all_del
+                }), lock = data.filter((i) => {
+                    return i.mark == this.mark.route.all_lock
+                })
+                if (del.length > 0 && !del[0].is_disabled) 
+                    this.mark_btn.all_del = this.route_id.length == 0
+                if (lock.length > 0 && !lock[0].is_disabled) 
+                    this.mark_btn.all_lock = this.route_id.length == 0
+            }
         },
         addRoute() {
             this.title = '新建路由'

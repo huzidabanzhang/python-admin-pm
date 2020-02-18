@@ -24,7 +24,10 @@
                 label="标识"
                 prop="mark"
             >
-                <el-input v-model="form.mark"></el-input>
+                <el-input 
+                    v-model="form.mark"
+                    :disabled="!form.admin_id"
+                ></el-input>
             </el-form-item>
             <el-form-item
                 label="菜单"

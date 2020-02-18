@@ -8,6 +8,11 @@
                 circle
                 @click="addAdmin"
                 title="新增"
+                :disabled="mark_btn.add"
+                v-premissions="{
+                    mark: mark.admin.add,
+                    type: 'add'
+                }"
             >
             </el-button>
             <el-button
@@ -15,9 +20,14 @@
                 icon="el-icon-check"
                 size="mini"
                 circle
-                :disabled="admin_id.length == 0"
                 @click="lockAdmin(admin_id, false)"
                 title="启用"
+                :disabled="mark_btn.all_lock"
+                v-premissions="{
+                    mark: mark.admin.all_lock,
+                    type: 'all_lock',
+                    not_disabled: true
+                }"
             >
             </el-button>
             <el-button
@@ -25,18 +35,28 @@
                 size="mini"
                 icon="el-icon-close"
                 circle
-                :disabled="admin_id.length == 0"
                 @click="lockAdmin(admin_id, true)"
                 title="禁用"
+                :disabled="mark_btn.all_lock"
+                v-premissions="{
+                    mark: mark.admin.all_lock,
+                    type: 'all_lock',
+                    not_disabled: true
+                }"
             ></el-button>
             <el-button
                 type="danger"
                 size="mini"
                 icon="el-icon-delete"
                 circle
-                :disabled="admin_id.length == 0"
                 @click="delAdmin(admins)"
                 title="删除"
+                :disabled="mark_btn.all_del"
+                v-premissions="{
+                    mark: mark.admin.all_del,
+                    type: 'all_del',
+                    not_disabled: true
+                }"
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
@@ -44,6 +64,11 @@
                 @click="init"
                 circle
                 title="刷新"
+                :disabled="mark_btn.list"
+                v-premissions="{
+                    mark: mark.admin.list,
+                    type: 'list'
+                }"
             ></el-button>
 
             <el-form
@@ -91,6 +116,11 @@
                         size="mini"
                         type="primary"
                         @click="changeAdmin"
+                        :disabled="mark_btn.list"
+                        v-premissions="{
+                            mark: mark.admin.list,
+                            type: 'list'
+                        }"
                     >搜索</el-button>
                 </el-form-item>
             </el-form>
@@ -167,7 +197,7 @@
             >
                 <template
                     slot-scope="scope"
-                    v-if="scope.row.username != 'Admin'"
+                    v-if="isSelect(scope.row)"
                 >
                     <el-button
                         icon="el-icon-edit"
@@ -175,6 +205,11 @@
                         circle
                         @click.native="editAdmin(scope.row)"
                         title="编辑"
+                        :disabled="mark_btn.set"
+                        v-premissions="{
+                            mark: mark.admin.set,
+                            type: 'set'
+                        }"
                     ></el-button>
                     <el-button
                         type="info"
@@ -184,6 +219,11 @@
                         circle
                         @click.native="lockAdmin([scope.row.admin_id], true)"
                         title="禁用"
+                        :disabled="mark_btn.lock"
+                        v-premissions="{
+                            mark: mark.admin.lock,
+                            type: 'lock'
+                        }"
                     ></el-button>
                     <el-button
                         v-else
@@ -193,6 +233,11 @@
                         circle
                         @click.native="lockAdmin([scope.row.admin_id], false)"
                         title="启用"
+                        :disabled="mark_btn.lock"
+                        v-premissions="{
+                            mark: mark.admin.lock,
+                            type: 'lock'
+                        }"
                     >
                     </el-button>
                     <el-button
@@ -202,6 +247,11 @@
                         circle
                         @click.native="delAdmin([scope.row], false)"
                         title="删除"
+                        :disabled="mark_btn.del"
+                        v-premissions="{
+                            mark: mark.admin.del,
+                            type: 'del'
+                        }"
                     >
                     </el-button>
                 </template>
@@ -234,6 +284,8 @@ import { QueryAdminByParam, LockAdmin, DelAdmin } from '@api/sys.user'
 import { QueryRoleByParam } from '@api/sys.role'
 import Info from './info.vue'
 import Pagination from '@/pages/pagination/index.vue'
+import setting from '@/setting.js'
+import store from '@/store/index'
 export default {
     name: 'sys-admin',
     components: { Info, Pagination },
@@ -258,7 +310,17 @@ export default {
             params: {},
             centerDialogVisible: false,
             admin_id: [],
-            admins: []
+            admins: [],
+            mark: setting.mark,
+            mark_btn: {
+                list: false,
+                add: false,
+                set: false,
+                del: false,
+                lock: false,
+                all_del: true,
+                all_lock: true
+            }
         }
     },
     created() {
@@ -324,7 +386,7 @@ export default {
             this.role = ''
         },
         isSelect(row) {
-            return row.username == 'Admin'
+            return row.username != setting.SYS_ADMIN.name
         },
         handleClose() {
             this.centerDialogVisible = false
@@ -341,6 +403,18 @@ export default {
                     admin_id: i.admin_id
                 })
             })
+            let data = store.getters['d2admin/user/info'].interfaces
+            if (data) {
+                let del = data.filter((i) => {
+                    return i.mark == this.mark.admin.all_del
+                }), lock = data.filter((i) => {
+                    return i.mark == this.mark.admin.all_lock
+                })
+                if (del.length > 0 && !del[0].is_disabled) 
+                    this.mark_btn.all_del = this.route_id.length == 0
+                if (lock.length > 0 && !lock[0].is_disabled) 
+                    this.mark_btn.all_lock = this.route_id.length == 0
+            }
         },
         addAdmin() {
             this.title = '新建管理员'

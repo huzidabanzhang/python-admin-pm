@@ -55,7 +55,11 @@ export default {
         active: true
     },
     // 按钮接口标识
-    lock_interface: ['lock_interface', 'del_interface'],
+    lock_interface: ['lock_interface', 'del_interface', 'get_interface_list'],
+    SYS_ADMIN: {
+        name: 'Admin',
+        mark: 'SYS_ADMIN'
+    },
     mark: {
         menu: {
             add: 'add_menu',
@@ -70,11 +74,12 @@ export default {
             list: 'get_router_list',
             set: 'set_router',
             lock: 'lock_router',
-            del: 'del_router'
+            del: 'del_router',
+            all_del: 'del_router',
+            all_lock: 'lock_router'
         },
         interface: {
             add: 'add_interface',
-            list: 'get_interface_list',
             set: 'set_interface'
         },
         file: {
@@ -96,7 +101,9 @@ export default {
             set: 'set_admin',
             lock: 'lock_admin',
             del: 'del_admin',
-            init: 'init_admin'
+            init: 'init_admin',
+            all_del: 'del_admin',
+            all_lock: 'lock_admin'
         },
         role: {
             add: 'add_role',

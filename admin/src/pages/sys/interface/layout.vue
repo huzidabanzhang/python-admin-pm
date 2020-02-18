@@ -8,6 +8,11 @@
                 circle
                 @click="addInterface"
                 title="新增"
+                :disabled="mark_btn.add"
+                v-premissions="{
+                    mark: mark.interface.add,
+                    type: 'add'
+                }"
             >
             </el-button>
             <el-button
@@ -185,6 +190,11 @@
                         circle
                         @click.native="editInterface(scope.row)"
                         title="编辑"
+                        :disabled="mark_btn.set"
+                        v-premissions="{
+                            mark: mark.interface.set,
+                            type: 'set'
+                        }"
                     ></el-button>
                     <el-button
                         type="info"
@@ -278,7 +288,6 @@ export default {
             interface_id: [],
             mark: setting.mark,
             mark_btn: {
-                list: false,
                 add: false,
                 set: false
             }

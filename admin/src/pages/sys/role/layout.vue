@@ -8,6 +8,11 @@
                 circle
                 @click="addRole"
                 title="新增"
+                :disabled="mark_btn.add"
+                v-premissions="{
+                    mark: mark.role.add,
+                    type: 'add'
+                }"
             >
             </el-button>
             <el-button
@@ -15,9 +20,14 @@
                 size="mini"
                 icon="el-icon-delete"
                 circle
-                :disabled="select.role_id == null || select.mark == 'SYS_ADMIN'"
                 @click="delRole"
                 title="删除"
+                :disabled="mark_btn.del"
+                v-premissions="{
+                    mark: mark.role.del,
+                    type: 'del',
+                    not_disabled: true
+                }"
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
@@ -25,6 +35,11 @@
                 @click="init"
                 circle
                 title="刷新"
+                :disabled="mark_btn.list"
+                v-premissions="{
+                    mark: mark.role.list,
+                    type: 'list'
+                }"
             ></el-button>
 
             <el-form
@@ -55,6 +70,11 @@
                         size="mini"
                         type="primary"
                         @click="changeStatus"
+                        :disabled="mark_btn.list"
+                        v-premissions="{
+                            mark: mark.role.list,
+                            type: 'list'
+                        }"
                     >搜索</el-button>
                 </el-form-item>
             </el-form>
@@ -66,7 +86,7 @@
                 class="role-group" 
                 :class="select.role_id == item.role_id ? 'select' : ''" 
                 @dblclick="editRole(item)"
-                @click="select = item"
+                @click="getRole(item)"
             >
                 <i class="fa fa-group role-icon"></i>
                 <i class="icon role-top" 
@@ -91,6 +111,8 @@
 <script>
 import { QueryRoleByParam, LockRole, DelRole } from '@api/sys.role'
 import Info from './info.vue'
+import setting from '@/setting.js'
+import store from '@/store/index'
 export default {
     name: 'sys-role',
     components: { Info },
@@ -109,7 +131,15 @@ export default {
                 role_id: null
             },
             params: {},
-            centerDialogVisible: false
+            centerDialogVisible: false,
+            mark: setting.mark,
+            mark_btn: {
+                list: false,
+                add: false,
+                set: false,
+                del: true,
+                lock: false
+            }
         }
     },
     created() {
@@ -149,7 +179,38 @@ export default {
             }
             this.centerDialogVisible = true
         },
+        getRole(item) {
+            this.select = item
+
+            if (item.mark == setting.SYS_ADMIN.mark) {
+                this.mark_btn.del = true
+                return true
+            }
+
+            let data = store.getters['d2admin/user/info'].interfaces
+            if (data) {
+                let del = data.filter((i) => {
+                    return i.mark == this.mark.role.del
+                })
+                if (del.length > 0 && !del[0].is_disabled) {
+                    this.mark_btn.del = false
+                } else return true
+            } else return true
+        },
         editRole(params) {
+            let data = store.getters['d2admin/user/info'].interfaces
+            if (data == undefined || data.length == 0)
+                return true
+
+            if (!this.mark_btn.set) {
+                let set = data.filter((i) => {
+                    return i.mark == this.mark.role.set
+                })
+                if (set.length > 0) this.mark_btn.set = set[0].is_disabled
+            }
+
+            if (this.mark_btn.set) return true
+
             this.title = '编辑角色'
             this.params = params
             this.centerDialogVisible = true
