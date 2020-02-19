@@ -411,9 +411,9 @@ export default {
                     return i.mark == this.mark.admin.all_lock
                 })
                 if (del.length > 0 && !del[0].is_disabled) 
-                    this.mark_btn.all_del = this.route_id.length == 0
+                    this.mark_btn.all_del = this.admin_id.length == 0
                 if (lock.length > 0 && !lock[0].is_disabled) 
-                    this.mark_btn.all_lock = this.route_id.length == 0
+                    this.mark_btn.all_lock = this.admin_id.length == 0
             }
         },
         addAdmin() {
