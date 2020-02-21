@@ -44,7 +44,7 @@ export function RetrieveDocument(data) {
 }
 
 /**
- * 下载文档
+ * 下载 文档
  * @param {*} data 
  */
 export function DownDocument(data) {

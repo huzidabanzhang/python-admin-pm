@@ -114,6 +114,10 @@ export default {
         },
         log: {
             list: 'get_log_list'
+        },
+        base: {
+            export: 'export_sql',
+            import: 'import_sql'
         }
     }
     // 禁止删除的菜单项

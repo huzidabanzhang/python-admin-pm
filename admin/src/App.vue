@@ -5,7 +5,8 @@
 </template>
 
 <script>
-import { checkDb, CreateDrop } from '@api/sys.user'
+import { checkDb } from '@api/sys.user'
+import { CreateDrop } from '@api/sys.base'
 import util from '@/libs/util'
 export default {
     name: 'app',

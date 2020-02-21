@@ -25,26 +25,6 @@ export function AccountLogout() {
 /**
  * 初始化数据库和原始数据
  */
-export function CreateDrop() {
-    return request({
-        url: '/v1/Admin/CreateDrop',
-        method: 'get'
-    })
-}
-
-/**
- * 初始化数据库和原始数据(新建后想重新初始化)
- */
-export function AgainCreateDrop() {
-    return request({
-        url: '/v1/Admin/AgainCreateDrop',
-        method: 'get'
-    })
-}
-
-/**
- * 初始化数据库和原始数据
- */
 export function checkDb() {
     return request({
         url: '/v1/Admin/checkDb',
