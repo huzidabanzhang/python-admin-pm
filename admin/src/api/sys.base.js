@@ -23,11 +23,7 @@ export function ImportSql(data) {
         url: '/v1/Base/ImportSql',
         method: 'post',
         data,
-        headers: { 'content-type': 'multipart/form-data', isCheck: true },
-        onUploadProgress: res => {
-            const percentCompleted = Math.floor((res.loaded * 100) / res.total)
-            progressEvent({ percent: percentCompleted })
-        }
+        headers: { 'content-type': 'multipart/form-data' }
     })
 }
 

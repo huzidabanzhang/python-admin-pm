@@ -10,6 +10,7 @@
                     size="mini"
                     type="primary"
                     :disabled="mark_btn.export"
+                    @click="exportBase"
                     v-premissions="{
                         mark: mark.base.export,
                         type: 'export'
@@ -19,25 +20,75 @@
             <el-form-item>
                 <el-button
                     size="mini"
-                    :disabled="mark_btn.import"
-                    v-premissions="{
-                        mark: mark.base.import,
-                        type: 'import'
-                    }"
+                    @click="importBase"
+                    v-if="info.info && info.info.mark == admin.mark"
                 >导入数据库</el-button>
             </el-form-item>
             <el-form-item>
                 <el-button
                     size="mini"
                     type="danger"
+                    @click="initBase"
+                    v-if="info.info && info.info.mark == admin.mark"
                 >重置数据库</el-button>
             </el-form-item>
         </el-form>
+
+        <input type="file" style="display: none" ref="SQL_FILE" @change="importSql">
+
+        <el-dialog
+            title="备份数据库"
+            :visible.sync="centerDialogVisible"
+            width="40%"
+            append-to-body
+            destroy-on-close
+            @closed="centerDialogVisible = false"
+        >
+            <el-form
+                label-width="80px"
+                :model="form"
+                :rules="rules"
+                size="medium"
+            >
+                <el-form-item
+                    label="备份方式"
+                    prop="type"
+                >
+                    <el-select
+                        v-model="form.type"
+                    >
+                        <el-option
+                            v-for="item in typeOption"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <span
+                slot="footer"
+                class="dialog-footer"
+            >
+                <el-button
+                    @click="centerDialogVisible = false"
+                    size="medium"
+                >取 消</el-button>
+                <el-button
+                    type="primary"
+                    @click="exportSql"
+                    :loading="loading"
+                    size="medium"
+                >确 定</el-button>
+            </span>
+        </el-dialog>
     </d2-container>
 </template>
 
 <script>
-import { AgainCreateDrop, ImportSql, ExportSql } from '@api/sys.route'
+import { mapState, mapActions } from 'vuex'
+import { AgainCreateDrop, ImportSql, ExportSql } from '@api/sys.base'
 import util from '@/libs/util.js'
 import setting from '@/setting.js'
 import store from '@/store/index'
@@ -45,59 +96,136 @@ export default {
     name: 'sys-base',
     data() {
         return {
+            admin: setting.SYS_ADMIN,
             mark: setting.mark,
             mark_btn: {
-                export: false,
-                import: false
+                export: false
+            },
+            centerDialogVisible: false,
+            loading: false,
+            rules: {
+                type: [
+                    { required: true, message: '请选择备份方式', trigger: 'change' }
+                ]
+            },
+            typeOption: [
+                { label: '数据加表结构', value: 1 },
+                { label: '表结构不包含数据', value: 2 },
+                { label: '数据不包含表结构', value: 3 }
+            ],
+            form: {
+                type: 1
             }
         }
     },
+    computed: {
+        ...mapState('d2admin/user', [
+            'info'
+        ])
+    },
     methods: {
-        importBase(keys, is_disabled) {
-            if (keys.length == 0) return this.$message({
-                message: '未选择任何记录',
-                type: 'warning',
-                duration: 3 * 1000
-            })
-
-            this.$confirm(is_disabled ? '确定要禁用该路由吗' : '确定要启用该路由吗',
-                is_disabled ? '禁用路由' : '启用路由',
+        ...mapActions('d2admin/account', [
+            'logout'
+        ]),
+        initBase() {
+            this.$confirm('重置数据库将清空所有数据，确定要重置吗？', '提示',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    this.Lock(keys, is_disabled)
+                    let loadingInstance = this.$loading(this.loadOption('正在重置数据库中.....'))
+                    AgainCreateDrop()
+                        .then(async res => {
+                            loadingInstance.close()
+                            this.sqlognout()
+                        })
+                        .catch(async res => {
+                            loadingInstance.close()
+                        })
                 })
         },
-        importBase(route_id) {
-            if (route_id.length == 0) return this.$message({
-                message: '未选择任何记录',
-                type: 'warning',
-                duration: 3 * 1000
+        exportBase() {
+            this.form.type = 1
+            this.centerDialogVisible = true
+        },
+        exportSql() {
+            this.loading = true
+            ExportSql({
+                type: this.form.type
+            }).then((response) => {
+                const href = window.URL.createObjectURL(new Blob([response.data], { type: response.data.type }))
+                let downloadElement = document.createElement('a')
+                downloadElement.href = href
+                downloadElement.download = response.headers.filename //下载后文件名
+                document.body.appendChild(downloadElement)
+                downloadElement.click() //点击下载
+                document.body.removeChild(downloadElement);//下载完成移除元素
+                window.URL.revokeObjectURL(href) //释放blob对象
+                this.loading = false
+                this.centerDialogVisible = false
+            }).catch(() => {
+                this.loading = false
             })
-
-            this.$confirm('确定要删除该路由吗', '删除路由',
+        },
+        importBase() {
+            this.$confirm('导入数据库将覆盖所有数据，确定要导入吗？', '提示',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    DelRoute({
-                        route_id: route_id
-                    }).then(async res => {
-                        this.$message({
-                            message: '删除路由成功',
-                            type: 'success',
-                            duration: 3 * 1000
-                        })
-                        this.route_id = []
-                        this.init()
-                    })
+                    this.$refs.SQL_FILE.click()
                 })
+        },
+        sqlognout() {
+            this.$confirm('请重新登录', '提示',
+            {
+                confirmButtonText: '确定',
+                type: 'success',
+                showClose: false,
+                showCancelButton: false,
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                closeOnHashChange: false
+            }).then(() => {
+                this.logout({
+                    confirm: false
+                })
+            })
+        },
+        importSql(event) {
+            let formData = new FormData(), file = event.target.files
+
+            if (file.length == 0) return this.$message({
+                message: '请选择上传文件',
+                type: 'warning',
+                duration: 3 * 1000
+            })
+
+            formData.append('document', file[0])
+
+            let loadingInstance = this.$loading(this.loadOption('正在导入数据库中.....'))
+
+            ImportSql(
+                formData
+            ).then((response) => {
+                loadingInstance.close()
+                this.sqlognout()
+                this.$refs.SQL_FILE.value = ''
+            }).catch(async res => {
+                loadingInstance.close()
+                this.$refs.SQL_FILE.value = ''
+            })
         }
     }
 }
 </script>
+
+<style scoped>
+.el-form-item:last-child {
+    margin-bottom: 0;
+}
+</style>
