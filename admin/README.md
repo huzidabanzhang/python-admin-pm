@@ -5,8 +5,9 @@
 * 系统类页面
 
 ## 计划
-* 按钮权限
-* 文档文件夹
-* 代码优化
+* 按钮权限 （已完成）
+* 文档文件夹 （已完成）
+* 文档模块功能
+* 部署到服务器上
 
-  Python服务器端代码 GIT地址: https://github.com/huzidabanzhang/python-admin // 服务器端在调整中 拉下来暂时不能用！！！
+  Python服务器端代码 GIT地址: https://github.com/huzidabanzhang/python-admin // 除了文档模块其他正常
