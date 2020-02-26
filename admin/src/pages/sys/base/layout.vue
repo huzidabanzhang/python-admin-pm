@@ -34,7 +34,12 @@
             </el-form-item>
         </el-form>
 
-        <input type="file" style="display: none" ref="SQL_FILE" @change="importSql">
+        <input
+            type="file"
+            style="display: none"
+            ref="SQL_FILE"
+            @change="importSql"
+        >
 
         <el-dialog
             title="备份数据库"
@@ -54,9 +59,7 @@
                     label="备份方式"
                     prop="type"
                 >
-                    <el-select
-                        v-model="form.type"
-                    >
+                    <el-select v-model="form.type">
                         <el-option
                             v-for="item in typeOption"
                             :key="item.value"
@@ -182,19 +185,19 @@ export default {
         },
         sqlognout() {
             this.$confirm('请重新登录', '提示',
-            {
-                confirmButtonText: '确定',
-                type: 'success',
-                showClose: false,
-                showCancelButton: false,
-                closeOnClickModal: false,
-                closeOnPressEscape: false,
-                closeOnHashChange: false
-            }).then(() => {
-                this.logout({
-                    confirm: false
+                {
+                    confirmButtonText: '确定',
+                    type: 'success',
+                    showClose: false,
+                    showCancelButton: false,
+                    closeOnClickModal: false,
+                    closeOnPressEscape: false,
+                    closeOnHashChange: false
+                }).then(() => {
+                    this.logout({
+                        confirm: false
+                    })
                 })
-            })
         },
         importSql(event) {
             let formData = new FormData(), file = event.target.files

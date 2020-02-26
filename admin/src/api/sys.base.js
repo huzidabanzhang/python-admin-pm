@@ -9,7 +9,7 @@ export function ExportSql(data) {
         url: '/v1/Base/ExportSql',
         method: 'post',
         data,
-        headers: {isCheck: true},
+        headers: { isCheck: true },
         responseType: 'blob'
     })
 }
