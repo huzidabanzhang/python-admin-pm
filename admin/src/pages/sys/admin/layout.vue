@@ -285,7 +285,6 @@ import { QueryRoleByParam } from '@api/sys.role'
 import Info from './info.vue'
 import Pagination from '@/pages/pagination/index.vue'
 import setting from '@/setting.js'
-import store from '@/store/index'
 export default {
     name: 'sys-admin',
     components: { Info, Pagination },
@@ -403,7 +402,7 @@ export default {
                     admin_id: i.admin_id
                 })
             })
-            let data = store.getters['d2admin/user/info'].interfaces
+            let data = this.$store.getters['d2admin/user/interfaces']
             if (data) {
                 let del = data.filter((i) => {
                     return i.mark == this.mark.admin.all_del

@@ -11,28 +11,51 @@ export default {
          * @param {*} state vuex state
          */
         menus(state) {
-            return state.info.menus
+            try {
+                return state.info.menus
+            } catch (error) {
+                return []
+            }
         },
         /**
          * @description 返回接口数据
          * @param {*} state vuex state
          */
         interfaces(state) {
-            return state.info.interfaces
+            try {
+                return state.info.interfaces
+            } catch (error) {
+                return []
+            }
         },
         /**
          * @description 返回路由数据
          * @param {*} state vuex state
          */
         routes(state) {
-            return state.info.routers
+            try {
+                return state.info.routers
+            } catch (error) {
+                return []
+            }
         },
         /**
-         * @description 返回用户数据
+         * @description 返回用户所有数据
          * @param {*} state vuex state
          */
         info(state) {
             return state.info
+        },
+        /**
+         * @description 返回用户基本数据
+         * @param {*} state vuex state
+         */
+        user(state) {
+            try {
+                return state.info.user
+            } catch (error) {
+                return {}
+            }
         },
         /**
          * @description 返回是否初始化

@@ -112,7 +112,6 @@
 import { QueryRoleByParam, LockRole, DelRole } from '@api/sys.role'
 import Info from './info.vue'
 import setting from '@/setting.js'
-import store from '@/store/index'
 export default {
     name: 'sys-role',
     components: { Info },
@@ -187,7 +186,7 @@ export default {
                 return true
             }
 
-            let data = store.getters['d2admin/user/info'].interfaces
+            let data = this.$store.getters['d2admin/user/interfaces']
             if (data) {
                 let del = data.filter((i) => {
                     return i.mark == this.mark.role.del
@@ -198,7 +197,7 @@ export default {
             } else return true
         },
         editRole(params) {
-            let data = store.getters['d2admin/user/info'].interfaces
+            let data = this.$store.getters['d2admin/user/interfaces']
             if (data == undefined || data.length == 0)
                 return true
 

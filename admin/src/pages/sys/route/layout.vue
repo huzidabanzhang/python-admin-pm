@@ -268,7 +268,6 @@ import { cloneDeep } from 'lodash'
 import Info from './info.vue'
 import util from '@/libs/util.js'
 import setting from '@/setting.js'
-import store from '@/store/index'
 export default {
     name: 'sys-route',
     components: { Info },
@@ -334,7 +333,7 @@ export default {
             this.route_id = selection.map((i) => {
                 return i.route_id
             })
-            let data = store.getters['d2admin/user/info'].interfaces
+            let data = this.$store.getters['d2admin/user/interfaces']
             if (data) {
                 let del = data.filter((i) => {
                     return i.mark == this.mark.route.all_del

@@ -32,7 +32,55 @@
                 :md="6"
                 :lg="4"
                 :xl="3"
-                v-for="(item, index) in list"
+                v-for="(item, index) in folder"
+                :key="index"
+            >
+                <el-card :body-style="{ padding: '10px' }">
+                    <div>
+                        <div
+                            class="name"
+                            :title="item.name"
+                        >{{item.name}}</div>
+                        <el-dropdown
+                            class="button"
+                            trigger="click"
+                            size="mini"
+                            placement="bottom-start"
+                        >
+                            <span class="el-dropdown-link">
+                                <i class="fa fa-ellipsis-v"></i>
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item
+                                    @click.native="openFolder(item)"
+                                    command="open"
+                                >打开文件夹</el-dropdown-item>
+                                <el-dropdown-item
+                                    @click.native="setFolder(item)"
+                                    v-if="user && user.mark == mark"
+                                >重命名</el-dropdown-item>
+                                <el-dropdown-item
+                                    @click.native="delFolder(item, index)"
+                                    v-if="user && user.mark == mark"
+                                >删除</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </div>
+                    <div class="el-image image">
+                        <div class="image-slot">
+                            <img src="./image/folder.png">
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
+
+            <el-col
+                :xs="6"
+                :sm="6"
+                :md="6"
+                :lg="4"
+                :xl="3"
+                v-for="(item, index) in file"
                 :key="index"
             >
                 <el-card :body-style="{ padding: '10px' }">
@@ -55,6 +103,7 @@
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item>下载</el-dropdown-item>
                                 <el-dropdown-item>删除</el-dropdown-item>
+                                <el-dropdown-item>属性</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </div>
@@ -78,14 +127,14 @@
                         v-else
                     >
                         <div class="image-slot">
-                            <i class="fa fa-file"></i>
+                            <img src="./image/file.png">
                         </div>
                     </div>
                 </el-card>
             </el-col>
             <el-col
                 class="empty"
-                v-if="list.length == 0"
+                v-if="file.length == 0 && folder.length == 0"
             >暂无数据</el-col>
         </el-row>
 
@@ -101,6 +150,7 @@
 
         <Upload
             :centerDialogVisible="centerDialogVisible"
+            :folder_id="pid"
             @handleClose="handleClose"
         ></Upload>
     </d2-container>
@@ -114,6 +164,7 @@ import Pagination from '@/pages/pagination/index.vue'
 import Upload from '@/pages/upload/index.vue'
 // 获取缓存菜单需要
 import util from '@/libs/util.js'
+import setting from '@/setting.js'
 export default {
     name: 'sys-document',
     props: {
@@ -123,24 +174,26 @@ export default {
     components: { Pagination, Upload },
     data() {
         return {
-            list: [],
+            file: [],
             folder: [],
             checked: [],
             page: 1,
             total: 0,
             size: 40,
             loading: false,
-            isDel: 0,
+            isDel: false,
             centerDialogVisible: false,
-            prev_id: 0,
-            next_id: 0,
-            src: '/API/v1/Document/GetDocument/'
+            prev_id: null,
+            pid: null,
+            src: '/API/v1/Document/GetDocument/',
+            mark: setting.SYS_ADMIN.mark,
+            user: this.$store.getters['d2admin/user/user']
         }
     },
     watch: {
         visible: {
             handler: function (val) {
-                if (val) this.getFolder(this.next_id)
+                if (val) this.getFolder(this.pid)
             },
             immediate: true, //关键
             deep: true
@@ -151,14 +204,15 @@ export default {
             let params = {
                 page: this.page,
                 page_size: this.size,
-                deleted: this.isDel
+                deleted: this.isDel,
+                folder_id: this.pid
             }
 
             this.loading = true
             QueryDocumentByParam(params)
                 .then(async res => {
                     this.total = res.total
-                    this.list = res.data
+                    this.file = res.data
                     this.loading = false
                 })
                 .catch(() => {
@@ -227,7 +281,7 @@ export default {
                         instance.confirmButtonText = '提交中...'
                         CreateFolder({
                             name: instance.inputValue,
-                            pid: this.prev_id
+                            pid: this.pid
                         })
                             .then(async res => {
                                 instance.confirmButtonLoading = false
@@ -244,6 +298,39 @@ export default {
             }).then(() => {
                 this.$message.success('新建成功')
             }).catch()
+        },
+        setFolder(item) {
+            this.$prompt('', '重命名文件夹', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                inputPlaceholder: '请输入文件夹名',
+                inputValue: item.name,
+                beforeClose: (action, instance, done) => {
+                    if (action === 'confirm') {
+                        instance.confirmButtonLoading = true
+                        instance.confirmButtonText = '提交中...'
+                        ModifyFolder({
+                            name: instance.inputValue,
+                            folder_id: item.folder_id
+                        })
+                            .then(async res => {
+                                instance.confirmButtonLoading = false
+                                item.name = instance.inputValue
+                                done()
+                            })
+                            .catch(() => {
+                                instance.confirmButtonLoading = false
+                            })
+                    } else {
+                        done()
+                    }
+                }
+            }).then(() => {
+                this.$message.success('新建成功')
+            }).catch()
+        },
+        delFolder(item, index) {
+            
         }
     }
 }
@@ -301,13 +388,14 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: 13px;
-    width: calc(100% - 5px);
+    max-width: calc(100% - 10px);
     line-height: 15px;
+    display: inline-block;
 }
 
 .el-dropdown-menu--mini .el-dropdown-menu__item {
     min-width: 40px;
-    text-align: center;
+    padding: 2px 10px;
 }
 
 .el-checkbox {
@@ -336,7 +424,7 @@ export default {
     width: 100%;
     color: #909399;
     font-size: 30px;
-    height: 150px;
+    height: 120px;
 }
 
 .el-card {
@@ -344,6 +432,6 @@ export default {
 }
 
 .el-image__inner {
-    height: 150px;
+    height: 120px;
 }
 </style>

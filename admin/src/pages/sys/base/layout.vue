@@ -21,7 +21,7 @@
                 <el-button
                     size="mini"
                     @click="importBase"
-                    v-if="info.info && info.info.mark == admin.mark"
+                    v-if="info && info.mark == admin.mark"
                 >导入数据库</el-button>
             </el-form-item>
             <el-form-item>
@@ -29,7 +29,7 @@
                     size="mini"
                     type="danger"
                     @click="initBase"
-                    v-if="info.info && info.info.mark == admin.mark"
+                    v-if="info && info.mark == admin.mark"
                 >重置数据库</el-button>
             </el-form-item>
         </el-form>
@@ -90,11 +90,10 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import { AgainCreateDrop, ImportSql, ExportSql } from '@api/sys.base'
 import util from '@/libs/util.js'
 import setting from '@/setting.js'
-import store from '@/store/index'
 export default {
     name: 'sys-base',
     data() {
@@ -118,13 +117,9 @@ export default {
             ],
             form: {
                 type: 1
-            }
+            },
+            user: this.$store.getters['d2admin/user/user']
         }
-    },
-    computed: {
-        ...mapState('d2admin/user', [
-            'info'
-        ])
     },
     methods: {
         ...mapActions('d2admin/account', [

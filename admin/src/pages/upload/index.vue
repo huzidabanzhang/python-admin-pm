@@ -56,7 +56,8 @@ import { CreateDocument } from '@api/sys.document'
 import util from '@/libs/util.js'
 export default {
     props: {
-        centerDialogVisible: Boolean
+        centerDialogVisible: Boolean,
+        folder_id: String
     },
     data() {
         return {
@@ -136,6 +137,7 @@ export default {
                 }
             }
             formData.append('admin_id', util.cookies.get('uuid'))
+            formData.append('folder_id', this.folder_id)
             formData.append('type', 1)
 
             if (formData.get('uid') == null) return this.$message.error('请选择上传文件')

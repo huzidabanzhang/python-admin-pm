@@ -38,7 +38,7 @@ export default {
 
                         // 设置 vuex 用户信息
                         await dispatch('d2admin/user/set', {
-                            info: res.info,
+                            user: res.info,
                             menus: res.menus,
                             routes: res.routes,
                             interfaces: res.interface

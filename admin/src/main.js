@@ -48,7 +48,7 @@ Vue.use(VCharts)
 
 // 按钮权限判断指令
 Vue.directive('premissions', function (el, binding, node) {
-    let params = binding.value, data = store.getters['d2admin/user/info'].interfaces
+    let params = binding.value, data = store.getters['d2admin/user/interfaces']
     if (data) {
         let item  = data.filter((i) => {
             return i.mark == params.mark
