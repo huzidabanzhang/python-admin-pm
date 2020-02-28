@@ -157,7 +157,7 @@
                 align="left"
             >
                 <template slot-scope="scope">
-                    <el-tag size="medium">{{scope.row.mark}}</el-tag>
+                    <el-tag size="smaill">{{scope.row.mark}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -167,12 +167,12 @@
             >
                 <template slot-scope="scope">
                     <el-tag
-                        size="medium"
+                        size="smaill"
                         type="success"
                         v-if="!scope.row.is_disabled"
                     >启用</el-tag>
                     <el-tag
-                        size="medium"
+                        size="smaill"
                         type="info"
                         v-else
                     >禁用</el-tag>
@@ -367,11 +367,7 @@ export default {
             })
         },
         lockInterface(keys, is_disabled) {
-            if (keys.length == 0) return this.$message({
-                message: '未选择任何记录',
-                type: 'warning',
-                duration: 3 * 1000
-            })
+            if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm(is_disabled ? '确定要禁用该接口吗' : '确定要启用该接口吗',
                 is_disabled ? '禁用接口' : '启用接口',
@@ -385,11 +381,7 @@ export default {
                 })
         },
         delInterface (interface_id) {
-            if (interface_id.length == 0) return this.$message({
-                message: '未选择任何记录',
-                type: 'warning',
-                duration: 3 * 1000
-            })
+            if (interface_id.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm('确定要删除该接口吗', '删除接口',
                 {
@@ -403,11 +395,7 @@ export default {
                     }).then(async res => {
                         this.getInterfaceInfo(interface_id, 1)
                         this.interface_id = []
-                        this.$message({
-                            message: '接口删除成功',
-                            type: 'success',
-                            duration: 3 * 1000
-                        })
+                        this.$message.success('接口删除成功')
                         this.init()
                     })
                 })
@@ -440,11 +428,7 @@ export default {
             }).then(async res => {
                 this.getInterfaceInfo(keys, 2, is_disabled)
                 this.interface_id = []
-                this.$message({
-                    message: is_disabled ? '接口禁用成功' : '接口启用成功',
-                    type: 'success',
-                    duration: 3 * 1000
-                })
+                this.$message.success(is_disabled ? '接口禁用成功' : '接口启用成功')
                 this.init()
             })
         }

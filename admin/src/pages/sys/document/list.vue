@@ -1,29 +1,49 @@
 <template>
     <d2-container>
-        <el-form
-            :inline="true"
-            slot="header"
-            size="mini"
-        >
-            <el-form-item>
-                <el-button
-                    type="primary"
-                    size="mini"
-                    @click="centerDialogVisible = true"
-                >上传<i class="el-icon-upload el-icon--right"></i></el-button>
-            </el-form-item>
+        <div slot="header">
+            <el-button
+                title="返回上一级"
+                size="mini"
+                style="float: left;"
+                circle
+                v-if="pid != '0'"
+                @click="backFolder(prev)"
+            ><i class="el-icon-back"></i></el-button>
 
-            <el-form-item>
-                <el-button
-                    type="primary"
-                    size="mini"
-                    icon="el-icon-circle-plus-outline"
-                    @click="addFolder"
-                >新建文件夹
-                </el-button>
-            </el-form-item>
+            <el-breadcrumb
+                separator-class="el-icon-arrow-right"
+                style="float: left;    
+                    height: 30px;
+                    padding-left: 10px;
+                    line-height: 30px;"
+            >
+                <el-breadcrumb-item v-for="(item, index) in tree"><a @click="toFolder(item)">{{item.name}}</a></el-breadcrumb-item>
+            </el-breadcrumb>
 
-        </el-form>
+            <el-form
+                :inline="true"
+                size="mini"
+                style="float: right;"
+            >
+                <el-form-item>
+                    <el-button
+                        type="primary"
+                        size="mini"
+                        icon="el-icon-circle-plus-outline"
+                        @click="addFolder"
+                    >新建文件夹
+                    </el-button>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button
+                        type="primary"
+                        size="mini"
+                        @click="centerDialogVisible = true"
+                    >上传<i class="el-icon-upload el-icon--right"></i></el-button>
+                </el-form-item>
+            </el-form>
+        </div>
 
         <el-row v-loading="loading">
             <el-col
@@ -32,10 +52,13 @@
                 :md="6"
                 :lg="4"
                 :xl="3"
-                v-for="(item, index) in folder"
+                v-for="(item, index) in data"
                 :key="index"
             >
-                <el-card :body-style="{ padding: '10px' }">
+                <el-card
+                    :body-style="{ padding: '10px' }"
+                    v-if="item.is_folder"
+                >
                     <div>
                         <div
                             class="name"
@@ -51,16 +74,13 @@
                                 <i class="fa fa-ellipsis-v"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item
-                                    @click.native="openFolder(item)"
-                                    command="open"
-                                >打开文件夹</el-dropdown-item>
+                                <el-dropdown-item @click.native="openFolder(item)">打开文件夹</el-dropdown-item>
                                 <el-dropdown-item
                                     @click.native="setFolder(item)"
                                     v-if="user && user.mark == mark"
                                 >重命名</el-dropdown-item>
                                 <el-dropdown-item
-                                    @click.native="delFolder(item, index)"
+                                    @click.native="delFolder(item)"
                                     v-if="user && user.mark == mark"
                                 >删除</el-dropdown-item>
                             </el-dropdown-menu>
@@ -72,18 +92,11 @@
                         </div>
                     </div>
                 </el-card>
-            </el-col>
 
-            <el-col
-                :xs="6"
-                :sm="6"
-                :md="6"
-                :lg="4"
-                :xl="3"
-                v-for="(item, index) in file"
-                :key="index"
-            >
-                <el-card :body-style="{ padding: '10px' }">
+                <el-card
+                    :body-style="{ padding: '10px' }"
+                    v-else
+                >
                     <div>
                         <el-checkbox v-model="index">
                             <div
@@ -101,9 +114,10 @@
                                 <i class="fa fa-ellipsis-v"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item>下载</el-dropdown-item>
-                                <el-dropdown-item>删除</el-dropdown-item>
-                                <el-dropdown-item>属性</el-dropdown-item>
+                                <el-dropdown-item @click.native="retrieveFile(item)">移到回收站</el-dropdown-item>
+                                <el-dropdown-item @click.native="down(item.path, item.name)">下载</el-dropdown-item>
+                                <el-dropdown-item @click.native="delFile(item)">删除</el-dropdown-item>
+                                <el-dropdown-item @click.native="getFile(item)">属性</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </div>
@@ -112,7 +126,7 @@
                         class="image"
                         :src="src + item.path"
                         fit="contain"
-                        v-if="item.type == 1"
+                        v-if="item.status == 1"
                         :preview-src-list="[src + item.path]"
                     >
                         <div
@@ -134,7 +148,7 @@
             </el-col>
             <el-col
                 class="empty"
-                v-if="file.length == 0 && folder.length == 0"
+                v-if="data.length == 0"
             >暂无数据</el-col>
         </el-row>
 
@@ -143,7 +157,7 @@
             :page="page"
             :total="total"
             :size="size"
-            :pageList="[40, 80, 120]"
+            :layout="'prev, pager, next, jumper'"
             @handleSize="handleSize"
             @handleCurrent="handleCurrent"
         ></Pagination>
@@ -153,6 +167,42 @@
             :folder_id="pid"
             @handleClose="handleClose"
         ></Upload>
+
+        <el-dialog
+            title="附件属性"
+            :visible.sync="Visible"
+            width="40%"
+            append-to-body
+            destroy-on-close
+            @closed="Visible = false"
+        >
+            <el-form
+                label-width="80px"
+                ref="adminForm"
+                :model="form"
+                disabled
+                size="smaill"
+            >
+                <el-form-item
+                    label="文件名"
+                    prop="name"
+                >
+                    <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="大小"
+                    prop="size"
+                >
+                    <el-input v-model="form.size"></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="创建时间"
+                    prop="create_time"
+                >
+                    <el-input v-model="form.create_time"></el-input>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
     </d2-container>
 </template>
 
@@ -174,8 +224,7 @@ export default {
     components: { Pagination, Upload },
     data() {
         return {
-            file: [],
-            folder: [],
+            data: [],
             checked: [],
             page: 1,
             total: 0,
@@ -183,17 +232,25 @@ export default {
             loading: false,
             isDel: false,
             centerDialogVisible: false,
-            prev_id: null,
-            pid: null,
+            tree: [{
+                name: '根目录',
+                folder_id: '0',
+                index: 0
+            }],
+            prev: {},
+            pid: '0',
             src: '/API/v1/Document/GetDocument/',
             mark: setting.SYS_ADMIN.mark,
-            user: this.$store.getters['d2admin/user/user']
+            user: this.$store.getters['d2admin/user/user'],
+            Visible: false,
+            form: {},
+            is_sys: false
         }
     },
     watch: {
         visible: {
             handler: function (val) {
-                if (val) this.getFolder(this.pid)
+                if (val) this.getFolder(this.pid, true)
             },
             immediate: true, //关键
             deep: true
@@ -212,21 +269,35 @@ export default {
             QueryDocumentByParam(params)
                 .then(async res => {
                     this.total = res.total
-                    this.file = res.data
+                    for (let i = 0; i < this.data.length; i++) {
+                        if (this.data[i].is_folder == false) {
+                            this.data.splice(i)
+                            i--
+                        }
+                    }
+                    for (let i = 0; i < res.data.length; i++) {
+                        let item = res.data[i]
+                        item.is_folder = false
+                        this.data.push(item)
+                    }
                     this.loading = false
                 })
                 .catch(() => {
                     this.loading = false
                 })
         },
-        getFolder(pid) {
+        getFolder(pid, isInit) {
             this.loading = true
             QueryFolderByParam({
                 pid: pid
             })
                 .then(async res => {
-                    this.folder = res
-                    this.page = 1
+                    this.data = res.map(i => {
+                        let item = i
+                        item.is_folder = true
+                        return item
+                    })
+                    if (isInit) this.page = 1
                     this.init()
                 })
                 .catch(() => {
@@ -281,11 +352,12 @@ export default {
                         instance.confirmButtonText = '提交中...'
                         CreateFolder({
                             name: instance.inputValue,
-                            pid: this.pid
+                            pid: this.pid,
+                            is_sys: this.is_sys
                         })
                             .then(async res => {
                                 instance.confirmButtonLoading = false
-                                this.folder.push(res)
+                                this.getFolder(this.pid, false)
                                 done()
                             })
                             .catch(() => {
@@ -296,7 +368,7 @@ export default {
                     }
                 }
             }).then(() => {
-                this.$message.success('新建成功')
+                this.$message.success('创建文件夹成功')
             }).catch()
         },
         setFolder(item) {
@@ -326,11 +398,91 @@ export default {
                     }
                 }
             }).then(() => {
-                this.$message.success('新建成功')
+                this.$message.success('重命名文件夹成功')
             }).catch()
         },
-        delFolder(item, index) {
-            
+        delFile(item) {
+            this.$confirm('确定将文件删除吗？', '提示',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    DelDocument({
+                        document_id: item.document_id
+                    })
+                        .then(async res => {
+                            this.$message.success('删除文件成功')
+                            this.init()
+                        })
+                })
+        },
+        retrieveFile(item) {
+            this.$confirm('确定将文件移到回收站吗？', '提示',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    RetrieveDocument({
+                        document_id: item.document_id
+                    })
+                        .then(async res => {
+                            this.$message.success('移动文件成功')
+                            this.init()
+                        })
+                })
+        },
+        delFolder(item) {
+            this.$confirm('删除该文件夹，其中的文件将转移到根目录下，确定要删除吗？', '提示',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    DelFolder({
+                        folder_id: item.folder_id
+                    })
+                        .then(async res => {
+                            this.$message.success('删除文件夹成功')
+                            this.getFolder(this.pid, false)
+                        })
+                })
+        },
+        openFolder(item) {
+            let data = cloneDeep(item)
+            data.index = this.tree.length
+            this.prev = data
+            this.tree.push(data)
+            this.pid = item.folder_id
+            this.is_sys = item.is_sys
+            this.getFolder(this.pid, true)
+        },
+        backFolder(item) {
+            let data = cloneDeep(item), count = this.tree.length - data.index
+            this.tree.splice(item.index, count)
+            this.pid = data.pid
+            if (this.pid == '0') this.prev = {}
+            else this.prev = this.tree[item.index - 1]
+            this.is_sys = item.is_sys
+            this.getFolder(this.pid, true)
+        },
+        toFolder(item) {
+            let data = cloneDeep(item), count = this.tree.length - data.index + 1
+            this.tree.splice(item.index + 1, count)
+            this.pid = data.folder_id
+            if (this.pid == '0') this.prev = {}
+            else this.prev = this.tree[item.index]
+            this.is_sys = item.is_sys
+            this.getFolder(this.pid, true)
+        },
+        getFile(item) {
+            this.form = cloneDeep(item)
+            this.form.size = this.bytesToSize(this.form.size)
+            this.Visible = true
         }
     }
 }
@@ -400,7 +552,7 @@ export default {
 
 .el-checkbox {
     width: calc(100% - 10px);
-    padding-bottom: 5px;
+    height: 19px;
 }
 
 .el-checkbox >>> .el-checkbox__input {
@@ -412,7 +564,12 @@ export default {
 }
 
 .el-checkbox >>> .el-checkbox__label {
-    padding-left: 5px;
+    padding-left: 10px;
+    width: calc(100% - 20px);
+}
+
+.el-form--inline .el-form-item:last-child {
+    margin-right: 0;
 }
 </style>
 

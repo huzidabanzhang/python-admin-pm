@@ -90,7 +90,7 @@
             <el-form
                 label-width="80px"
                 :model="form"
-                size="medium"
+                size="smaill"
                 :rules="rules"
                 ref="SYSMENU"
             >
@@ -237,7 +237,7 @@
                     align="left"
                 >
                     <template slot-scope="scope">
-                        <el-tag size="medium">{{scope.row.mark}}</el-tag>
+                        <el-tag size="smaill">{{scope.row.mark}}</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -247,12 +247,12 @@
                 >
                     <template slot-scope="scope">
                         <el-tag
-                            size="medium"
+                            size="smaill"
                             type="success"
                             v-if="!scope.row.is_disabled"
                         >启用</el-tag>
                         <el-tag
-                            size="medium"
+                            size="smaill"
                             type="info"
                             v-else
                         >禁用</el-tag>
@@ -354,11 +354,7 @@ export default {
             }
         },
         handleInitParent(type) {
-            this.$message({
-                message: type == 1 ? '菜单编辑成功' : '菜单创建成功',
-                type: 'success',
-                duration: 3 * 1000
-            })
+            this.$message.success(type == 1 ? '菜单编辑成功' : '菜单创建成功')
             this.formLoad = false
             this.init(true)
         },

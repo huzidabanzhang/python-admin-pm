@@ -185,10 +185,7 @@ export default {
                         })
                 } else {
                     // 登录表单校验失败
-                    this.$message({
-                        message: '用户名、密码或者验证码不能为空',
-                        type: 'error'
-                    })
+                    this.$message.error('用户名、密码或者验证码不能为空')
                 }
             })
         }

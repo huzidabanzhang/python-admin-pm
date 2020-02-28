@@ -156,12 +156,12 @@
             >
                 <template slot-scope="scope">
                     <el-tag
-                        size="medium"
+                        size="smaill"
                         type="primary"
                         v-if="scope.row.cache"
                     >是</el-tag>
                     <el-tag
-                        size="medium"
+                        size="smaill"
                         type="info"
                         v-else
                     >否</el-tag>
@@ -174,12 +174,12 @@
             >
                 <template slot-scope="scope">
                     <el-tag
-                        size="medium"
+                        size="smaill"
                         type="success"
                         v-if="!scope.row.is_disabled"
                     >启用</el-tag>
                     <el-tag
-                        size="medium"
+                        size="smaill"
                         type="info"
                         v-else
                     >禁用</el-tag>
@@ -365,11 +365,7 @@ export default {
             this.centerDialogVisible = true
         },
         lockRoute(keys, is_disabled) {
-            if (keys.length == 0) return this.$message({
-                message: '未选择任何记录',
-                type: 'warning',
-                duration: 3 * 1000
-            })
+            if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm(is_disabled ? '确定要禁用该路由吗' : '确定要启用该路由吗',
                 is_disabled ? '禁用路由' : '启用路由',
@@ -392,11 +388,7 @@ export default {
             })
         },
         delRoute(route_id) {
-            if (route_id.length == 0) return this.$message({
-                message: '未选择任何记录',
-                type: 'warning',
-                duration: 3 * 1000
-            })
+            if (route_id.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm('确定要删除该路由吗', '删除路由',
                 {
@@ -408,11 +400,7 @@ export default {
                     DelRoute({
                         route_id: route_id
                     }).then(async res => {
-                        this.$message({
-                            message: '删除路由成功',
-                            type: 'success',
-                            duration: 3 * 1000
-                        })
+                        this.$message.success('删除路由成功')
                         this.route_id = []
                         this.init()
                     })

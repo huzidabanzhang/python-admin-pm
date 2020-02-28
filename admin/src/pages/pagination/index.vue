@@ -5,7 +5,7 @@
         :current-page="page"
         :page-sizes="pageList"
         :page-size="size"
-        layout="total, sizes, prev, pager, next, jumper"
+        :layout="layout"
         :total="total"
     >
     </el-pagination>
@@ -21,6 +21,12 @@ export default {
             type: Array,
             default: function () {
                 return [20, 50, 100]
+            }
+        },
+        layout: {
+            type: String,
+            default: function () {
+                return "total, sizes, prev, pager, next, jumper"
             }
         }
     },

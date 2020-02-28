@@ -53,7 +53,7 @@
                 label-width="80px"
                 :model="form"
                 :rules="rules"
-                size="medium"
+                size="smaill"
             >
                 <el-form-item
                     label="备份方式"
@@ -76,13 +76,13 @@
             >
                 <el-button
                     @click="centerDialogVisible = false"
-                    size="medium"
+                    size="smaill"
                 >取 消</el-button>
                 <el-button
                     type="primary"
                     @click="exportSql"
                     :loading="loading"
-                    size="medium"
+                    size="smaill"
                 >确 定</el-button>
             </span>
         </el-dialog>
@@ -197,11 +197,7 @@ export default {
         importSql(event) {
             let formData = new FormData(), file = event.target.files
 
-            if (file.length == 0) return this.$message({
-                message: '请选择上传文件',
-                type: 'warning',
-                duration: 3 * 1000
-            })
+            if (file.length == 0) return this.$message.warning('请选择上传文件')
 
             formData.append('document', file[0])
 

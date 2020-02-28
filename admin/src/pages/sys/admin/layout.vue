@@ -154,7 +154,7 @@
             >
                 <template slot-scope="scope">
                     <el-tag
-                        size="medium"
+                        size="smaill"
                         type="primary"
                         v-html="getRoleName(scope.row.role_id)"
                     ></el-tag>
@@ -167,12 +167,12 @@
             >
                 <template slot-scope="scope">
                     <el-tag
-                        size="medium"
+                        size="smaill"
                         type="success"
                         v-if="!scope.row.is_disabled"
                     >启用</el-tag>
                     <el-tag
-                        size="medium"
+                        size="smaill"
                         type="info"
                         v-else
                     >禁用</el-tag>
@@ -434,11 +434,8 @@ export default {
             this.centerDialogVisible = true
         },
         lockAdmin(keys, is_disabled) {
-            if (keys.length == 0) return this.$message({
-                message: '未选择任何记录',
-                type: 'warning',
-                duration: 3 * 1000
-            })
+            if (keys.length == 0) return this.$message.warning('未选择任何记录')
+            
 
             this.$confirm(is_disabled ? '确定要禁用该管理员吗' : '确定要启用该管理员吗',
                 is_disabled ? '禁用管理员' : '启用管理员',
@@ -461,11 +458,7 @@ export default {
             })
         },
         delAdmin(admins) {
-            if (admins.length == 0) return this.$message({
-                message: '未选择任何记录',
-                type: 'warning',
-                duration: 3 * 1000
-            })
+            if (admins.length == 0) this.$message.warning('未选择任何记录')
 
             this.$confirm('确定要删除该管理员吗', '删除管理员',
                 {
@@ -477,11 +470,7 @@ export default {
                     DelAdmin({
                         admins: JSON.stringify(admins)
                     }).then(async res => {
-                        this.$message({
-                            message: '删除管理员成功',
-                            type: 'success',
-                            duration: 3 * 1000
-                        })
+                        this.$message.success('删除管理员成功')
                         this.admins = []
                         this.init()
                     })

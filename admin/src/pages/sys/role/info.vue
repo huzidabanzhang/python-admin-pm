@@ -11,7 +11,7 @@
             label-width="80px"
             :model="form"
             :rules="rules"
-            size="medium"
+            size="smaill"
             v-loading="loading"
         >
             <el-form-item
@@ -59,19 +59,19 @@
                 type="danger"
                 icon="el-icon-delete"
                 @click="delRole"
-                size="medium"
+                size="smaill"
                 style="float: left;"
                 v-if="params.role_id"
             ></el-button>
             <el-button
                 @click="handleClosed"
-                size="medium"
+                size="smaill"
             >取 消</el-button>
             <el-button
                 type="primary"
                 @click="handelInfo"
                 :loading="isSubmit"
-                size="medium"
+                size="smaill"
             >确 定</el-button>
         </span>
     </el-dialog>
@@ -167,17 +167,9 @@ export default {
                 return i.type == 'MENU' ? menu_id.push(i.menu_id) : interface_id.push(i.menu_id)
             })
 
-            if (this.form.name == '') return this.$message({
-                message: '请输入角色名',
-                type: 'error',
-                duration: 3 * 1000
-            })
+            if (this.form.name == '') return this.$message.error('请输入角色名')
 
-            if (this.form.mark == '') return this.$message({
-                message: '请输入标识',
-                type: 'error',
-                duration: 3 * 1000
-            })
+            if (this.form.mark == '') this.$message.error('请输入标识')
 
             this.isSubmit = true
             let params = {
@@ -207,11 +199,7 @@ export default {
             }
         },
         handleInitParent(type) {
-            this.$message({
-                message: type == 1 ? '角色编辑成功' : '角色创建成功',
-                type: 'success',
-                duration: 3 * 1000
-            })
+            this.$message.success(type == 1 ? '角色编辑成功' : '角色创建成功')
             this.$emit('callback', true)
             this.isSubmit = false
         },
@@ -229,11 +217,7 @@ export default {
                     DelRole({
                         role_id: [this.params.role_id]
                     }).then(async res => {
-                        this.$message({
-                            message: '删除角色成功',
-                            type: 'success',
-                            duration: 3 * 1000
-                        })
+                        this.$message.success('删除角色成功')
                         this.$emit('callback', true)
                     })
                 })

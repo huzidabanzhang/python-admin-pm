@@ -138,7 +138,7 @@ export default {
             }
             formData.append('admin_id', util.cookies.get('uuid'))
             formData.append('folder_id', this.folder_id)
-            formData.append('type', 1)
+            formData.append('status', 1)
 
             if (formData.get('uid') == null) return this.$message.error('请选择上传文件')
 

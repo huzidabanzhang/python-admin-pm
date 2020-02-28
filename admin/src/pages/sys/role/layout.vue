@@ -215,11 +215,7 @@ export default {
             this.centerDialogVisible = true
         },
         lockRole(keys, is_disabled) {
-            if (keys.length == 0) return this.$message({
-                message: '未选择任何记录',
-                type: 'warning',
-                duration: 3 * 1000
-            })
+            if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm(is_disabled ? '确定要禁用该角色吗' : '确定要启用该角色吗',
                 is_disabled ? '禁用角色' : '启用角色',
@@ -253,20 +249,12 @@ export default {
                         DelRole({
                             role_id: [this.select.role_id]
                         }).then(async res => {
-                            this.$message({
-                                message: '删除角色成功',
-                                type: 'success',
-                                duration: 3 * 1000
-                            })
+                            this.$message.success('删除角色成功')
                             this.select = {role_id: null}
                             this.init()
                         })
                     })
-            } else this.$message({
-                message: '未选择任何记录',
-                type: 'warning',
-                duration: 3 * 1000
-            })
+            } else this.$message.warning('未选择任何记录')
         }
     }
 }

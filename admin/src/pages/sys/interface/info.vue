@@ -12,7 +12,7 @@
             ref="adminForm"
             :model="form"
             :rules="rules"
-            size="medium"
+            size="smaill"
             v-loading="loading"
         >
             <el-form-item
@@ -83,13 +83,13 @@
         >
             <el-button
                 @click="handleClosed"
-                size="medium"
+                size="smaill"
             >取 消</el-button>
             <el-button
                 type="primary"
                 @click="handelInfo"
                 :loading="isSubmit"
-                size="medium"
+                size="smaill"
             >确 定</el-button>
         </span>
     </el-dialog>
@@ -209,11 +209,7 @@ export default {
             }
         },
         handleInitParent(type) {
-            this.$message({
-                message: type == 1 ? '接口编辑成功' : '接口创建成功',
-                type: 'success',
-                duration: 3 * 1000
-            })
+            this.$message.success(type == 1 ? '接口编辑成功' : '接口创建成功')
             this.$emit('callback', true)
             this.isSubmit = false
         },
