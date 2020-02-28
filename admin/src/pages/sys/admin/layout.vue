@@ -458,7 +458,7 @@ export default {
             })
         },
         delAdmin(admins) {
-            if (admins.length == 0) this.$message.warning('未选择任何记录')
+            if (admins.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm('确定要删除该管理员吗', '删除管理员',
                 {

@@ -6,11 +6,12 @@
                 size="mini"
                 style="float: left;"
                 circle
-                v-if="pid != '0'"
+                v-if="pid != '0' && !isDel"
                 @click="backFolder(prev)"
             ><i class="el-icon-back"></i></el-button>
 
             <el-breadcrumb
+                v-if="!isDel"
                 separator-class="el-icon-arrow-right"
                 style="float: left;    
                     height: 30px;
@@ -25,7 +26,52 @@
                 size="mini"
                 style="float: right;"
             >
-                <el-form-item>
+                <el-form-item v-if="!isDel">
+                    <el-button
+                        type="danger"
+                        size="mini"
+                        @click="changeFolder(true)"
+                    >回收站
+                    </el-button>
+                </el-form-item>
+
+                <el-form-item v-if="isDel">
+                    <el-button
+                        size="mini"
+                        @click="changeFolder(false)"
+                    >文件夹
+                    </el-button>
+                </el-form-item>
+
+                <el-form-item v-if="isDel">
+                    <el-dropdown
+                        size="mini"
+                        split-button
+                        @command="handleCommand"
+                    >
+                        <i class="el-icon-setting"></i>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="3">还原</el-dropdown-item>
+                            <el-dropdown-item command="2">删除</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </el-form-item>
+
+                <el-form-item v-if="!isDel">
+                    <el-dropdown
+                        size="mini"
+                        split-button
+                        @command="handleCommand"
+                    >
+                        <i class="el-icon-setting"></i>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="1">移动回收站</el-dropdown-item>
+                            <el-dropdown-item command="2">删除</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </el-form-item>
+
+                <el-form-item v-if="!isDel">
                     <el-button
                         type="primary"
                         size="mini"
@@ -35,7 +81,7 @@
                     </el-button>
                 </el-form-item>
 
-                <el-form-item>
+                <el-form-item v-if="!isDel">
                     <el-button
                         type="primary"
                         size="mini"
@@ -46,110 +92,119 @@
         </div>
 
         <el-row v-loading="loading">
-            <el-col
-                :xs="6"
-                :sm="6"
-                :md="6"
-                :lg="4"
-                :xl="3"
-                v-for="(item, index) in data"
-                :key="index"
-            >
-                <el-card
-                    :body-style="{ padding: '10px' }"
-                    v-if="item.is_folder"
+            <el-checkbox-group v-model="checked">
+                <el-col
+                    :xs="6"
+                    :sm="6"
+                    :md="6"
+                    :lg="4"
+                    :xl="3"
+                    v-for="(item, index) in data"
+                    :key="index"
                 >
-                    <div>
-                        <div
-                            class="name"
-                            :title="item.name"
-                        >{{item.name}}</div>
-                        <el-dropdown
-                            class="button"
-                            trigger="click"
-                            size="mini"
-                            placement="bottom-start"
-                        >
-                            <span class="el-dropdown-link">
-                                <i class="fa fa-ellipsis-v"></i>
-                            </span>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item @click.native="openFolder(item)">打开文件夹</el-dropdown-item>
-                                <el-dropdown-item
-                                    @click.native="setFolder(item)"
-                                    v-if="user && user.mark == mark"
-                                >重命名</el-dropdown-item>
-                                <el-dropdown-item
-                                    @click.native="delFolder(item)"
-                                    v-if="user && user.mark == mark"
-                                >删除</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </el-dropdown>
-                    </div>
-                    <div class="el-image image">
-                        <div class="image-slot">
-                            <img src="./image/folder.png">
-                        </div>
-                    </div>
-                </el-card>
-
-                <el-card
-                    :body-style="{ padding: '10px' }"
-                    v-else
-                >
-                    <div>
-                        <el-checkbox v-model="index">
+                    <el-card
+                        :body-style="{ padding: '10px' }"
+                        v-if="item.is_folder"
+                    >
+                        <div>
                             <div
                                 class="name"
                                 :title="item.name"
                             >{{item.name}}</div>
-                        </el-checkbox>
-                        <el-dropdown
-                            class="button"
-                            trigger="click"
-                            size="mini"
-                            placement="bottom-start"
-                        >
-                            <span class="el-dropdown-link">
-                                <i class="fa fa-ellipsis-v"></i>
-                            </span>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item @click.native="retrieveFile(item)">移到回收站</el-dropdown-item>
-                                <el-dropdown-item @click.native="down(item.path, item.name)">下载</el-dropdown-item>
-                                <el-dropdown-item @click.native="delFile(item)">删除</el-dropdown-item>
-                                <el-dropdown-item @click.native="getFile(item)">属性</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </el-dropdown>
-                    </div>
-                    <el-image
-                        lazy
-                        class="image"
-                        :src="src + item.path"
-                        fit="contain"
-                        v-if="item.status == 1"
-                        :preview-src-list="[src + item.path]"
-                    >
-                        <div
-                            slot="error"
-                            class="image-slot"
-                        >
-                            <i class="el-icon-picture-outline"></i>
+                            <el-dropdown
+                                class="button"
+                                trigger="click"
+                                size="mini"
+                                placement="bottom-start"
+                            >
+                                <span class="el-dropdown-link">
+                                    <i class="fa fa-ellipsis-v"></i>
+                                </span>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item @click.native="openFolder(item)">打开文件夹</el-dropdown-item>
+                                    <el-dropdown-item
+                                        @click.native="setFolder(item)"
+                                        v-if="user && user.mark == mark"
+                                    >重命名</el-dropdown-item>
+                                    <el-dropdown-item
+                                        @click.native="delFolder(item)"
+                                        v-if="user && user.mark == mark"
+                                    >删除</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
                         </div>
-                    </el-image>
-                    <div
-                        class="el-image image"
+                        <div class="el-image image">
+                            <div class="image-slot">
+                                <img src="./image/folder.png">
+                            </div>
+                        </div>
+                    </el-card>
+
+                    <el-card
+                        :body-style="{ padding: '10px' }"
                         v-else
                     >
-                        <div class="image-slot">
-                            <img src="./image/file.png">
+                        <div>
+                            <el-checkbox :label="item.document_id">
+                                <div
+                                    class="name"
+                                    :title="item.name"
+                                >{{item.name}}</div>
+                            </el-checkbox>
+                            <el-dropdown
+                                class="button"
+                                trigger="click"
+                                size="mini"
+                                placement="bottom-start"
+                            >
+                                <span class="el-dropdown-link">
+                                    <i class="fa fa-ellipsis-v"></i>
+                                </span>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item
+                                        v-if="!isDel"
+                                        @click.native="retrieveFile([item.document_id], true)"
+                                    >移到回收站</el-dropdown-item>
+                                    <el-dropdown-item
+                                        v-if="isDel"
+                                        @click.native="retrieveFile([item.document_id], false)"
+                                    >还原</el-dropdown-item>
+                                    <el-dropdown-item @click.native="down(item.path, item.name)">下载</el-dropdown-item>
+                                    <el-dropdown-item @click.native="delFile([item.document_id])">删除</el-dropdown-item>
+                                    <el-dropdown-item @click.native="getFile(item)">属性</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
                         </div>
-                    </div>
-                </el-card>
-            </el-col>
-            <el-col
-                class="empty"
-                v-if="data.length == 0"
-            >暂无数据</el-col>
+                        <el-image
+                            lazy
+                            class="image"
+                            :src="src + item.path"
+                            fit="scale-down"
+                            v-if="item.status == 1"
+                            :preview-src-list="[src + item.path]"
+                        >
+                            <div
+                                slot="error"
+                                class="image-slot"
+                            >
+                                <i class="el-icon-picture-outline"></i>
+                            </div>
+                        </el-image>
+                        <div
+                            class="el-image image"
+                            v-else
+                        >
+                            <div class="image-slot">
+                                <img src="./image/file.png">
+                            </div>
+                        </div>
+                    </el-card>
+                </el-col>
+                <el-col
+                    class="empty"
+                    v-if="data.length == 0"
+                >暂无数据</el-col>
+            </el-checkbox-group>
         </el-row>
 
         <Pagination
@@ -268,6 +323,7 @@ export default {
             this.loading = true
             QueryDocumentByParam(params)
                 .then(async res => {
+                    this.checked = []
                     this.total = res.total
                     for (let i = 0; i < this.data.length; i++) {
                         if (this.data[i].is_folder == false) {
@@ -285,6 +341,14 @@ export default {
                 .catch(() => {
                     this.loading = false
                 })
+        },
+        changeFolder(isDel) {
+            this.isDel = isDel
+            if (isDel) {
+                this.data = []
+                this.page = 1
+                this.init()
+            } else this.getFolder(this.pid, true)
         },
         getFolder(pid, isInit) {
             this.loading = true
@@ -401,7 +465,7 @@ export default {
                 this.$message.success('重命名文件夹成功')
             }).catch()
         },
-        delFile(item) {
+        delFile(id) {
             this.$confirm('确定将文件删除吗？', '提示',
                 {
                     confirmButtonText: '确定',
@@ -410,7 +474,7 @@ export default {
                 })
                 .then(() => {
                     DelDocument({
-                        document_id: item.document_id
+                        document_id: id
                     })
                         .then(async res => {
                             this.$message.success('删除文件成功')
@@ -418,8 +482,8 @@ export default {
                         })
                 })
         },
-        retrieveFile(item) {
-            this.$confirm('确定将文件移到回收站吗？', '提示',
+        retrieveFile(id, deleted) {
+            this.$confirm(deleted ? '确定将文件移到回收站吗？' : '确定还原文件吗？', '提示',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -427,7 +491,8 @@ export default {
                 })
                 .then(() => {
                     RetrieveDocument({
-                        document_id: item.document_id
+                        document_id: id,
+                        deleted: deleted
                     })
                         .then(async res => {
                             this.$message.success('移动文件成功')
@@ -435,7 +500,7 @@ export default {
                         })
                 })
         },
-        delFolder(item) {
+        delFolder(id) {
             this.$confirm('删除该文件夹，其中的文件将转移到根目录下，确定要删除吗？', '提示',
                 {
                     confirmButtonText: '确定',
@@ -444,13 +509,27 @@ export default {
                 })
                 .then(() => {
                     DelFolder({
-                        folder_id: item.folder_id
+                        folder_id: id
                     })
                         .then(async res => {
                             this.$message.success('删除文件夹成功')
                             this.getFolder(this.pid, false)
                         })
                 })
+        },
+        handleCommand(command) {
+            if (this.checked.length == 0) return this.$message.warning('未选择任何记录')
+            switch (command) {
+                case '1':
+                    this.retrieveFile(this.checked, true)
+                    break;
+                case '2':
+                    this.delFile(this.checked)
+                    break;
+                case '3':
+                    this.retrieveFile(this.checked, false)
+                    break;
+            }
         },
         openFolder(item) {
             let data = cloneDeep(item)
@@ -516,7 +595,7 @@ export default {
 .image {
     width: 100%;
     display: block;
-    min-height: 100px;
+    height: 120px;
 }
 
 .clearfix:before,
@@ -586,9 +665,5 @@ export default {
 
 .el-card {
     margin: 0 5px 10px 5px;
-}
-
-.el-image__inner {
-    height: 120px;
 }
 </style>
