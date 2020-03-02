@@ -66,12 +66,10 @@ export default {
             del: 'del_menu',
             set: 'set_menu',
             lock: 'lock_menu',
-            list: 'get_menu_list',
             inter: 'get_menu_to_interface'
         },
         route: {
             add: 'add_router',
-            list: 'get_router_list',
             set: 'set_router',
             lock: 'lock_router',
             del: 'del_router',
@@ -84,7 +82,6 @@ export default {
         },
         file: {
             add: 'add_document',
-            list: 'get_document_list',
             down: 'down_document',
             del: 'del_document',
             retrieve: 'retrieve_document'
@@ -92,12 +89,10 @@ export default {
         folder: {
             add: 'create_folder',
             del: 'del_folder',
-            set: 'modify_folder',
-            list: 'query_folder'
+            set: 'modify_folder'
         },
         admin: {
             add: 'add_admin',
-            list: 'get_admin_list',
             set: 'set_admin',
             lock: 'lock_admin',
             del: 'del_admin',
@@ -107,13 +102,9 @@ export default {
         },
         role: {
             add: 'add_role',
-            list: 'get_role_list',
             set: 'set_role',
             lock: 'lock_role',
             del: 'del_role'
-        },
-        log: {
-            list: 'get_log_list'
         },
         base: {
             export: 'export_sql',

@@ -21,11 +21,6 @@
                 @click="init"
                 circle
                 title="刷新"
-                :disabled="mark_btn.list"
-                v-premissions="{
-                    mark: mark.menu.list,
-                    type: 'list'
-                }"
             ></el-button>
         </div>
 
@@ -302,7 +297,6 @@ export default {
             dialogLoading: false,
             mark: setting.mark,
             mark_btn: {
-                list: false,
                 add: false,
                 set: false,
                 inter: false,

@@ -1,7 +1,6 @@
 <template>
     <Docment
         :visible="visible"
-        :type="1"
     ></Docment>
 </template>
 

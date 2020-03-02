@@ -64,11 +64,6 @@
                 @click="init"
                 circle
                 title="刷新"
-                :disabled="mark_btn.list"
-                v-premissions="{
-                    mark: mark.route.list,
-                    type: 'list'
-                }"
             ></el-button>
 
             <el-form
@@ -99,11 +94,6 @@
                         size="mini"
                         type="primary"
                         @click="changeLock"
-                        :disabled="mark_btn.list"
-                        v-premissions="{
-                            mark: mark.route.list,
-                            type: 'list'
-                        }"
                     >搜索</el-button>
                 </el-form-item>
             </el-form>
@@ -287,7 +277,6 @@ export default {
             route_id: [],
             mark: setting.mark,
             mark_btn: {
-                list: false,
                 add: false,
                 set: false,
                 del: false,

@@ -8,7 +8,7 @@
         @closed="handleClosed"
     >
         <el-form
-            label-width="80px"
+            label-width="100px"
             ref="adminForm"
             :model="form"
             :rules="rules"
@@ -54,7 +54,7 @@
                 label="标识"
                 prop="mark"
             >
-                <el-input 
+                <el-input
                     v-model="form.mark"
                     :disabled="form.interface_id != undefined"
                 ></el-input>
@@ -75,6 +75,12 @@
                     >
                     </el-option>
                 </el-select>
+            </el-form-item>
+            <el-form-item
+                label="不允许禁用"
+                prop="not_allow"
+            >
+                <el-switch v-model="form.not_allow" :disabled="form.interface_id != undefined"></el-switch>
             </el-form-item>
         </el-form>
         <span
@@ -116,7 +122,8 @@ export default {
                 method: 'GET',
                 description: '',
                 mark: '',
-                menu_id: ''
+                menu_id: '',
+                not_allow: false
             },
             rules: {
                 name: [
@@ -136,6 +143,9 @@ export default {
                 ],
                 menu_id: [
                     { required: true, message: '请选择所属菜单', trigger: 'change' }
+                ],
+                not_allow: [
+                    { required: true, message: '请选择', trigger: 'change' }
                 ]
             },
             isSubmit: false,
@@ -187,7 +197,7 @@ export default {
                 ModifyInterface(params)
                     .then(async res => {
                         interfaces.map((i, index) => {
-                            if (i.interface_id == params.interface_id) 
+                            if (i.interface_id == params.interface_id)
                                 return interfaces[index] = params
                         })
                         util.initInterface(interfaces)

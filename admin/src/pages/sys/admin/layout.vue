@@ -64,11 +64,6 @@
                 @click="init"
                 circle
                 title="刷新"
-                :disabled="mark_btn.list"
-                v-premissions="{
-                    mark: mark.admin.list,
-                    type: 'list'
-                }"
             ></el-button>
 
             <el-form
@@ -116,11 +111,6 @@
                         size="mini"
                         type="primary"
                         @click="changeAdmin"
-                        :disabled="mark_btn.list"
-                        v-premissions="{
-                            mark: mark.admin.list,
-                            type: 'list'
-                        }"
                     >搜索</el-button>
                 </el-form-item>
             </el-form>
@@ -272,6 +262,7 @@
             :title="title"
             :params="params"
             :role="roleParams"
+            :isTab="false"
             :centerDialogVisible="centerDialogVisible"
             @handleClose="handleClose"
             @callback="init"
@@ -312,7 +303,6 @@ export default {
             admins: [],
             mark: setting.mark,
             mark_btn: {
-                list: false,
                 add: false,
                 set: false,
                 del: false,

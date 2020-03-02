@@ -43,7 +43,7 @@
                 label="用户名"
                 prop="username"
             >
-                <el-input v-model="form.username"></el-input>
+                <el-input v-model="form.username" :disabled="form.admin_id != ''"></el-input>
             </el-form-item>
             <el-form-item
                 label="密码"
@@ -86,6 +86,7 @@
             <el-form-item
                 label="角色"
                 prop="role_id"
+                v-if="isTab == false"
             >
                 <el-select
                     v-model="form.role_id"
@@ -131,7 +132,8 @@ export default {
         title: String,
         params: Object,
         role: Array,
-        centerDialogVisible: Boolean
+        centerDialogVisible: Boolean,
+        isTab: Boolean
     },
     data() {
         return {
@@ -209,7 +211,12 @@ export default {
             if (this.form.admin_id) {
                 ModifyAdmin(params)
                     .then(async res => {
-                        this.handleInitParent(1)
+                        if (res.is_self == true) {
+                            util.updateUserInfo(res)
+                            this.$message.success('管理员编辑成功')
+                            this.$emit('callback', res.user)
+                            this.isSubmit = false
+                        } else this.handleInitParent(1)
                     })
                     .catch(() => {
                         this.isSubmit = false

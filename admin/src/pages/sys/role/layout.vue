@@ -35,11 +35,6 @@
                 @click="init"
                 circle
                 title="刷新"
-                :disabled="mark_btn.list"
-                v-premissions="{
-                    mark: mark.role.list,
-                    type: 'list'
-                }"
             ></el-button>
 
             <el-form
@@ -70,11 +65,6 @@
                         size="mini"
                         type="primary"
                         @click="changeStatus"
-                        :disabled="mark_btn.list"
-                        v-premissions="{
-                            mark: mark.role.list,
-                            type: 'list'
-                        }"
                     >搜索</el-button>
                 </el-form-item>
             </el-form>
@@ -133,7 +123,6 @@ export default {
             centerDialogVisible: false,
             mark: setting.mark,
             mark_btn: {
-                list: false,
                 add: false,
                 set: false,
                 del: true,

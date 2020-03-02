@@ -198,7 +198,7 @@
                     ></el-button>
                     <el-button
                         type="info"
-                        v-if="!scope.row.is_disabled && isSelect(scope.row)"
+                        v-if="!scope.row.is_disabled && isSelect(scope.row) && !scope.row.not_allow"
                         icon="el-icon-close"
                         size="mini"
                         circle
@@ -206,7 +206,7 @@
                         title="禁用"
                     ></el-button>
                     <el-button
-                        v-if="isSelect(scope.row) && scope.row.is_disabled"
+                        v-if="isSelect(scope.row) && scope.row.is_disabled && !scope.row.not_allow"
                         type="success"
                         icon="el-icon-check"
                         size="mini"
@@ -352,7 +352,8 @@ export default {
                 method: 'GET',
                 description: '',
                 mark: '',
-                menu_id: ''
+                menu_id: '',
+                not_allow: false
             }
             this.centerDialogVisible = true
         },

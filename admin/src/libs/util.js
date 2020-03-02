@@ -162,11 +162,31 @@ util.initInterface = function (f) {
 
 /**
  * @description 获取菜单树
- * @param {Object} params 数据
  */
 util.getMenuTree = function () {
     let menus = cloneDeep(store.getters['d2admin/user/menus'])
     return util.dealData(menus, 1)
+}
+
+
+/**
+ * @description 更新个人信息
+ * @param {Object} u 数据
+ */
+util.updateUserInfo = function (u) {
+    let info = cloneDeep(store.getters['d2admin/user/info'])
+    
+    store.dispatch('d2admin/user/set', {}, { root: true })
+
+    util.cookies.set('token', u.token)
+    util.cookies.set('password', u.user.password)
+
+    store.dispatch('d2admin/user/set', {
+        info: u.user,
+        menus: info.menus,
+        routes: info.routes,
+        interfaces: info.interfaces
+    }, { root: true })
 }
 
 /**

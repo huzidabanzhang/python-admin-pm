@@ -3,6 +3,8 @@ const VueFilenameInjector = require('./tools/vue-filename-injector')
 const ThemeColorReplacer = require('webpack-theme-color-replacer')
 const forElementUI = require('webpack-theme-color-replacer/forElementUI')
 
+const CompressionPlugin = require('compression-webpack-plugin')
+
 // 拼接路径
 const resolve = dir => require('path').join(__dirname, dir)
 
@@ -33,6 +35,7 @@ module.exports = {
             }
         }
     },
+    productionSourceMap: false,
     css: {
         loaderOptions: {
             // 设置 scss 公用变量文件
@@ -48,6 +51,18 @@ module.exports = {
             config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
             config.optimization.minimizer[0].options.terserOptions.compress.drop_debugger = true
             config.optimization.minimizer[0].options.terserOptions.compress.pure_funcs = ['console.log']
+
+            return {
+                plugins: [
+                    new CompressionPlugin({
+                        algorithm: 'gzip',
+                        test: /\.(js|css)$/,// 匹配文件名
+                        threshold: 10240, // 对超过10k的数据压缩
+                        deleteOriginalAssets: false, // 不删除源文件
+                        minRatio: 0.8 // 压缩比
+                    })
+                ]
+            }
         }
     },
     // 默认设置: https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-service/lib/config/base.js
