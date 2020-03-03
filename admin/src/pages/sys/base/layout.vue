@@ -21,7 +21,7 @@
                 <el-button
                     size="mini"
                     @click="importBase"
-                    v-if="info && info.mark == admin.mark"
+                    v-if="isMark()"
                 >导入数据库</el-button>
             </el-form-item>
             <el-form-item>
@@ -29,7 +29,7 @@
                     size="mini"
                     type="danger"
                     @click="initBase"
-                    v-if="info && info.mark == admin.mark"
+                    v-if="isMark()"
                 >重置数据库</el-button>
             </el-form-item>
         </el-form>
@@ -98,7 +98,7 @@ export default {
     name: 'sys-base',
     data() {
         return {
-            admin: setting.SYS_ADMIN,
+            admin: setting.SYS_ADMIN.mark,
             mark: setting.mark,
             mark_btn: {
                 export: false
@@ -143,6 +143,11 @@ export default {
                             loadingInstance.close()
                         })
                 })
+        },
+        isMark() {
+            if (this.user && Object.keys(this.user).length > 0) 
+                return this.user.mark == this.admin
+            return false
         },
         exportBase() {
             this.form.type = 1
