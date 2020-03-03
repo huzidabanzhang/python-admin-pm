@@ -38,12 +38,14 @@ function ResetRoute(to, next) {
             util.initMenu(m, 1, true)
             
             if (to.path != '/login') RouteFresh = false
-            next({ ...to, replace: true })
+            if (process.env.NODE_ENV !== 'development') next()
+            else  next({ ...to, replace: true})
         }).catch(err => {
             console.log(err)
         })
-        return true
     }
+    
+    next()
 }
 
 /**
@@ -65,9 +67,8 @@ router.beforeEach(async (to, from, next) => {
         // 请根据自身业务需要修改
         const token = util.cookies.get('token')
         const user_info = store.getters['d2admin/user/info']
-        if (token && token !== 'undefined' && JSON.stringify(user_info) != '{}') {
+        if (token && token != 'undefined' && Object.keys(user_info).length > 0) {
             if (to.path == '/index') RouteFresh = true
-            ResetRoute(to, next)
             if (to.matched.some(r => r.meta.is_disabled == true )) { 
                 next({
                     name: 'page403',
@@ -75,7 +76,7 @@ router.beforeEach(async (to, from, next) => {
                         redirect: to.fullPath
                     }
                 })
-            } else next()
+            } else ResetRoute(to, next)
         } else {
             // 没有登录的时候跳转到登录界面
             // 携带上登陆成功之后需要跳转的页面完整路径
@@ -89,9 +90,8 @@ router.beforeEach(async (to, from, next) => {
             NProgress.done()
         }
     } else {
-        ResetRoute(to, next)
         // 不需要身份校验 直接通过
-        next()
+        ResetRoute(to, next)
     }
 })
 

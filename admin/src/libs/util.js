@@ -89,7 +89,7 @@ util.initRoute = function (r, type, isAll = false) {
         })
         let info = store.getters['d2admin/user/info']
         store.dispatch('d2admin/user/set', {
-            info: info.info,
+            user: info.user,
             menus: info.menus,
             routes: r,
             interfaces: info.interfaces
@@ -106,28 +106,14 @@ let getMenuInfo = (params) => {
     }
 }
 
-let getPowerMenu = (menu, data) => {
-    for (let i = 0; i < menu.length; i++) {
-        if (menu[i].is_disabled == true) {
-            menu.splice(i)
-            i--
-            continue
-        }
-
-        data.push(menu[i])
-        if (menu[i].children) {
-            data.children = []
-            getMenuInfo(menu[i], data.children)
-        }
-    } 
-}
-
 /**
  * @description 动态加载菜单
  * @param {Object} m 菜单
  */
 util.initMenu = function (m, type, isAll = false) {
-    let data = cloneDeep(m), menus = [], menu = getPowerMenu(util.dealData(data, 3), menus)
+    let data = cloneDeep(m).filter(i => {
+        return !i.is_disabled
+    }), menus = util.dealData(data, 3)
     store.commit('d2admin/menu/asideSet', menus)
     if (isAll && type != 1) {
         Notification({
@@ -138,7 +124,7 @@ util.initMenu = function (m, type, isAll = false) {
         })
         let info = store.getters['d2admin/user/info']
         store.dispatch('d2admin/user/set', {
-            info: info.info,
+            user: info.user,
             menus: m,
             routes: info.routes,
             interfaces: info.interfaces
@@ -153,7 +139,7 @@ util.initMenu = function (m, type, isAll = false) {
 util.initInterface = function (f) {
     let info = store.getters['d2admin/user/info']
     store.dispatch('d2admin/user/set', {
-        info: info.info,
+        user: info.user,
         menus: info.menus,
         routes: info.routes,
         interfaces: f
@@ -182,7 +168,7 @@ util.updateUserInfo = function (u) {
     util.cookies.set('password', u.user.password)
 
     store.dispatch('d2admin/user/set', {
-        info: u.user,
+        user: u.user,
         menus: info.menus,
         routes: info.routes,
         interfaces: info.interfaces

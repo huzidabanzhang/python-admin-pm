@@ -54,6 +54,7 @@ export default {
     transition: {
         active: true
     },
+    hidden_menu: ['system', 'system_menu'],
     // 按钮接口标识
     lock_interface: ['lock_interface', 'del_interface', 'get_interface_list'],
     SYS_ADMIN: {

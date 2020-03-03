@@ -159,7 +159,7 @@
                         }"
                     >关联接口</el-button>
                     <el-button 
-                        v-if="form.is_disabled == false"
+                        v-if="form.is_disabled == false && isHidden(form.mark)"
                         type="info" 
                         icon="el-icon-close"
                         @click="lockMenu(form.menu_id, true)"
@@ -170,7 +170,7 @@
                         }"
                     >禁用</el-button>
                     <el-button
-                        v-else
+                        v-if="form.is_disabled == true && isHidden(form.mark)"
                         type="success" 
                         icon="el-icon-check"
                         @click="lockMenu(form.menu_id, false)"
@@ -181,6 +181,7 @@
                         }"
                     >启用</el-button>
                     <el-button 
+                        v-if="isHidden(form.mark)"
                         type="danger"
                         icon="el-icon-delete"
                         @click="delMenu(form.menu_id)"
@@ -325,6 +326,11 @@ export default {
                 .catch(() => {
                     this.loading = false
                 })
+        },
+        isHidden(mark) {
+            return !setting.hidden_menu.some((i) => {
+                return i == mark
+            })
         },
         submit() {
             this.formLoad = true
