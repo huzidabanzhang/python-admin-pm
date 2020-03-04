@@ -190,19 +190,20 @@ export default {
         },
         editRole(params) {
             let data = this.$store.getters['d2admin/user/interfaces']
-            if (data == undefined || data.length == 0) this.mark_btn.set = true
+
+            if (params.mark == setting.SYS_ADMIN.mark) this.btn_submit = true
             else {
-                if (!this.mark_btn.set) {
-                    let set = data.filter((i) => {
-                        return i.mark == this.mark.role.set
-                    })
-                    if (set.length > 0) this.mark_btn.set = set[0].is_disabled
+                if (data == undefined || data.length == 0) this.mark_btn.set = true
+                else {
+                    if (!this.mark_btn.set) {
+                        let set = data.filter((i) => {
+                            return i.mark == this.mark.role.set
+                        })
+                        if (set.length > 0) this.mark_btn.set = set[0].is_disabled
+                    }
                 }
+                this.btn_submit = this.mark_btn.set
             }
-
-            if (params.mark == setting.SYS_ADMIN.mark) this.mark_btn.set = true
-
-            this.btn_submit = this.mark_btn.set
             this.title = '编辑角色'
             this.params = params
             this.centerDialogVisible = true

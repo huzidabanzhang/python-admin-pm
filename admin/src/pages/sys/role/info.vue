@@ -37,6 +37,7 @@
                     ref="treeMenu"
                     :data="menu"
                     :props="prop"
+                    :default-checked-keys="select"
                     node-key="menu_id"
                     show-checkbox   
                 >
@@ -112,7 +113,8 @@ export default {
                 children: 'children'
             },
             btn_add: this.submit,
-            btn_del: this.del
+            btn_del: this.del,
+            select: []
         }
     },
     watch: {
@@ -145,7 +147,7 @@ export default {
                 .then(async res => {
                     this.dealData(res.data)
                     this.$nextTick(() => {
-                        this.$refs.treeMenu.setCheckedKeys(res.select, false)
+                        this.select = res.select
                     })
                     this.loading = false
                 })
