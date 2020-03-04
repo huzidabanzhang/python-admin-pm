@@ -6,9 +6,8 @@
                 size="mini"
                 icon="el-icon-plus"
                 circle
-                @click="addInterface"
+                @click="addInterface(mark_btn.add)"
                 title="新增"
-                :disabled="mark_btn.add"
                 v-premissions="{
                     mark: mark.interface.add,
                     type: 'add'
@@ -188,9 +187,8 @@
                         icon="el-icon-edit"
                         size="mini"
                         circle
-                        @click.native="editInterface(scope.row)"
+                        @click.native="editInterface(scope.row, mark_btn.set)"
                         title="编辑"
-                        :disabled="mark_btn.set"
                         v-premissions="{
                             mark: mark.interface.set,
                             type: 'set'
@@ -242,6 +240,7 @@
             ref="roleInfo"
             :title="title"
             :params="params"
+            :submit="btn_submit"
             :centerDialogVisible="centerDialogVisible"
             @handleClose="handleClose"
             @callback="init"
@@ -286,6 +285,7 @@ export default {
             params: {},
             centerDialogVisible: false,
             interface_id: [],
+            btn_submit: false,
             mark: setting.mark,
             mark_btn: {
                 add: false,
@@ -344,7 +344,8 @@ export default {
                 return i == row.mark
             })
         },
-        addInterface() {
+        addInterface(disabled) {
+            this.btn_submit = disabled
             this.title = '新建接口'
             this.params = {
                 name: '',
@@ -357,7 +358,8 @@ export default {
             }
             this.centerDialogVisible = true
         },
-        editInterface(params) {
+        editInterface(params, disabled) {
+            this.btn_submit = disabled
             this.title = '编辑接口'
             this.params = params
             this.centerDialogVisible = true

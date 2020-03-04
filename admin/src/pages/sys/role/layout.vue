@@ -6,9 +6,8 @@
                 size="mini"
                 icon="el-icon-plus"
                 circle
-                @click="addRole"
+                @click="addRole(mark_btn.add)"
                 title="新增"
-                :disabled="mark_btn.add"
                 v-premissions="{
                     mark: mark.role.add,
                     type: 'add'
@@ -92,6 +91,8 @@
             :title="title"
             :params="params"
             :centerDialogVisible="centerDialogVisible"
+            :submit="btn_submit"
+            :del="mark_btn.del"
             @handleClose="handleClose"
             @callback="init"
         ></Info>
@@ -121,6 +122,7 @@ export default {
             },
             params: {},
             centerDialogVisible: false,
+            btn_submit: false,
             mark: setting.mark,
             mark_btn: {
                 add: false,
@@ -159,7 +161,8 @@ export default {
         handleClose() {
             this.centerDialogVisible = false
         },
-        addRole() {
+        addRole(disabled) {
+            this.btn_submit = disabled
             this.title = '新建角色'
             this.params = {
                 name: '',
@@ -187,18 +190,19 @@ export default {
         },
         editRole(params) {
             let data = this.$store.getters['d2admin/user/interfaces']
-            if (data == undefined || data.length == 0)
-                return true
-
-            if (!this.mark_btn.set) {
-                let set = data.filter((i) => {
-                    return i.mark == this.mark.role.set
-                })
-                if (set.length > 0) this.mark_btn.set = set[0].is_disabled
+            if (data == undefined || data.length == 0) this.mark_btn.set = true
+            else {
+                if (!this.mark_btn.set) {
+                    let set = data.filter((i) => {
+                        return i.mark == this.mark.role.set
+                    })
+                    if (set.length > 0) this.mark_btn.set = set[0].is_disabled
+                }
             }
 
-            if (this.mark_btn.set) return true
+            if (params.mark == setting.SYS_ADMIN.mark) this.mark_btn.set = true
 
+            this.btn_submit = this.mark_btn.set
             this.title = '编辑角色'
             this.params = params
             this.centerDialogVisible = true

@@ -5,6 +5,7 @@
         width="40%"
         append-to-body
         destroy-on-close
+        :close-on-click-modal="false"
         @closed="handleClosed"
     >
         <el-form
@@ -43,7 +44,7 @@
                 label="用户名"
                 prop="username"
             >
-                <el-input v-model="form.username" :disabled="form.admin_id != ''"></el-input>
+                <el-input v-model="form.username" :disabled="form.admin_id != undefined"></el-input>
             </el-form-item>
             <el-form-item
                 label="密码"
@@ -116,6 +117,7 @@
                 @click="handelInfo"
                 :loading="isSubmit"
                 size="smaill"
+                :disabled="btn"
             >确 定</el-button>
         </span>
     </el-dialog>
@@ -127,13 +129,15 @@ import { CreateDocument, GetDocument } from '@api/sys.document'
 import util from '@/libs/util.js'
 import defaultImg from '@/assets/3ea6beec64369c2642b92c6726f1epng.png'
 import { cloneDeep } from 'lodash'
+import setting from '@/setting.js'
 export default {
     props: {
         title: String,
         params: Object,
         role: Array,
         centerDialogVisible: Boolean,
-        isTab: Boolean
+        isTab: Boolean,
+        submit: Boolean
     },
     data() {
         return {
@@ -176,7 +180,8 @@ export default {
                 { label: '女', value: 2 }
             ],
             roleOption: this.role,
-            API: '/API/v1/Document/GetDocument/'
+            API: '/API/v1/Document/GetDocument/',
+            btn: this.submit
         }
     },
     watch: {
@@ -184,7 +189,7 @@ export default {
             this.Visible = newVal
             if (newVal) {
                 this.roleOption = this.role.map((i) => {
-                    if (i.mark == 'SYS_ADMIN') i.disabled = true
+                    if (i.mark == setting.SYS_ADMIN.mark) i.disabled = true
                     return i
                 })
                 this.form = cloneDeep(this.params)
@@ -192,6 +197,9 @@ export default {
                     this.avatarUrl = this.API + this.form.avatarUrl
                 } else this.avatarUrl = ''
             }
+        },
+        submit(newVal) {
+            this.btn = newVal
         }
     },
     methods: {

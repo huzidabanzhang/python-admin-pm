@@ -58,7 +58,7 @@ Vue.directive('premissions', function (el, binding, node) {
             if (params.not_disabled == undefined || !params.not_disabled)
                 node.context.mark_btn[params.type] = item[0].is_disabled
         }
-    }
+    } else node.context.mark_btn[params.type] = true
 })
 
 new Vue({

@@ -5,6 +5,7 @@
         width="40%"
         append-to-body
         destroy-on-close
+        :close-on-click-modal="false"
         @closed="handleClosed"
     >
         <el-form
@@ -96,6 +97,7 @@
                 @click="handelInfo"
                 :loading="isSubmit"
                 size="smaill"
+                :disabled="btn"
             >确 定</el-button>
         </span>
     </el-dialog>
@@ -111,7 +113,8 @@ export default {
         title: String,
         params: Object,
         role: Array,
-        centerDialogVisible: Boolean
+        centerDialogVisible: Boolean,
+        submit: Boolean
     },
     data() {
         return {
@@ -156,7 +159,8 @@ export default {
                 { label: 'PUT', value: 'PUT' },
                 { label: 'DELETE', value: 'DELETE' }
             ],
-            menuOption: []
+            menuOption: [],
+            btn: this.submit
         }
     },
     watch: {
@@ -170,6 +174,9 @@ export default {
 
                 this.form = cloneDeep(this.params)
             }
+        },
+        submit(newVal) {
+            this.btn = newVal
         }
     },
     methods: {

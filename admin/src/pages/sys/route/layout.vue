@@ -6,9 +6,8 @@
                 size="mini"
                 icon="el-icon-plus"
                 circle
-                @click="addRoute"
+                @click="addRoute(mark_btn.add)"
                 title="新增"
-                :disabled="mark_btn.add"
                 v-premissions="{
                     mark: mark.route.add,
                     type: 'add'
@@ -185,9 +184,8 @@
                         icon="el-icon-edit"
                         size="mini"
                         circle
-                        @click.native="editRoute(scope.row)"
+                        @click.native="editRoute(scope.row, mark_btn.set)"
                         title="编辑"
-                        :disabled="mark_btn.set"
                         v-premissions="{
                             mark: mark.route.set,
                             type: 'set'
@@ -246,6 +244,7 @@
             :params="params"
             :centerDialogVisible="centerDialogVisible"
             :parent="routeData"
+            :submit="btn_submit"
             @handleClose="handleClose"
             @callback="init"
         ></Info>
@@ -275,6 +274,7 @@ export default {
             params: {},
             centerDialogVisible: false,
             route_id: [],
+            btn_submit: false,
             mark: setting.mark,
             mark_btn: {
                 add: false,
@@ -335,7 +335,8 @@ export default {
                     this.mark_btn.all_lock = this.route_id.length == 0
             }
         },
-        addRoute() {
+        addRoute(disabled) {
+            this.btn_submit = disabled
             this.title = '新建路由'
             this.params = {
                 pid: '0',
@@ -348,7 +349,8 @@ export default {
             }
             this.centerDialogVisible = true
         },
-        editRoute(params) {
+        editRoute(params, disabled) {
+            this.btn_submit = disabled
             this.title = '编辑路由'
             this.params = params
             this.centerDialogVisible = true

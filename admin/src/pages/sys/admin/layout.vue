@@ -6,9 +6,8 @@
                 size="mini"
                 icon="el-icon-plus"
                 circle
-                @click="addAdmin"
+                @click="addAdmin(mark_btn.add)"
                 title="新增"
-                :disabled="mark_btn.add"
                 v-premissions="{
                     mark: mark.admin.add,
                     type: 'add'
@@ -193,9 +192,8 @@
                         icon="el-icon-edit"
                         size="mini"
                         circle
-                        @click.native="editAdmin(scope.row)"
+                        @click.native="editAdmin(scope.row, mark_btn.set)"
                         title="编辑"
-                        :disabled="mark_btn.set"
                         v-premissions="{
                             mark: mark.admin.set,
                             type: 'set'
@@ -263,6 +261,7 @@
             :params="params"
             :role="roleParams"
             :isTab="false"
+            :submit="btn_submit"
             :centerDialogVisible="centerDialogVisible"
             @handleClose="handleClose"
             @callback="init"
@@ -301,6 +300,7 @@ export default {
             centerDialogVisible: false,
             admin_id: [],
             admins: [],
+            btn_submit: false,
             mark: setting.mark,
             mark_btn: {
                 add: false,
@@ -405,7 +405,8 @@ export default {
                     this.mark_btn.all_lock = this.admin_id.length == 0
             }
         },
-        addAdmin() {
+        addAdmin(disabled) {
+            this.btn_submit = disabled
             this.title = '新建管理员'
             this.params = {
                 username: '',
@@ -418,7 +419,8 @@ export default {
             }
             this.centerDialogVisible = true
         },
-        editAdmin(params) {
+        editAdmin(params, disabled) {
+            this.btn_submit = disabled
             this.title = '编辑管理员'
             this.params = params
             this.centerDialogVisible = true

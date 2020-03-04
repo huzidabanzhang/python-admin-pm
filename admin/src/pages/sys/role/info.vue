@@ -5,6 +5,7 @@
         width="50%"
         append-to-body
         destroy-on-close
+        :close-on-click-modal="false"
         @closed="handleClosed"
     >
         <el-form
@@ -26,7 +27,7 @@
             >
                 <el-input 
                     v-model="form.mark"
-                    :disabled="!form.admin_id"
+                    :disabled="form.admin_id != undefined"
                 ></el-input>
             </el-form-item>
             <el-form-item
@@ -37,8 +38,7 @@
                     :data="menu"
                     :props="prop"
                     node-key="menu_id"
-                    show-checkbox
-                    default-expand-all
+                    show-checkbox   
                 >
                     <span
                         class="custom-tree-node"
@@ -62,6 +62,7 @@
                 size="smaill"
                 style="float: left;"
                 v-if="params.role_id"
+                :disabled="btn_del"
             ></el-button>
             <el-button
                 @click="handleClosed"
@@ -71,6 +72,7 @@
                 type="primary"
                 @click="handelInfo"
                 :loading="isSubmit"
+                :disabled="btn_add"
                 size="smaill"
             >确 定</el-button>
         </span>
@@ -85,7 +87,9 @@ export default {
     props: {
         title: String,
         params: Object,
-        centerDialogVisible: Boolean
+        centerDialogVisible: Boolean,
+        submit: Boolean,
+        del: Boolean
     },
     data() {
         return {
@@ -106,7 +110,9 @@ export default {
             prop: {
                 label: 'title',
                 children: 'children'
-            }
+            },
+            btn_add: this.submit,
+            btn_del: this.del
         }
     },
     watch: {
@@ -116,6 +122,12 @@ export default {
                 this.form = cloneDeep(this.params)
                 this.getMenuList()
             }
+        },
+        submit(newVal) {
+            this.btn_add = newVal
+        },
+        del(newVal) {
+            this.btn_del = newVal
         }
     },
     methods: {
