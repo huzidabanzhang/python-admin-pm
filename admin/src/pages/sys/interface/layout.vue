@@ -12,35 +12,48 @@
                     mark: mark.interface.add,
                     type: 'add'
                 }"
-            >
-            </el-button>
+            ></el-button>
             <el-button
                 type="success"
                 icon="el-icon-check"
                 size="mini"
                 circle
-                :disabled="interface_id.length == 0"
                 @click="lockInterface(interface_id, false)"
                 title="启用"
-            >
-            </el-button>
+                :disabled="mark_btn.all_lock"
+                v-premissions="{
+                    mark: mark.interface.all_lock,
+                    type: 'all_lock',
+                    not_disabled: true
+                }"
+            ></el-button>
             <el-button
                 type="info"
                 size="mini"
                 icon="el-icon-close"
                 circle
-                :disabled="interface_id.length == 0"
                 @click="lockInterface(interface_id, true)"
                 title="禁用"
+                :disabled="mark_btn.all_lock"
+                v-premissions="{
+                    mark: mark.interface.all_lock,
+                    type: 'all_lock',
+                    not_disabled: true
+                }"
             ></el-button>
             <el-button
                 type="danger"
                 size="mini"
                 icon="el-icon-delete"
                 circle
-                :disabled="interface_id.length == 0"
                 @click="delInterface(interface_id)"
                 title="删除"
+                :disabled="mark_btn.all_del"
+                v-premissions="{
+                    mark: mark.interface.all_del,
+                    type: 'all_del',
+                    not_disabled: true
+                }"
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
@@ -191,7 +204,8 @@
                         title="编辑"
                         v-premissions="{
                             mark: mark.interface.set,
-                            type: 'set'
+                            type: 'set',
+                            not_hidden: true
                         }"
                     ></el-button>
                     <el-button
@@ -202,6 +216,11 @@
                         circle
                         @click.native="lockInterface([scope.row.interface_id], true)"
                         title="禁用"
+                        :disabled="mark_btn.lock"
+                        v-premissions="{
+                            mark: mark.interface.lock,
+                            type: 'lock'
+                        }"
                     ></el-button>
                     <el-button
                         v-if="isSelect(scope.row) && scope.row.is_disabled && !scope.row.not_allow"
@@ -211,6 +230,11 @@
                         circle
                         @click.native="lockInterface([scope.row.interface_id], false)"
                         title="启用"
+                        :disabled="mark_btn.lock"
+                        v-premissions="{
+                            mark: mark.interface.lock,
+                            type: 'lock'
+                        }"
                     >
                     </el-button>
                     <el-button
@@ -221,6 +245,11 @@
                         @click.native="delInterface([scope.row.interface_id], false)"
                         v-if="isSelect(scope.row)"
                         title="删除"
+                        :disabled="mark_btn.del"
+                        v-premissions="{
+                            mark: mark.interface.del,
+                            type: 'del'
+                        }"
                     >
                     </el-button>
                 </template>
@@ -289,7 +318,11 @@ export default {
             mark: setting.mark,
             mark_btn: {
                 add: false,
-                set: false
+                del: false,
+                set: false,
+                lock: false,
+                all_del: true,
+                all_lock: true
             }
         }
     },
@@ -368,6 +401,18 @@ export default {
             this.interface_id = selection.map((i) => {
                 return i.interface_id
             })
+            let data = this.$store.getters['d2admin/user/interfaces']
+            if (data) {
+                let del = data.filter((i) => {
+                    return i.mark == this.mark.interface.all_del
+                }), lock = data.filter((i) => {
+                    return i.mark == this.mark.interface.all_lock
+                })
+                if (del.length > 0 && !del[0].is_disabled) 
+                    this.mark_btn.all_del = this.interface_id.length == 0
+                if (lock.length > 0 && !lock[0].is_disabled) 
+                    this.mark_btn.all_lock = this.interface_id.length == 0
+            }
         },
         lockInterface(keys, is_disabled) {
             if (keys.length == 0) return this.$message.warning('未选择任何记录')

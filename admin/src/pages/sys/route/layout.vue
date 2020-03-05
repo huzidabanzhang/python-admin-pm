@@ -188,7 +188,8 @@
                         title="编辑"
                         v-premissions="{
                             mark: mark.route.set,
-                            type: 'set'
+                            type: 'set',
+                            not_hidden: true
                         }"
                     ></el-button>
                     <el-button

@@ -79,7 +79,11 @@ export default {
         },
         interface: {
             add: 'add_interface',
-            set: 'set_interface'
+            set: 'set_interface',
+            lock: 'lock_interface',
+            del: 'del_interface',
+            all_del: 'del_interface',
+            all_lock: 'lock_interface'
         },
         file: {
             add: 'add_document',

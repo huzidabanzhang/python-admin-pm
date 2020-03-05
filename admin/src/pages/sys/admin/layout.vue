@@ -196,7 +196,8 @@
                         title="编辑"
                         v-premissions="{
                             mark: mark.admin.set,
-                            type: 'set'
+                            type: 'set',
+                            not_hidden: true
                         }"
                     ></el-button>
                     <el-button

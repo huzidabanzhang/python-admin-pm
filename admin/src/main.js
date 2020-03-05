@@ -53,8 +53,10 @@ Vue.directive('premissions', function (el, binding, node) {
         let item  = data.filter((i) => {
             return i.mark == params.mark
         })
-        if (item.length == 0) el.style.display = 'none'
-        else {
+        if (item.length == 0) {
+            if (!params.not_hidden) el.style.display = 'none'
+            else node.context.mark_btn[params.type] = true
+        } else {
             if (params.not_disabled == undefined || !params.not_disabled)
                 node.context.mark_btn[params.type] = item[0].is_disabled
         }
