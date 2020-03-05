@@ -200,6 +200,7 @@ export default {
                             return i.mark == this.mark.role.set
                         })
                         if (set.length > 0) this.mark_btn.set = set[0].is_disabled
+                        else this.mark_btn.set = true
                     }
                 }
                 this.btn_submit = this.mark_btn.set
