@@ -296,8 +296,8 @@ export default {
             lock: '',
             is_disabled: '',
             lockOption: [
-                { label: '启用', value: 'true' },
-                { label: '禁用', value: 'false' }
+                { label: '启用', value: 'false' },
+                { label: '禁用', value: 'true' }
             ],
             method: '',
             isMethod: '',
