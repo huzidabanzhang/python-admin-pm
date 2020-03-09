@@ -123,7 +123,6 @@
                         :props="menu_prop"
                         :show-all-levels="false"
                         v-model="form.pid"
-                        clearable
                         filterable
                     ></el-cascader>
                 </el-form-item>
@@ -279,7 +278,7 @@ export default {
                 children: 'children'
             },
             isAdd: true,
-            menu_prop: { value: 'menu_id', label: 'title', emitPath: false },
+            menu_prop: { value: 'menu_id', label: 'title', emitPath: false, checkStrictly: true },
             rules: {
                 title: [{ required: true, message: '请输入名称', trigger: 'blur' }],
                 mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
@@ -319,6 +318,7 @@ export default {
                 .then(async res => {
                     let data = cloneDeep(res)
                     this.menuData = util.dealData(res, 3)
+                    this.treeData = cloneDeep(this.menuData)
                     this.loading = false
                     // 更新当前路由
                     if (isTrue == true) util.initMenu(data, 3, true)
@@ -372,6 +372,7 @@ export default {
                 type: 1,
                 is_disabled: true
             }
+            this.treeData = cloneDeep(this.menuData)
             this.isAdd = true
         },
         getMenuItem(data) {
