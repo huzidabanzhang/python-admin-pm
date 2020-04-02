@@ -3,8 +3,6 @@
   
   测试账号：Test 密码：123456
   
-  有问题欢迎大家提给我
-  
   Python服务器端代码 GIT地址: https://github.com/huzidabanzhang/python-admin
   
 ## 计划
