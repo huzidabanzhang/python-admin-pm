@@ -2,6 +2,13 @@
     <d2-container>
         <div slot="header">
             <el-button
+                type="success"
+                size="mini"
+                icon="el-icon-upload"
+                @click="centerDialogVisible = true"
+            >上传</el-button>
+
+            <el-button
                 icon="el-icon-refresh-right"
                 size="mini"
                 @click="init"
@@ -14,71 +21,98 @@
                 size="mini"
                 class="form-right"
             >
-                <!-- <el-form-item>
-                    <el-select
-                        v-model="lock"
-                        placeholder="路由状态"
+                <el-form-item>
+                    <el-input
+                        placeholder="公司"
+                        v-model="company"
                         clearable
-                        size="mini"
-                        :clear="clearLock"
+                        :clear="clear(company)"
                     >
-                        <el-option
-                            v-for="item in lockOption"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        >
-                        </el-option>
-                    </el-select>
-                </el-form-item> -->
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-input
+                        placeholder="姓名"
+                        v-model="name"
+                        clearable
+                        :clear="clear(name)"
+                    >
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-date-picker
+                        v-model="payment_time"
+                        type="month"
+                        placeholder="选择工资时间"
+                    >
+                    </el-date-picker>
+                </el-form-item>
+
                 <el-form-item>
                     <el-button
                         icon="el-icon-search"
                         size="mini"
                         type="primary"
-                        @click="centerDialogVisible = true"
                     >搜索</el-button>
                 </el-form-item>
             </el-form>
         </div>
 
         <el-table
-            :data="routeData"
+            :data="wageData"
             style="width: 100%"
             size="mini"
             type="ghost"
             v-loading="loading"
             :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
             row-key="id"
-            @select="changeSelect"
-            @select-all="changeSelect"
         >
-            <el-table-column
-                type="selection"
-                width="55"
-            >
+            <el-table-column type="expand">
+                <template slot-scope="props">
+                    <el-form
+                        label-position="left"
+                        inline
+                        class="demo-table-expand"
+                    >
+                        <el-form-item
+                            v-for="(item, key) in props.row.wages"
+                            label="key"
+                            :key="key"
+                        >
+                            <span>{{ item }}</span>
+                        </el-form-item>
+                    </el-form>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="title"
-                label="路由名称"
+                prop="company"
+                label="公司"
                 align="center"
             >
             </el-table-column>
             <el-table-column
-                prop="path"
-                label="路径"
+                prop="name"
+                label="姓名"
                 align="center"
             >
             </el-table-column>
             <el-table-column
-                prop="component"
-                label="组件"
+                prop="id_card"
+                label="身份证"
                 align="center"
             >
             </el-table-column>
             <el-table-column
-                prop="componentPath"
-                label="组件路径"
+                prop="phone"
+                label="电话"
+                align="center"
+            >
+            </el-table-column>
+            <el-table-column
+                prop="payment_time"
+                label="工资时间"
                 align="center"
             >
             </el-table-column>
@@ -100,12 +134,13 @@ export default {
     components: { Info },
     data() {
         return {
-            routeData: [],
+            wageData: [],
             loading: false,
-            title: '',
+            company: '',
+            name: '',
+            payment_time: '',
             params: {},
             centerDialogVisible: false,
-            route_id: [],
             btn_submit: false
         }
     },
@@ -133,6 +168,10 @@ export default {
         },
         handleClose() {
             this.centerDialogVisible = false
+            this.init()
+        },
+        clear(val) {
+            val = ''
         }
     }
 }

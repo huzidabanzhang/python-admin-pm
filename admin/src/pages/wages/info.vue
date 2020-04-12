@@ -12,6 +12,9 @@
             v-model="payment_time"
             type="month"
             placeholder="选择月"
+            style="text-align: center;
+            margin-bottom: 10px;
+            margin-left: 100px;"
         >
         </el-date-picker>
 
@@ -29,10 +32,6 @@
         >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            <div
-                class="el-upload__tip"
-                slot="tip"
-            >最多上传{{maxLimit}}个文件，且单文件不超过{{maxSize}}MB</div>
         </el-upload>
 
         <span
@@ -40,19 +39,12 @@
             class="dialog-footer"
         >
             <el-button
-                type="primary"
-                @click="CreateUpload"
-                size="mini"
-                :loading="loading"
-                style="float: left"
-            >上 传</el-button>
-            <el-button
                 @click="handleClosed"
                 size="mini"
             >取 消</el-button>
             <el-button
                 type="primary"
-                @click="handleClosed"
+                @click="CreateUpload"
                 size="mini"
             >确 定</el-button>
         </span>
@@ -70,6 +62,7 @@ export default {
         return {
             Visible: this.centerDialogVisible,
             fileList: {},
+            payment_time: '',
             loading: false,
             maxLimit: 1,
             maxSize: 5
@@ -80,8 +73,8 @@ export default {
             this.Visible = newVal
             if (newVal) {
                 this.fileList = {}
-                let date = new date()
-                this.payment_time = date .getFullYear() + '-' + date .getMonth()
+                let date = new Date()
+                this.payment_time = date.getFullYear() + '-' + date.getMonth()
             }
         }
     },
@@ -106,10 +99,7 @@ export default {
             }
         },
         close() {
-            this.$emit('handleClose', {
-                data: this.fileList,
-                change: false
-            })
+            this.$emit('handleClose')
         },
         handleExceed(files, fileList) {
             let count = this.maxLimit - fileList.length
@@ -153,6 +143,7 @@ export default {
                 .then(async res => {
                     this.fileList[0].onSuccess()
                     this.loading = false
+                    this.close()
                 })
                 .catch(() => {
                     this.loading = false
