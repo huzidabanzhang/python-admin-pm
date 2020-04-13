@@ -46,6 +46,7 @@
                 type="primary"
                 @click="CreateUpload"
                 size="mini"
+                :loading="loading"
             >确 定</el-button>
         </span>
     </el-dialog>
@@ -93,13 +94,13 @@ export default {
                     type: 'warning'
                 })
                     .then(() => {
-                        this.close()
+                        this.close(false)
                     })
                     .catch(() => { })
             }
         },
-        close() {
-            this.$emit('handleClose')
+        close(isTrue) {
+            this.$emit('handleClose', isTrue)
         },
         handleExceed(files, fileList) {
             let count = this.maxLimit - fileList.length
@@ -141,11 +142,10 @@ export default {
             this.loading = true
             ImportWages(formData, this.handelProgress)
                 .then(async res => {
-                    this.fileList[0].onSuccess()
-                    this.loading = false
-                    this.close()
+                    self.loading = false
+                    self.close(true)
                 })
-                .catch(() => {
+                .catch((e) => {
                     this.loading = false
                 })
         }

@@ -45,6 +45,7 @@
                     <el-date-picker
                         v-model="payment_time"
                         type="month"
+                        value-format="yyyy-MM"
                         placeholder="选择工资时间"
                     >
                     </el-date-picker>
@@ -55,6 +56,7 @@
                         icon="el-icon-search"
                         size="mini"
                         type="primary"
+                        @click="init"
                     >搜索</el-button>
                 </el-form-item>
             </el-form>
@@ -78,7 +80,7 @@
                     >
                         <el-form-item
                             v-for="(item, key) in props.row.wages"
-                            label="key"
+                            :label="key"
                             :key="key"
                         >
                             <span>{{ item }}</span>
@@ -118,6 +120,15 @@
             </el-table-column>
         </el-table>
 
+        <Pagination
+            slot="footer"
+            :page="page"
+            :total="total"
+            :size="size"
+            @handleSize="handleSize"
+            @handleCurrent="handleCurrent"
+        ></Pagination>
+
         <Info
             :centerDialogVisible="centerDialogVisible"
             @handleClose="handleClose"
@@ -128,12 +139,16 @@
 <script>
 import { QueryWagesByParam } from '@api/wages.wages'
 import { cloneDeep } from 'lodash'
+import Pagination from '@/pages/pagination/index.vue'
 import Info from './info.vue'
 export default {
     name: 'wages-wages',
-    components: { Info },
+    components: { Info, Pagination },
     data() {
         return {
+            page: 1,
+            total: 0,
+            size: 20,
             wageData: [],
             loading: false,
             company: '',
@@ -149,25 +164,36 @@ export default {
     },
     methods: {
         init(isTrue) {
-            // if (isTrue) this.centerDialogVisible = false
-            // let params = {}
-            // if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
+            if (isTrue) this.centerDialogVisible = false
+            let params = {
+                page: this.page,
+                page_size: this.size
+            }
+            if (this.company != '') params['company'] = this.company
+            if (this.name != '') params['name'] = this.name
+            if (this.payment_time != '') params['payment_time'] = this.payment_time
 
-            // this.loading = true
-            // QueryRouteByParam(params)
-            //     .then(async res => {
-            //         let data = cloneDeep(res)
-            //         this.routeData = util.dealData(res, 2)
-            //         this.loading = false
-            //         // 更新当前路由
-            //         if (isTrue) util.initRoute(data, 2, true)
-            //     })
-            //     .catch(() => {
-            //         this.loading = false
-            //     })
+            this.loading = true
+            QueryWagesByParam(params)
+                .then(async res => {
+                    this.wageData = res.data
+                    this.total = res.total
+                    this.loading = false
+                })
+                .catch(() => {
+                    this.loading = false
+                })
         },
         handleClose() {
-            this.centerDialogVisible = false
+            this.init(true)
+        },
+        handleSize(size) {
+            this.size = size
+            this.page = 1
+            this.init()
+        },
+        handleCurrent(page) {
+            this.page = page
             this.init()
         },
         clear(val) {
@@ -192,5 +218,18 @@ export default {
 
 .form-right {
     float: right;
+}
+
+.demo-table-expand {
+    font-size: 0;
+}
+.demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
 }
 </style>
