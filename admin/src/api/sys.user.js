@@ -79,8 +79,7 @@ export function ModifyAdmin(data) {
     return request({
         url: '/v1/Admin/ModifyAdmin',
         method: 'post',
-        data,
-        headers: {isCheck: true}
+        data
     })
 }
 

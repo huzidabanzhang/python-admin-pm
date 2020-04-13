@@ -14,7 +14,7 @@
 
             <el-dropdown-item
                 @click.native="initBase"
-                :disabled="isMark()"
+                v-show="!isMark()"
             >
                 <i class="fa fa-refresh"></i>
                 重置数据库
