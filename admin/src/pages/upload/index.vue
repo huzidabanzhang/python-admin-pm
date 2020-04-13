@@ -5,7 +5,7 @@
         width="460px"
         append-to-body
         destroy-on-close
-        @closed="handleClosed"
+        :before-close="handleClosed"
     >
         <el-upload
             class="upload"
