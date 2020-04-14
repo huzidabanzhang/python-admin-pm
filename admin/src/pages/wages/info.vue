@@ -74,8 +74,9 @@ export default {
             this.Visible = newVal
             if (newVal) {
                 this.fileList = {}
-                let date = new Date()
-                this.payment_time = date.getFullYear() + '-' + date.getMonth()
+                let date = new Date(), month = date.getMonth()
+                if (month == 0) month = 12
+                this.payment_time = date.getFullYear() + '-' + month
             }
         }
     },
@@ -144,6 +145,9 @@ export default {
                 .then(async res => {
                     self.loading = false
                     self.close(true)
+                    if (res.length > 0) self.$alert(res.join('<br>'), '导入错误提示', {
+                        dangerouslyUseHTMLString: true
+                    })
                 })
                 .catch((e) => {
                     this.loading = false
