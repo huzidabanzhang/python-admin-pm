@@ -12,6 +12,7 @@
             v-model="payment_time"
             type="month"
             placeholder="选择月"
+            value-format="yyyy-MM"
             style="text-align: center;
             margin-bottom: 10px;
             margin-left: 100px;"
