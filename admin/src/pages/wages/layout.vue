@@ -9,6 +9,11 @@
             >上传</el-button>
 
             <el-button
+                type="primary"
+                size="mini"
+            ><a href="http://wages.ye9418.com/test.xlsx" style="color: white;"><i class="el-icon-download"></i>模板</a></el-button>
+
+            <el-button
                 icon="el-icon-refresh-right"
                 size="mini"
                 @click="init"
