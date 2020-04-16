@@ -14,6 +14,19 @@ export function QueryWagesByParam(data) {
 }
 
 /**
+ * 删除工资
+ * @param {*} data 
+ */
+export function DelWages(data) {
+    return request({
+        url: '/wages/Wages/DelWages',
+        method: 'post',
+        data,
+        headers: { isCheck: true }
+    })
+}
+
+/**
  * 导入工资
  * @param {*} data 
  */

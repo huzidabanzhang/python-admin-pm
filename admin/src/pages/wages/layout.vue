@@ -11,7 +11,19 @@
             <el-button
                 type="primary"
                 size="mini"
-            ><a href="http://wages.ye9418.com/test.xlsx" style="color: white;"><i class="el-icon-download"></i>模板</a></el-button>
+            ><a
+                    href="http://wages.ye9418.com/test.xlsx"
+                    style="color: white;"
+                ><i class="el-icon-download"></i>模板</a></el-button>
+
+            <el-button
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+                @click="delWages(rid)"
+                circle
+                title="删除"
+            ></el-button>
 
             <el-button
                 icon="el-icon-refresh-right"
@@ -73,9 +85,14 @@
             size="mini"
             type="ghost"
             v-loading="loading"
-            :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-            row-key="id"
+            @select="changeSelect"
+            @select-all="changeSelect"
         >
+            <el-table-column
+                type="selection"
+                width="55"
+            >
+            </el-table-column>
             <el-table-column type="expand">
                 <template slot-scope="props">
                     <el-form
@@ -123,6 +140,23 @@
                 align="center"
             >
             </el-table-column>
+            <el-table-column
+                prop="content"
+                label="操作"
+                align="left"
+            >
+                <template slot-scope="scope">
+                    <el-button
+                        type="danger"
+                        icon="el-icon-delete"
+                        size="mini"
+                        circle
+                        @click.native="delWages([scope.row.wages_id])"
+                        title="删除"
+                    >
+                    </el-button>
+                </template>
+            </el-table-column>
         </el-table>
 
         <Pagination
@@ -142,7 +176,7 @@
 </template>
 
 <script>
-import { QueryWagesByParam } from '@api/wages.wages'
+import { QueryWagesByParam, DelWages } from '@api/wages.wages'
 import { cloneDeep } from 'lodash'
 import Pagination from '@/pages/pagination/index.vue'
 import Info from './info.vue'
@@ -161,7 +195,8 @@ export default {
             payment_time: '',
             params: {},
             centerDialogVisible: false,
-            btn_submit: false
+            btn_submit: false,
+            rid: []
         }
     },
     created() {
@@ -203,6 +238,34 @@ export default {
         },
         clear(val) {
             val = ''
+        },
+        changeSelect(selection) {
+            this.rid = selection.map((i) => {
+                return i.wages_id
+            })
+        },
+        delWages(rid) {
+            if (rid.length == 0) return this.$message.warning('未选择任何记录')
+
+            this.$confirm('确定要删除选择的记录吗', '删除记录',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    this.loading = true
+                    DelWages({
+                        rid: rid
+                    }).then(async res => {
+                        this.rid = []
+                        this.$message.success('删除成功')
+                        this.init()
+                    })
+                        .catch(() => {
+                            this.loading = false
+                        })
+                })
         }
     }
 }
