@@ -147,11 +147,13 @@ export default {
                     self.loading = false
                     self.close(true)
                     if (res.length > 0) self.$alert(res.join('<br>'), '导入错误提示', {
-                        dangerouslyUseHTMLString: true
+                        dangerouslyUseHTMLString: true,
+                        customClass: 'max_hight'
                     })
                 })
                 .catch((e) => {
-                    this.loading = false
+                    self.loading = false
+                    self.close(true)
                 })
         }
     }
@@ -165,5 +167,10 @@ export default {
 
 .el-upload-list {
     text-align: left;
+}
+
+.max-hight {
+    max-height: 500px;
+    overflow-y: auto;
 }
 </style>
