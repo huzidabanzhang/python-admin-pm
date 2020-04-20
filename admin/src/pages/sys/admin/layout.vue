@@ -318,6 +318,8 @@ export default {
     },
     methods: {
         init(isTrue) {
+            this.changeSelect([])
+
             if (isTrue) this.centerDialogVisible = false
             let params = {
                 page: this.page,
@@ -446,7 +448,6 @@ export default {
                 admin_id: keys,
                 is_disabled: is_disabled
             }).then(async res => {
-                this.admin_id == []
                 this.init()
             })
         },
@@ -464,7 +465,6 @@ export default {
                         admins: JSON.stringify(admins)
                     }).then(async res => {
                         this.$message.success('删除管理员成功')
-                        this.admins = []
                         this.init()
                     })
                 })

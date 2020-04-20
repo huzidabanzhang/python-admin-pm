@@ -331,6 +331,8 @@ export default {
     },
     methods: {
         init(isTrue) {
+            this.changeSelect([])
+            
             if (isTrue) this.centerDialogVisible = false
             let params = {
                 page: this.page,
@@ -442,7 +444,6 @@ export default {
                         interface_id: interface_id
                     }).then(async res => {
                         this.getInterfaceInfo(interface_id, 1)
-                        this.interface_id = []
                         this.$message.success('接口删除成功')
                         this.init()
                     })
@@ -475,7 +476,6 @@ export default {
                 is_disabled: is_disabled
             }).then(async res => {
                 this.getInterfaceInfo(keys, 2, is_disabled)
-                this.interface_id = []
                 this.$message.success(is_disabled ? '接口禁用成功' : '接口启用成功')
                 this.init()
             })

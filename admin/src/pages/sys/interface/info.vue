@@ -216,7 +216,7 @@ export default {
             } else {
                 CreateInterface(params)
                     .then(async res => {
-                        interfaces.push(res.data)
+                        interfaces.push(res)
                         util.initInterface(interfaces)
                         this.handleInitParent(2)
                     })
