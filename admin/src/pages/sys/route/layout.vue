@@ -292,6 +292,8 @@ export default {
     },
     methods: {
         init(isTrue) {
+            this.changeSelect([])
+            
             if (isTrue) this.centerDialogVisible = false
             let params = {}
             if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
@@ -375,7 +377,6 @@ export default {
                 route_id: keys,
                 is_disabled: is_disabled
             }).then(async res => {
-                this.route_id = []
                 this.init(true)
             })
         },
@@ -393,7 +394,6 @@ export default {
                         route_id: route_id
                     }).then(async res => {
                         this.$message.success('删除路由成功')
-                        this.route_id = []
                         this.init()
                     })
                 })
