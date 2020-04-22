@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { ImportWages } from '@api/wages.wages'
+import { ImportSalary } from '@api/salary.salary'
 import util from '@/libs/util.js'
 export default {
     props: {
@@ -142,7 +142,7 @@ export default {
             formData.append('payment_time', this.payment_time)
 
             this.loading = true
-            ImportWages(formData, this.handelProgress)
+            ImportSalary(formData, this.handelProgress)
                 .then(async res => {
                     self.loading = false
                     self.close(true)

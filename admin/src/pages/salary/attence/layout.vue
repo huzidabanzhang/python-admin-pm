@@ -12,7 +12,7 @@
                 type="primary"
                 size="mini"
             ><a
-                    href="http://wages.ye9418.com/test.xlsx"
+                    href="http://salary.ye9418.com/test.xlsx"
                     style="color: white;"
                 ><i class="el-icon-download"></i>模板</a></el-button> -->
 
@@ -92,10 +92,10 @@
                     >
                         <el-form-item
                             v-for="(item, key) in props.row.attance"
-                            :label="key"
+                            :label="item.name"
                             :key="key"
                         >
-                            <span v-html="item"></span>
+                            <span v-html="item.value"></span>
                         </el-form-item>
                     </el-form>
                 </template>
@@ -131,7 +131,7 @@
                         v-for="(item, key) in scope.row.content"
                         :key="key"
                         style="padding-right: 10px;"
-                    >{{key}}：{{item}}</span>
+                    >{{item.name}}：{{item.value}}</span>
                 </template>
             </el-table-column>
             <el-table-column
@@ -171,12 +171,12 @@
 </template>
 
 <script>
-import { QueryAttendanceByParam, DelAttendance } from '@api/wages.attence'
+import { QueryAttendanceByParam, DelAttendance } from '@api/salary.attence'
 import { cloneDeep } from 'lodash'
 import Pagination from '@/pages/pagination/index.vue'
 import Info from './info.vue'
 export default {
-    name: 'wages-attence',
+    name: 'salary-attence',
     components: { Info, Pagination },
     data() {
         return {

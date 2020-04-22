@@ -12,7 +12,7 @@
                 type="primary"
                 size="mini"
             ><a
-                    href="http://wages.ye9418.com/test.xlsx"
+                    href="http://salary.ye9418.com/test.xlsx"
                     style="color: white;"
                 ><i class="el-icon-download"></i>模板</a></el-button>
 
@@ -20,7 +20,7 @@
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
-                @click="delWages(rid)"
+                @click="delSalary(rid)"
                 circle
                 title="删除"
             ></el-button>
@@ -101,11 +101,11 @@
                         class="demo-table-expand"
                     >
                         <el-form-item
-                            v-for="(item, key) in props.row.wages"
-                            :label="key"
+                            v-for="(item, key) in props.row.salary"
+                            :label="item.name"
                             :key="key"
                         >
-                            <span>{{ item }}</span>
+                            <span>{{ item.value }}</span>
                         </el-form-item>
                     </el-form>
                 </template>
@@ -151,7 +151,7 @@
                         icon="el-icon-delete"
                         size="mini"
                         circle
-                        @click.native="delWages([scope.row.wages_id])"
+                        @click.native="delSalary([scope.row.salary_id])"
                         title="删除"
                     >
                     </el-button>
@@ -176,12 +176,12 @@
 </template>
 
 <script>
-import { QueryWagesByParam, DelWages } from '@api/wages.wages'
+import { QuerySalaryByParam, DelSalary } from '@api/salary.salary'
 import { cloneDeep } from 'lodash'
 import Pagination from '@/pages/pagination/index.vue'
 import Info from './info.vue'
 export default {
-    name: 'wages-wages',
+    name: 'salary-salary',
     components: { Info, Pagination },
     data() {
         return {
@@ -214,7 +214,7 @@ export default {
             if (this.payment_time != '') params['payment_time'] = this.payment_time
 
             this.loading = true
-            QueryWagesByParam(params)
+            QuerySalaryByParam(params)
                 .then(async res => {
                     this.wageData = res.data
                     this.total = res.total
@@ -241,10 +241,10 @@ export default {
         },
         changeSelect(selection) {
             this.rid = selection.map((i) => {
-                return i.wages_id
+                return i.salary_id
             })
         },
-        delWages(rid) {
+        delSalary(rid) {
             if (rid.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm('确定要删除选择的记录吗', '删除记录',
@@ -255,7 +255,7 @@ export default {
                 })
                 .then(() => {
                     this.loading = true
-                    DelWages({
+                    DelSalary({
                         rid: rid
                     }).then(async res => {
                         this.rid = []

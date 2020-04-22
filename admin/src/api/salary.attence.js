@@ -6,7 +6,7 @@ import request from '@/plugin/axios'
  */
 export function QueryAttendanceByParam(data) {
     return request({
-        url: '/wages/Wages/QueryAttendanceByParam',
+        url: '/v2/Salary/QueryAttendanceByParam',
         method: 'post',
         data,
         headers: { isCheck: true }
@@ -19,7 +19,7 @@ export function QueryAttendanceByParam(data) {
  */
 export function DelAttendance(data) {
     return request({
-        url: '/wages/Wages/DelAttendance',
+        url: '/v2/Salary/DelAttendance',
         method: 'post',
         data,
         headers: { isCheck: true }
@@ -32,7 +32,7 @@ export function DelAttendance(data) {
  */
 export function ImportAttendance(data, progressEvent) {
     return request({
-        url: '/wages/Wages/ImportAttendance',
+        url: '/v2/Salary/ImportAttendance',
         method: 'post',
         data,
         headers: { 'content-type': 'multipart/form-data', isCheck: true },

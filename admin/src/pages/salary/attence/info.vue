@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { ImportAttendance } from '@api/wages.attence'
+import { ImportAttendance } from '@api/salary.attence'
 import util from '@/libs/util.js'
 export default {
     props: {
