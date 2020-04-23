@@ -12,9 +12,9 @@
                 type="primary"
                 size="mini"
             ><a
-                    href="http://salary.ye9418.com/test.xlsx"
-                    style="color: white;"
-                ><i class="el-icon-download"></i>模板</a></el-button>
+                href="http://wages.ye9418.com/test.xlsx"
+                style="color: white;"
+            ><i class="el-icon-download"></i>模板</a></el-button>
 
             <el-button
                 type="danger"
