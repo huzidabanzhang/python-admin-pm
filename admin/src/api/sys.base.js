@@ -46,3 +46,29 @@ export function AgainCreateDrop() {
         method: 'get'
     })
 }
+
+/**
+ * 获取用户登录情况
+ * @param {*} data 
+ */
+export function GetLoginInfo(data) {
+    return request({
+        url: '/v1/Base/GetLoginInfo',
+        method: 'post',
+        data,
+        headers: { isCheck: true }
+    })
+}
+
+/**
+ * 获取所有用户登录次数
+ * @param {*} data 
+ */
+export function GetAllUserLoginCount(data) {
+    return request({
+        url: '/v1/Base/GetAllUserLoginCount',
+        method: 'post',
+        data,
+        headers: { isCheck: true }
+    })
+}
