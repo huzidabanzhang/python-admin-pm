@@ -22,7 +22,7 @@
     "clipboard-polyfill": "^2.8.1",
     "countup.js": "^2.0.4",
     "dayjs": "^1.8.14",
-    "echarts": "^4.2.1",
+    "echarts": "^4.7.0",
     "element-ui": "^2.12.0",
     "flex.css": "^1.1.7",
     "fuse.js": "^3.4.5",

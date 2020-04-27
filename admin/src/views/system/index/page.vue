@@ -1,6 +1,39 @@
 <template>
     <d2-container class="page">
         <el-row :gutter="20">
+            <el-col :span="16" v-if="!isAdmin()">
+                <el-card class="box-card">
+                    <div
+                        slot="header"
+                        class="header"
+                    >
+                        <span>用户登录IP分布情况表</span>
+                    </div>
+                    <div
+                        id="userIp"
+                        style="height: 600px;"
+                    ></div>
+                </el-card>
+            </el-col>
+
+            <el-col :span="12" v-else>
+                <el-card class="box-card">
+                    <div
+                        slot="header"
+                        class="header"
+                    >
+                        <span>{{user.username}} 登录统计表</span>
+                    </div>
+                    <div>
+                        <ve-histogram
+                            :loading="userLogin.loading"
+                            :data="userLogin.chartData"
+                            :extend="userLogin.extend"
+                        ></ve-histogram>
+                    </div>
+                </el-card>
+            </el-col>
+
             <el-col :span="8">
                 <el-card class="box-card">
                     <div
@@ -32,8 +65,10 @@
                     </div>
                 </el-card>
             </el-col>
+        </el-row>
 
-            <el-col :span="16">
+        <el-row :gutter="20" v-if="!isAdmin()">
+            <el-col :span="12">
                 <el-card class="box-card">
                     <div
                         slot="header"
@@ -50,9 +85,7 @@
                     </div>
                 </el-card>
             </el-col>
-        </el-row>
 
-        <el-row :gutter="20">
             <el-col :span="12">
                 <el-card class="box-card">
                     <div
@@ -74,8 +107,12 @@
 </template>
 
 <script>
-import { GetLoginInfo, GetAllUserLoginCount } from '@api/sys.base'
+import echarts from 'echarts'
+require('echarts/extension/bmap/bmap')
+require('echarts/map/js/china')
+import { GetLoginInfo, GetAllUserLoginCount, GetUserLoginIp } from '@api/sys.base'
 import defaultImg from '@/assets/3ea6beec64369c2642b92c6726f1epng.png'
+import setting from '@/setting.js'
 export default {
     data() {
         return {
@@ -93,9 +130,146 @@ export default {
                 chartData: {},
                 loading: false
             },
+            userIp: {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: (params) => {
+                        let ip = this.ip_list[params.name].ip
+                        return ip.join('<br>')
+                    }
+                },
+                bmap: {
+                    center: [104.114129, 37.550339],
+                    zoom: 5,
+                    roam: false,
+                    mapStyle: {
+                        styleJson: [{
+                            'featureType': 'water',
+                            'elementType': 'all',
+                            'stylers': {
+                                'color': '#d1d1d1'
+                            }
+                        }, {
+                            'featureType': 'land',
+                            'elementType': 'all',
+                            'stylers': {
+                                'color': '#f3f3f3'
+                            }
+                        }, {
+                            'featureType': 'railway',
+                            'elementType': 'all',
+                            'stylers': {
+                                'visibility': 'off'
+                            }
+                        }, {
+                            'featureType': 'highway',
+                            'elementType': 'all',
+                            'stylers': {
+                                'color': '#fdfdfd'
+                            }
+                        }, {
+                            'featureType': 'highway',
+                            'elementType': 'labels',
+                            'stylers': {
+                                'visibility': 'off'
+                            }
+                        }, {
+                            'featureType': 'arterial',
+                            'elementType': 'geometry',
+                            'stylers': {
+                                'color': '#fefefe'
+                            }
+                        }, {
+                            'featureType': 'arterial',
+                            'elementType': 'geometry.fill',
+                            'stylers': {
+                                'color': '#fefefe'
+                            }
+                        }, {
+                            'featureType': 'poi',
+                            'elementType': 'all',
+                            'stylers': {
+                                'visibility': 'off'
+                            }
+                        }, {
+                            'featureType': 'green',
+                            'elementType': 'all',
+                            'stylers': {
+                                'visibility': 'off'
+                            }
+                        }, {
+                            'featureType': 'subway',
+                            'elementType': 'all',
+                            'stylers': {
+                                'visibility': 'off'
+                            }
+                        }, {
+                            'featureType': 'manmade',
+                            'elementType': 'all',
+                            'stylers': {
+                                'color': '#d1d1d1'
+                            }
+                        }, {
+                            'featureType': 'local',
+                            'elementType': 'all',
+                            'stylers': {
+                                'color': '#d1d1d1'
+                            }
+                        }, {
+                            'featureType': 'arterial',
+                            'elementType': 'labels',
+                            'stylers': {
+                                'visibility': 'off'
+                            }
+                        }, {
+                            'featureType': 'boundary',
+                            'elementType': 'all',
+                            'stylers': {
+                                'color': '#fefefe'
+                            }
+                        }, {
+                            'featureType': 'building',
+                            'elementType': 'all',
+                            'stylers': {
+                                'color': '#d1d1d1'
+                            }
+                        }, {
+                            'featureType': 'label',
+                            'elementType': 'labels.text.fill',
+                            'stylers': {
+                                'color': '#999999'
+                            }
+                        }]
+                    }
+                },
+                series: [
+                    {
+                        name: 'Ip',
+                        type: 'effectScatter',
+                        coordinateSystem: 'bmap',
+                        data: [],
+                        symbolSize: function (val) {
+                            return val[2] * 2
+                        },
+                        itemStyle: {
+                            color: 'purple',
+                            shadowBlur: 1,
+                            shadowColor: '#333'
+                        },
+                        showEffectOn: 'render',
+                        rippleEffect: {
+                            brushType: 'stroke'
+                        },
+                        hoverAnimation: true
+                    }
+                ]
+            },
+            ip_list: {},
             user: this.$store.getters['d2admin/user/user'],
             info: '',
-            circleUrl: defaultImg
+            circleUrl: defaultImg,
+            myChart: null,
+            mark: setting.SYS_ADMIN.mark
         }
     },
     created() {
@@ -117,6 +291,8 @@ export default {
                     this.userLogin.loading = false
                 })
 
+            if (this.isAdmin()) return true
+
             this.userAll.loading = true
             GetAllUserLoginCount({})
                 .then(async res => {
@@ -129,7 +305,39 @@ export default {
                 .catch(() => {
                     this.userAll.loading = false
                 })
-        }
+
+            GetUserLoginIp({})
+                .then(async res => {
+                    this.ip_list = res.ip
+                    this.userIp.series[0].data = this.convertData(res.ip, res.city)
+                    this.initMap()
+                })
+                .catch(() => {
+
+                })
+        },
+        convertData(data, city) {
+            let res = []
+            for (let i in data) {
+                let geoCoord = city[i]
+                if (geoCoord) {
+                    res.push({
+                        name: i,
+                        value: geoCoord.concat(data[i].count)
+                    })
+                }
+            }
+            return res
+        },
+        initMap() {
+            this.myChart = echarts.init(document.getElementById("userIp"))
+            this.myChart.setOption(this.userIp, true)
+        },
+        isAdmin() {
+            if (this.user && Object.keys(this.user).length > 0) 
+                return this.user.mark != this.mark
+            return false
+        },
     }
 }
 </script>

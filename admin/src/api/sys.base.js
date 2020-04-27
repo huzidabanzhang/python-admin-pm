@@ -72,3 +72,16 @@ export function GetAllUserLoginCount(data) {
         headers: { isCheck: true }
     })
 }
+
+/**
+ * 获取所有用户登录次数
+ * @param {*} data 
+ */
+export function GetUserLoginIp(data) {
+    return request({
+        url: '/v1/Base/GetUserLoginIp',
+        method: 'post',
+        data,
+        headers: { isCheck: true }
+    })
+}

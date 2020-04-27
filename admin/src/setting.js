@@ -32,7 +32,7 @@ export default {
     theme: {
         list: [
             {
-                title: 'd2admin 经典',
+                title: '经典',
                 name: 'd2',
                 preview: 'image/theme/d2/preview@2x.png'
             },
@@ -41,6 +41,11 @@ export default {
                 name: 'line',
                 backgroundImage: 'image/theme/line/bg.jpg',
                 preview: 'image/theme/line/preview@2x.png'
+            },
+            {
+                title: 'Chester',
+                name: 'chester',
+                preview: 'image/theme/chester/preview@2x.png'
             },
             {
                 title: '流星',
