@@ -31,11 +31,8 @@ function ResetRoute(to, next) {
             defaultValue: {},
             user: true
         }, { root: true }).then(res => {
-            const r = res.routes || []
             const m = res.menus || []
-
-            util.initRoute(r, 1, true)
-            util.initMenu(m, 1, true)
+            util.initMenu(m, false)
             
             if (to.path != '/login') RouteFresh = false
             if (process.env.NODE_ENV !== 'development') next()

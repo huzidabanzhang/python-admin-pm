@@ -39,8 +39,7 @@ export default {
                         // 设置 vuex 用户信息
                         await dispatch('d2admin/user/set', {
                             user: res.info,
-                            menus: res.menus,
-                            routes: res.routes,
+                            menus: util.dealData(res.menus),
                             interfaces: res.interface
                         }, { root: true })
                         // 用户登录后从持久化数据加载一系列的设置

@@ -74,14 +74,6 @@ export default {
             lock: 'lock_menu',
             inter: 'get_menu_to_interface'
         },
-        route: {
-            add: 'add_router',
-            set: 'set_router',
-            lock: 'lock_router',
-            del: 'del_router',
-            all_del: 'del_router',
-            all_lock: 'lock_router'
-        },
         interface: {
             add: 'add_interface',
             set: 'set_interface',

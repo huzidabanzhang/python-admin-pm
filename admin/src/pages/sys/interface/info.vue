@@ -79,9 +79,9 @@
             </el-form-item>
             <el-form-item
                 label="不允许禁用"
-                prop="not_allow"
+                prop="forbidden"
             >
-                <el-switch v-model="form.not_allow" :disabled="form.interface_id != undefined"></el-switch>
+                <el-switch v-model="form.forbidden" :disabled="form.interface_id != undefined"></el-switch>
             </el-form-item>
         </el-form>
         <span
@@ -126,7 +126,7 @@ export default {
                 description: '',
                 mark: '',
                 menu_id: '',
-                not_allow: false
+                forbidden: false
             },
             rules: {
                 name: [
@@ -147,7 +147,7 @@ export default {
                 menu_id: [
                     { required: true, message: '请选择所属菜单', trigger: 'change' }
                 ],
-                not_allow: [
+                forbidden: [
                     { required: true, message: '请选择', trigger: 'change' }
                 ]
             },

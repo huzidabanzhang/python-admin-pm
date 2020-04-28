@@ -39,31 +39,26 @@ util.open = function (url) {
     document.body.removeChild(document.getElementById('d2admin-link-temp'))
 }
 
-let getRouteInfo = (data) => {
-    let info = {
-        name: data.name,
-        path: data.path,
-        meta: {
-            title: data.title,
-            cache: data.cache,
-            auth: true,
-            is_disabled: data.is_disabled
-        },
-        id: data.route_id
-    }
+function componentToImport(ary) {
+    ary.forEach(i => {
+        if (i.componentPath != 'layout/header-aside') {
+            let component = () => import('@/pages/' + i.componentPath)
+            i.component = component
+        } else {
+            i.component = layoutHeaderAside
+        }
 
-    if (data.componentPath == 'layout/header-aside')
-        info['component'] = layoutHeaderAside
-    else info['component'] = () => import('@/pages/' + data.componentPath)
-
-    return info
+        if (i.children) {
+            componentToImport(i.children)
+        }
+    })
 }
 
 /**
  * @description 动态加载路由
  * @param {Object} r 路由
  */
-util.initRoute = function (r, type, isAll = false) {
+util.initRoute = function (r, isAll = false) {
     let data = cloneDeep(r), route = [
         {
             path: '/',
@@ -71,8 +66,11 @@ util.initRoute = function (r, type, isAll = false) {
         },
         { path: '*', redirect: '/404', hidden: true }
     ]
+    
+    componentToImport(data)
+    console.log(data)
 
-    let routes = route.concat(util.dealData(data, 1))
+    let routes = route.concat(data)
     router.$addRoutes(routes)
     // 更新标签页池
     store.commit('d2admin/page/init', [
@@ -80,29 +78,13 @@ util.initRoute = function (r, type, isAll = false) {
         ...routes
     ])
 
-    if (isAll && type != 1) {
+    if (isAll) {
         Notification({
             title: '提示',
             message: '动态加载路由成功',
             type: 'success',
             offset: 100
         })
-        let info = store.getters['d2admin/user/info']
-        store.dispatch('d2admin/user/set', {
-            user: info.user,
-            menus: info.menus,
-            routes: r,
-            interfaces: info.interfaces
-        }, { root: true })
-    }
-}
-
-let getMenuInfo = (params) => {
-    return {
-        title: params.title,
-        icon: params.icon,
-        id: params.menu_id,
-        path: params.path
     }
 }
 
@@ -110,12 +92,13 @@ let getMenuInfo = (params) => {
  * @description 动态加载菜单
  * @param {Object} m 菜单
  */
-util.initMenu = function (m, type, isAll = false) {
-    let data = cloneDeep(m).filter(i => {
+util.initMenu = function (m, isAll = false) {
+    let params = isAll ? util.dealData(cloneDeep(m)) : m, menus = params.menu.filter((i) => {
         return !i.is_disabled
-    }), menus = util.dealData(data, 3)
+    })
     store.commit('d2admin/menu/asideSet', menus)
-    if (isAll && type != 1) {
+
+    if (isAll) {
         Notification({
             title: '提示',
             message: '动态加载菜单成功',
@@ -125,11 +108,11 @@ util.initMenu = function (m, type, isAll = false) {
         let info = store.getters['d2admin/user/info']
         store.dispatch('d2admin/user/set', {
             user: info.user,
-            menus: m,
-            routes: info.routes,
+            menus: params,
             interfaces: info.interfaces
         }, { root: true })
     }
+    util.initRoute(params.route, isAll)
 }
 
 /**
@@ -141,7 +124,6 @@ util.initInterface = function (f) {
     store.dispatch('d2admin/user/set', {
         user: info.user,
         menus: info.menus,
-        routes: info.routes,
         interfaces: f
     }, { root: true })
 }
@@ -150,10 +132,8 @@ util.initInterface = function (f) {
  * @description 获取菜单树
  */
 util.getMenuTree = function () {
-    let menus = cloneDeep(store.getters['d2admin/user/menus'])
-    return util.dealData(menus, 1)
+    return cloneDeep(store.getters['d2admin/user/menus'].menu)
 }
-
 
 /**
  * @description 更新个人信息
@@ -170,28 +150,64 @@ util.updateUserInfo = function (u) {
     store.dispatch('d2admin/user/set', {
         user: u.user,
         menus: info.menus,
-        routes: info.routes,
         interfaces: info.interfaces
     }, { root: true })
 }
 
+let getRouteInfo = (params) => {
+    return {
+        id: params.menu_id,
+        name: params.name,
+        path: params.path,
+        meta: {
+            title: params.title,
+            cache: params.cache,
+            auth: true,
+            is_disabled: params.is_disabled
+        },
+        componentPath: params.componentPath
+    }
+}
+
+let getMenuInfo = (params) => {
+    return {
+        title: params.title,
+        icon: params.icon,
+        id: params.menu_id,
+        path: params.path,
+        is_disabled: params.is_disabled
+    }
+}
+
 /**
- * @description 菜单处理
+ * @description 菜单路由初始化处理
  * @param {Object} params 数据
  */
-util.dealData = function (params, type) {
-    let data = []
+util.dealData = function (params) {
+    let data = {
+        route: [],
+        menu: []
+    }
     while (params.length > 0) {
         for (let i = 0; i < params.length; i++) {
+            if (params[i].menu_id == undefined) {
+                params.splice(i, 1)
+                i--
+                continue
+            }
+
             if (params[i].pid == 0) {
-                data.push(type == 1 ? (params[i].menu_id ? getMenuInfo(params[i]) : getRouteInfo(params[i])) : params[i])
+                data.menu.push(getMenuInfo(params[i]))
+                data.route.push(getRouteInfo(params[i]))
                 params.splice(i, 1)
                 i--
             } else {
-                let index = data.findIndex(item => (type == 1 ? item.id : (type == 2 ? item.route_id : item.menu_id)) === params[i].pid)
+                let index = data.menu.findIndex(item => item.id === params[i].pid)
                 if (index == -1) continue
-                if (!data[index]['children']) data[index]['children'] = []
-                data[index]['children'].push(type == 1 ? (params[i].menu_id ? getMenuInfo(params[i]) : getRouteInfo(params[i])) : params[i])
+                if (!data.menu[index]['children']) data.menu[index]['children'] = []
+                if (!data.route[index]['children']) data.route[index]['children'] = []
+                data.menu[index]['children'].push(getMenuInfo(params[i]))
+                data.route[index]['children'].push(getRouteInfo(params[i]))
                 params.splice(i, 1)
                 i--
             }

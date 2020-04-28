@@ -109,7 +109,7 @@
                     label="标识"
                     prop="mark"
                 >
-                    <el-input 
+                    <el-input
                         v-model="form.mark"
                         :disabled="!isAdd"
                     ></el-input>
@@ -132,6 +132,24 @@
                 >
                     <el-input v-model="form.path"></el-input>
                 </el-form-item>
+                <el-form-item
+                    prop="component"
+                    label="组件"
+                >
+                    <el-input v-model="form.component"></el-input>
+                </el-form-item>
+                <el-form-item
+                    prop="componentPath"
+                    label="组件路径"
+                >
+                    <el-input v-model="form.componentPath"></el-input>
+                </el-form-item>
+                <!-- <el-form-item
+                    prop="cache"
+                    label="keep-alive"
+                    align="center"
+                >
+                </el-form-item> -->
                 <el-form-item
                     label="图标"
                     prop="icon"
@@ -157,9 +175,9 @@
                             type: 'inter'
                         }"
                     >关联接口</el-button>
-                    <el-button 
+                    <el-button
                         v-if="form.is_disabled == false && isHidden(form.mark)"
-                        type="info" 
+                        type="info"
                         icon="el-icon-close"
                         @click="lockMenu(form.menu_id, true)"
                         :disabled="mark_btn.lock"
@@ -170,7 +188,7 @@
                     >禁用</el-button>
                     <el-button
                         v-if="form.is_disabled == true && isHidden(form.mark)"
-                        type="success" 
+                        type="success"
                         icon="el-icon-check"
                         @click="lockMenu(form.menu_id, false)"
                         :disabled="mark_btn.lock"
@@ -179,7 +197,7 @@
                             type: 'lock'
                         }"
                     >启用</el-button>
-                    <el-button 
+                    <el-button
                         v-if="isHidden(form.mark)"
                         type="danger"
                         icon="el-icon-delete"
@@ -194,9 +212,9 @@
             </el-form>
         </el-card>
 
-        <el-dialog 
-            :title="dialogTitle" 
-            :visible.sync="dialogTableVisible" 
+        <el-dialog
+            :title="dialogTitle"
+            :visible.sync="dialogTableVisible"
             v-loading="dialogLoading"
             size="mini"
             width="800px"
@@ -317,11 +335,11 @@ export default {
             QueryMenuByParam(params)
                 .then(async res => {
                     let data = cloneDeep(res)
-                    this.menuData = util.dealData(res, 3)
+                    this.menuData = util.dealData(res).menu
                     this.treeData = cloneDeep(this.menuData)
                     this.loading = false
                     // 更新当前路由
-                    if (isTrue == true) util.initMenu(data, 3, true)
+                    if (isTrue == true) util.initMenu(data, true)
                 })
                 .catch(() => {
                     this.loading = false
