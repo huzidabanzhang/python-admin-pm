@@ -1,5 +1,12 @@
 <template>
-    <d2-container>
+    <el-dialog
+        title="数据库管理"
+        :visible.sync="Show"
+        width="40%"
+        append-to-body
+        destroy-on-close
+        @closed="close"
+    >
         <el-form
             :inline="true"
             size="mini"
@@ -41,61 +48,26 @@
             @change="importSql"
         >
 
-        <el-dialog
-            title="备份数据库"
-            :visible.sync="centerDialogVisible"
-            width="40%"
-            append-to-body
-            destroy-on-close
-            @closed="centerDialogVisible = false"
-        >
-            <el-form
-                label-width="80px"
-                :model="form"
-                :rules="rules"
-                size="smaill"
-            >
-                <el-form-item
-                    label="备份方式"
-                    prop="type"
-                >
-                    <el-select v-model="form.type">
-                        <el-option
-                            v-for="item in typeOption"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        >
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <span
-                slot="footer"
-                class="dialog-footer"
-            >
-                <el-button
-                    @click="centerDialogVisible = false"
-                    size="smaill"
-                >取 消</el-button>
-                <el-button
-                    type="primary"
-                    @click="exportSql"
-                    :loading="loading"
-                    size="smaill"
-                >确 定</el-button>
-            </span>
-        </el-dialog>
-    </d2-container>
+        <Info
+            :params="form"
+            :centerDialogVisible="centerDialogVisible"
+            @handleClose="handleClose"
+        ></Info>
+    </el-dialog>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
-import { AgainCreateDrop, ImportSql, ExportSql } from '@api/sys.base'
+import Info from './select.vue'
+import { AgainCreateDrop, ImportSql } from '@api/sys.base'
 import util from '@/libs/util.js'
 import setting from '@/setting.js'
 export default {
     name: 'sys-base',
+    props: {
+        Visible: Boolean
+    },
+    components: { Info },
     data() {
         return {
             admin: setting.SYS_ADMIN.mark,
@@ -103,22 +75,17 @@ export default {
             mark_btn: {
                 export: false
             },
+            Show: false,
             centerDialogVisible: false,
-            loading: false,
-            rules: {
-                type: [
-                    { required: true, message: '请选择备份方式', trigger: 'change' }
-                ]
-            },
-            typeOption: [
-                { label: '数据加表结构', value: 1 },
-                { label: '表结构不包含数据', value: 2 },
-                { label: '数据不包含表结构', value: 3 }
-            ],
             form: {
                 type: 1
             },
             user: this.$store.getters['d2admin/user/user']
+        }
+    },
+    watch: {
+        Visible(newVal) {
+            this.Show = newVal
         }
     },
     methods: {
@@ -144,33 +111,20 @@ export default {
                         })
                 })
         },
+        close() {
+            this.$emit('handleClose', false)
+        },
+        handleClose() {
+            this.centerDialogVisible = false
+        },
         isMark() {
-            if (this.user && Object.keys(this.user).length > 0) 
+            if (this.user && Object.keys(this.user).length > 0)
                 return this.user.mark == this.admin
             return false
         },
         exportBase() {
             this.form.type = 1
             this.centerDialogVisible = true
-        },
-        exportSql() {
-            this.loading = true
-            ExportSql({
-                type: this.form.type
-            }).then((response) => {
-                const href = window.URL.createObjectURL(new Blob([response.data], { type: response.data.type }))
-                let downloadElement = document.createElement('a')
-                downloadElement.href = href
-                downloadElement.download = response.headers.filename //下载后文件名
-                document.body.appendChild(downloadElement)
-                downloadElement.click() //点击下载
-                document.body.removeChild(downloadElement);//下载完成移除元素
-                window.URL.revokeObjectURL(href) //释放blob对象
-                this.loading = false
-                this.centerDialogVisible = false
-            }).catch(() => {
-                this.loading = false
-            })
         },
         importBase() {
             this.$confirm('导入数据库将覆盖所有数据，确定要导入吗？', '提示',

@@ -1,22 +1,42 @@
 <template>
     <d2-container class="page">
         <el-row :gutter="20">
-            <el-col :span="16" v-if="!isAdmin()">
+            <el-col :span="8">
                 <el-card class="box-card">
                     <div
                         slot="header"
                         class="header"
                     >
-                        <span>用户登录IP分布情况表</span>
+                        <span>
+                            <img
+                                v-if="info.avatarUrl && info.avatarUrl != ''"
+                                :src="'/API/v1/Document/GetDocument/' + info.avatarUrl"
+                                class="avatar"
+                            >
+                            <img
+                                v-else
+                                :src="circleUrl"
+                                class="avatar"
+                            >
+                            {{user.username}} {{info.isAdmin ? '管理员' : '普通用户'}}信息
+                        </span>
                     </div>
-                    <div
-                        id="userIp"
-                        style="height: 600px;"
-                    ></div>
+                    <el-form
+                        :model="info"
+                        label-width="120px"
+                    >
+                        </el-form-item>
+                        <el-form-item label="角色">
+                            {{info.role_name}}
+                        </el-form-item>
+                        <el-form-item label="最后登录时间">
+                            {{info.time}}
+                        </el-form-item>
+                    </el-form>
                 </el-card>
             </el-col>
 
-            <el-col :span="12" v-else>
+            <el-col :span="!isAdmin() ? 8 : 12">
                 <el-card class="box-card">
                     <div
                         slot="header"
@@ -40,58 +60,6 @@
                         slot="header"
                         class="header"
                     >
-                        <span>{{user.username}} {{info.isAdmin ? '管理员' : '普通用户'}}信息</span>
-                    </div>
-                    <div class="info">
-                        <img
-                            v-if="info.avatarUrl && info.avatarUrl != ''"
-                            :src="'/API/v1/Document/GetDocument/' + info.avatarUrl"
-                            class="avatar"
-                        >
-                        <img
-                            v-else
-                            :src="circleUrl"
-                            class="avatar"
-                        >
-                    </div>
-                    <div class="info">
-                        角色: {{info.role_name}}
-                    </div>
-                    <div class="info">
-                        角色标识: {{info.mark}}
-                    </div>
-                    <div class="info">
-                        最后登录时间: {{info.time}}
-                    </div>
-                </el-card>
-            </el-col>
-        </el-row>
-
-        <el-row :gutter="20" v-if="!isAdmin()">
-            <el-col :span="12">
-                <el-card class="box-card">
-                    <div
-                        slot="header"
-                        class="header"
-                    >
-                        <span>{{user.username}} 登录统计表</span>
-                    </div>
-                    <div>
-                        <ve-histogram
-                            :loading="userLogin.loading"
-                            :data="userLogin.chartData"
-                            :extend="userLogin.extend"
-                        ></ve-histogram>
-                    </div>
-                </el-card>
-            </el-col>
-
-            <el-col :span="12">
-                <el-card class="box-card">
-                    <div
-                        slot="header"
-                        class="header"
-                    >
                         <span>所有用户登录次数表</span>
                     </div>
                     <div>
@@ -103,6 +71,19 @@
                 </el-card>
             </el-col>
         </el-row>
+
+        <el-card class="box-card">
+            <div
+                slot="header"
+                class="header"
+            >
+                <span>用户登录IP分布情况表</span>
+            </div>
+            <div
+                id="userIp"
+                style="height: 600px;"
+            ></div>
+        </el-card>
     </d2-container>
 </template>
 
@@ -266,7 +247,7 @@ export default {
             },
             ip_list: {},
             user: this.$store.getters['d2admin/user/user'],
-            info: '',
+            info: {},
             circleUrl: defaultImg,
             myChart: null,
             mark: setting.SYS_ADMIN.mark
@@ -334,7 +315,7 @@ export default {
             this.myChart.setOption(this.userIp, true)
         },
         isAdmin() {
-            if (this.user && Object.keys(this.user).length > 0) 
+            if (this.user && Object.keys(this.user).length > 0)
                 return this.user.mark != this.mark
             return false
         },
@@ -352,17 +333,26 @@ export default {
 
 .header {
     text-align: center;
+    & > span {
+        line-height: 30px;
+        height: 30px;
+    }
+
+    img {
+        width: 30px;
+        height: 30px;
+        display: inline;
+        position: relative;
+        top: 8px;
+        margin-right: 5px;
+    }
 }
 
-.info {
-    text-align: center;
-    line-height: 30px;
-    height: auto;
-    padding-bottom: 10px;
-}
-
-.avatar {
-    display: initial;
+.el-form-item {
+    margin-bottom: 10px;
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .page {

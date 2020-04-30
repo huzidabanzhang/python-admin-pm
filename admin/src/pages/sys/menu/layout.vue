@@ -6,7 +6,7 @@
                 size="mini"
                 icon="el-icon-plus"
                 circle
-                @click="addMenu"
+                @click="addMenu(true)"
                 title="新增"
                 :disabled="mark_btn.add"
                 v-premissions="{
@@ -51,41 +51,11 @@
                 class="clearfix"
             >
                 <span>{{isAdd == true ? '新建菜单' : '编辑菜单'}}</span>
-                <el-button
-                    style="float: right; padding: 3px 5px"
-                    type="text"
-                    @click="submit"
-                    v-show="isAdd"
-                    :disabled="mark_btn.add"
-                    v-premissions="{
-                        mark: mark.menu.add,
-                        type: 'add'
-                    }"
-                >提交
-                </el-button>
-                <el-button
-                    style="float: right; padding: 3px 5px; margin-left: 0;"
-                    type="text"
-                    @click="submit"
-                    v-show="!isAdd"
-                    :disabled="mark_btn.set"
-                    v-premissions="{
-                        mark: mark.menu.set,
-                        type: 'set'
-                    }"
-                >提交
-                </el-button>
-                <el-button
-                    style="float: right; padding: 3px 5px"
-                    type="text"
-                    @click="resetForm('SYSMENU')"
-                >重置
-                </el-button>
             </div>
             <el-form
                 label-width="80px"
                 :model="form"
-                size="smaill"
+                size="mini"
                 :rules="rules"
                 ref="SYSMENU"
             >
@@ -98,6 +68,12 @@
                         v-model="form.menu_id"
                         disabled
                     ></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="图标"
+                    prop="icon"
+                >
+                    <d2-icon-select v-model="form.icon" />
                 </el-form-item>
                 <el-form-item
                     label="名称"
@@ -127,14 +103,14 @@
                     ></el-cascader>
                 </el-form-item>
                 <el-form-item
-                    label="路径"
+                    label="路由路径"
                     prop="path"
                 >
                     <el-input v-model="form.path"></el-input>
                 </el-form-item>
                 <el-form-item
                     prop="component"
-                    label="组件"
+                    label="路由组件"
                 >
                     <el-input v-model="form.component"></el-input>
                 </el-form-item>
@@ -144,59 +120,61 @@
                 >
                     <el-input v-model="form.componentPath"></el-input>
                 </el-form-item>
-                <!-- <el-form-item
-                    prop="cache"
-                    label="keep-alive"
-                    align="center"
-                >
-                </el-form-item> -->
                 <el-form-item
-                    label="图标"
-                    prop="icon"
+                    prop="cache"
+                    label="路由缓存"
                 >
-                    <d2-icon-select
-                        v-model="form.icon"
-                        :user-input="true"
-                    />
+                    <el-radio-group v-model="form.cache">
+                        <el-radio-button label="true">是</el-radio-button>
+                        <el-radio-button label="false">否</el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item
+                    prop="is_disabled"
+                    label="可见性"
+                >
+                    <el-radio-group
+                        v-model="form.is_disabled"
+                        :disabled="!isHidden(form.mark)"
+                    >
+                        <el-radio-button label="false">显示</el-radio-button>
+                        <el-radio-button label="true">隐藏</el-radio-button>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item
                     label="排序"
                     prop="sort"
                 >
-                    <el-input v-model.number="form.sort"></el-input>
+                    <el-input-number
+                        v-model="form.sort"
+                        :min="1"
+                    ></el-input-number>
                 </el-form-item>
-                <el-form-item v-if="!isAdd">
+                <el-form-item v-if="isAdd">
                     <el-button
-                        icon="el-icon-position"
-                        @click="getMenuToInterface(form.title, form.menu_id)"
-                        :disabled="mark_btn.inter"
-                        v-premissions="{
-                            mark: mark.menu.inter,
-                            type: 'inter'
-                        }"
-                    >关联接口</el-button>
-                    <el-button
-                        v-if="form.is_disabled == false && isHidden(form.mark)"
-                        type="info"
-                        icon="el-icon-close"
-                        @click="lockMenu(form.menu_id, true)"
-                        :disabled="mark_btn.lock"
-                        v-premissions="{
-                            mark: mark.menu.lock,
-                            type: 'lock'
-                        }"
-                    >禁用</el-button>
-                    <el-button
-                        v-if="form.is_disabled == true && isHidden(form.mark)"
-                        type="success"
+                        type="primary"
                         icon="el-icon-check"
-                        @click="lockMenu(form.menu_id, false)"
-                        :disabled="mark_btn.lock"
+                        @click="submit"
+                        :disabled="mark_btn.add"
                         v-premissions="{
-                            mark: mark.menu.lock,
-                            type: 'lock'
+                            mark: mark.menu.add,
+                            type: 'add'
                         }"
-                    >启用</el-button>
+                    >保存
+                    </el-button>
+                </el-form-item>
+                <el-form-item v-else>
+                    <el-button
+                        type="primary"
+                        icon="el-icon-check"
+                        @click="submit"
+                        :disabled="mark_btn.set"
+                        v-premissions="{
+                            mark: mark.menu.set,
+                            type: 'set'
+                        }"
+                    >保存
+                    </el-button>
                     <el-button
                         v-if="isHidden(form.mark)"
                         type="danger"
@@ -208,6 +186,15 @@
                             type: 'del'
                         }"
                     >删除</el-button>
+                    <el-button
+                        icon="el-icon-position"
+                        @click="getMenuToInterface(form.title, form.menu_id)"
+                        :disabled="mark_btn.inter"
+                        v-premissions="{
+                            mark: mark.menu.inter,
+                            type: 'inter'
+                        }"
+                    >关联接口</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
@@ -216,10 +203,12 @@
             :title="dialogTitle"
             :visible.sync="dialogTableVisible"
             v-loading="dialogLoading"
-            size="mini"
             width="800px"
         >
-            <el-table :data="interfaceData">
+            <el-table
+                :data="interfaceData"
+                size="mini"
+            >
                 <el-table-column
                     prop="name"
                     label="名称"
@@ -250,25 +239,23 @@
                     align="left"
                 >
                     <template slot-scope="scope">
-                        <el-tag size="smaill">{{scope.row.mark}}</el-tag>
+                        <el-tag>{{scope.row.mark}}</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column
                     prop="is_disabled"
-                    label="状态"
+                    label="可见性"
                     align="center"
                 >
                     <template slot-scope="scope">
                         <el-tag
-                            size="smaill"
                             type="success"
                             v-if="!scope.row.is_disabled"
-                        >启用</el-tag>
+                        >显示</el-tag>
                         <el-tag
-                            size="smaill"
                             type="info"
                             v-else
-                        >禁用</el-tag>
+                        >隐藏</el-tag>
                     </template>
                 </el-table-column>
             </el-table>
@@ -305,7 +292,10 @@ export default {
                     { required: true, message: '请输入排序', trigger: 'blur' },
                     { type: 'number', message: '排序必须为数字值' }
                 ],
-                icon: [{ required: true, message: '请选择图标', trigger: 'blur' }]
+                icon: [{ required: true, message: '请选择图标', trigger: 'blur' }],
+                component: [{ required: true, message: '请输入路由组件', trigger: 'blur' }],
+                componentPath: [{ required: true, message: '请输入组件路径', trigger: 'blur' }],
+                cache: [{ required: true, message: '请输入选择路由缓存', trigger: 'blur' }]
             },
             formLoad: false,
             isSubmit: false,
@@ -318,8 +308,7 @@ export default {
                 add: false,
                 set: false,
                 inter: false,
-                del: false,
-                lock: false
+                del: false
             }
         }
     },
@@ -328,18 +317,18 @@ export default {
     },
     methods: {
         init(isTrue) {
-            this.addMenu()
+            if (isTrue != true) this.addMenu(false)
+
             let params = {}
             if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
             this.loading = true
             QueryMenuByParam(params)
                 .then(async res => {
-                    let data = cloneDeep(res)
-                    this.menuData = util.dealData(res).menu
+                    this.menuData = util.getMenuTree(false, cloneDeep(res))
                     this.treeData = cloneDeep(this.menuData)
                     this.loading = false
                     // 更新当前路由
-                    if (isTrue == true) util.initMenu(data, true)
+                    if (isTrue == true) util.initMenu(res, true)
                 })
                 .catch(() => {
                     this.loading = false
@@ -376,53 +365,27 @@ export default {
             this.formLoad = false
             this.init(true)
         },
-        resetForm(formName) {
-            this.$refs[formName].resetFields()
-        },
-        addMenu(data) {
+        addMenu(isClear) {
             this.form = {
-                pid: data ? data.menu_id : '0',
-                title: '',
-                path: '',
-                icon: '',
-                mark: '',
-                sort: 1,
-                type: 1,
-                is_disabled: true
+                cache: true,
+                is_disabled: false,
+                sort: 1
             }
             this.treeData = cloneDeep(this.menuData)
+            if (isClear) this.$refs['SYSMENU'].clearValidate()
             this.isAdd = true
         },
         getMenuItem(data) {
             this.form = cloneDeep(data)
             this.treeData = cloneDeep(this.menuData)
             this.disabledMenu(this.form, this.treeData)
+            this.$refs['SYSMENU'].clearValidate()
             this.isAdd = false
         },
         disabledMenu(item, data) {
             data.map((i) => {
                 if (i.menu_id == item.menu_id) i.disabled = true
                 if (i.children) this.disabledMenu(item, i.children)
-            })
-        },
-        lockMenu(menu_id, is_disabled) {
-            this.$confirm(is_disabled ? '确定要禁用该菜单吗' : '确定要启用该菜单吗',
-                is_disabled ? '禁用菜单' : '启用菜单',
-                {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                })
-                .then(() => {
-                    this.Lock(menu_id, is_disabled)
-                })
-        },
-        Lock(menu_id, is_disabled) {
-            LockMenu({
-                menu_id: menu_id,
-                is_disabled: is_disabled
-            }).then(async res => {
-                this.init(true)
             })
         },
         delMenu(menu_id) {
@@ -471,7 +434,7 @@ export default {
     display: inline-block;
 }
 .el-card {
-    display: inline-table;
+    display: inline;
     width: 60%;
     margin-left: 7%;
     position: absolute;

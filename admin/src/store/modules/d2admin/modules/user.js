@@ -29,17 +29,6 @@ export default {
             }
         },
         /**
-         * @description 返回路由数据
-         * @param {*} state vuex state
-         */
-        routes(state) {
-            try {
-                return state.info.routers
-            } catch (error) {
-                return []
-            }
-        },
-        /**
          * @description 返回用户所有数据
          * @param {*} state vuex state
          */

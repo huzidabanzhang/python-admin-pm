@@ -14,7 +14,7 @@ export function CreateRole(data) {
 }
 
 /**
- * 禁用权限
+ * 隐藏权限
  * @param {*} data 
  */
 export function LockRole(data) {

@@ -31,11 +31,12 @@ Vue.directive('premissions', function (el, binding, node) {
             return i.mark == params.mark
         })
         if (item.length == 0) {
-            if (!params.not_hidden) el.style.display = 'none'
-            else node.context.mark_btn[params.type] = true
+            // if (!params.not_hidden) el.style.display = 'none'
+            // else node.context.mark_btn[params.type] = true
+            node.context.mark_btn[params.type] = true
         } else {
             if (params.not_disabled == undefined || !params.not_disabled)
-                node.context.mark_btn[params.type] = item[0].is_disabled
+                node.context.mark_btn[params.type] = Boolean(item[0].is_disabled)
         }
     } else node.context.mark_btn[params.type] = true
 })

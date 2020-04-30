@@ -20,7 +20,7 @@
                 size="mini"
                 circle
                 @click="lockAdmin(admin_id, false)"
-                title="启用"
+                title="显示"
                 :disabled="mark_btn.all_lock"
                 v-premissions="{
                     mark: mark.admin.all_lock,
@@ -35,7 +35,7 @@
                 icon="el-icon-close"
                 circle
                 @click="lockAdmin(admin_id, true)"
-                title="禁用"
+                title="隐藏"
                 :disabled="mark_btn.all_lock"
                 v-premissions="{
                     mark: mark.admin.all_lock,
@@ -107,6 +107,7 @@
                 <el-form-item>
                     <el-button
                         icon="el-icon-search"
+                        :loading="loading"
                         size="mini"
                         type="primary"
                         @click="changeAdmin"
@@ -143,7 +144,7 @@
             >
                 <template slot-scope="scope">
                     <el-tag
-                        size="smaill"
+                        size="mini"
                         type="primary"
                         v-html="getRoleName(scope.row.role_id)"
                     ></el-tag>
@@ -151,20 +152,29 @@
             </el-table-column>
             <el-table-column
                 prop="is_disabled"
-                label="状态"
-                align="center"
+                label="可见性"
+                align="left"
             >
                 <template slot-scope="scope">
-                    <el-tag
-                        size="smaill"
-                        type="success"
-                        v-if="!scope.row.is_disabled"
-                    >启用</el-tag>
-                    <el-tag
-                        size="smaill"
-                        type="info"
+                    <el-radio-group
+                        size="mini"
+                        v-model="scope.row.is_disabled"
+                        v-if="isSelect(scope.row)"
+                        :disabled="mark_btn.lock"
+                        v-premissions="{
+                            mark: mark.admin.lock,
+                            type: 'lock'
+                        }"
+                        @change="(label) => {lockAdmin([scope.row.admin_id], label, scope.row)}"
+                    >
+                        <el-radio-button :label="false">显示</el-radio-button>
+                        <el-radio-button :label="true">隐藏</el-radio-button>
+                    </el-radio-group>
+                    <el-button
+                        type="primary"
+                        size="mini"
                         v-else
-                    >禁用</el-tag>
+                    >显示</el-button>
                 </template>
             </el-table-column>
             <el-table-column
@@ -200,35 +210,6 @@
                             not_hidden: true
                         }"
                     ></el-button>
-                    <el-button
-                        type="info"
-                        v-if="!scope.row.is_disabled"
-                        icon="el-icon-close"
-                        size="mini"
-                        circle
-                        @click.native="lockAdmin([scope.row.admin_id], true)"
-                        title="禁用"
-                        :disabled="mark_btn.lock"
-                        v-premissions="{
-                            mark: mark.admin.lock,
-                            type: 'lock'
-                        }"
-                    ></el-button>
-                    <el-button
-                        v-else
-                        type="success"
-                        icon="el-icon-check"
-                        size="mini"
-                        circle
-                        @click.native="lockAdmin([scope.row.admin_id], false)"
-                        title="启用"
-                        :disabled="mark_btn.lock"
-                        v-premissions="{
-                            mark: mark.admin.lock,
-                            type: 'lock'
-                        }"
-                    >
-                    </el-button>
                     <el-button
                         type="danger"
                         icon="el-icon-delete"
@@ -292,8 +273,8 @@ export default {
             roleOption: [],
             roleParams: [],
             lockOption: [
-                { label: '启用', value: 'false' },
-                { label: '禁用', value: 'true' }
+                { label: '显示', value: 'false' },
+                { label: '隐藏', value: 'true' }
             ],
             loading: false,
             title: '',
@@ -412,13 +393,8 @@ export default {
             this.btn_submit = disabled
             this.title = '新建管理员'
             this.params = {
-                username: '',
-                password: '',
-                nickname: '',
-                email: '',
                 sex: 1,
-                role_id: '',
-                avatarUrl: ''
+                is_disabled: false
             }
             this.centerDialogVisible = true
         },
@@ -428,12 +404,11 @@ export default {
             this.params = params
             this.centerDialogVisible = true
         },
-        lockAdmin(keys, is_disabled) {
+        lockAdmin(keys, is_disabled, row) {
             if (keys.length == 0) return this.$message.warning('未选择任何记录')
-            
 
-            this.$confirm(is_disabled ? '确定要禁用该管理员吗' : '确定要启用该管理员吗',
-                is_disabled ? '禁用管理员' : '启用管理员',
+            this.$confirm(is_disabled ? '确定要隐藏该管理员吗' : '确定要显示该管理员吗',
+                is_disabled ? '隐藏管理员' : '显示管理员',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -441,6 +416,8 @@ export default {
                 })
                 .then(() => {
                     this.Lock(keys, is_disabled)
+                }).catch(() => {
+                    if (row) row.is_disabled = !is_disabled
                 })
         },
         Lock(keys, is_disabled) {

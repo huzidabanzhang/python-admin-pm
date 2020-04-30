@@ -12,7 +12,7 @@
             label-width="80px"
             :model="form"
             :rules="rules"
-            size="smaill"
+            size="mini"
             v-loading="loading"
         >
             <el-form-item
@@ -29,6 +29,17 @@
                     v-model="form.mark"
                     :disabled="form.role_id != undefined"
                 ></el-input>
+            </el-form-item>
+            <el-form-item
+                prop="is_disabled"
+                label="可见性"
+            >
+                <el-radio-group
+                    v-model="form.is_disabled"
+                >
+                    <el-radio-button label="false">显示</el-radio-button>
+                    <el-radio-button label="true">隐藏</el-radio-button>
+                </el-radio-group>
             </el-form-item>
             <el-form-item
                 label="菜单"
@@ -60,21 +71,21 @@
                 type="danger"
                 icon="el-icon-delete"
                 @click="delRole"
-                size="smaill"
+                size="mini"
                 style="float: left;"
                 v-if="params.role_id"
                 :disabled="btn_del"
             ></el-button>
             <el-button
                 @click="handleClosed"
-                size="smaill"
+                size="mini"
             >取 消</el-button>
             <el-button
                 type="primary"
                 @click="handelInfo"
                 :loading="isSubmit"
                 :disabled="btn_add"
-                size="smaill"
+                size="mini"
             >确 定</el-button>
         </span>
     </el-dialog>

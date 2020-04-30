@@ -10,10 +10,10 @@
     >
         <el-form
             label-width="100px"
-            ref="adminForm"
+            ref="interfaceForm"
             :model="form"
             :rules="rules"
-            size="smaill"
+            size="mini"
             v-loading="loading"
         >
             <el-form-item
@@ -78,10 +78,22 @@
                 </el-select>
             </el-form-item>
             <el-form-item
-                label="不允许禁用"
-                prop="forbidden"
+                prop="is_disabled"
+                label="可见性"
             >
-                <el-switch v-model="form.forbidden" :disabled="form.interface_id != undefined"></el-switch>
+                <el-radio-group
+                    v-model="form.is_disabled"
+                >
+                    <el-radio-button label="false">显示</el-radio-button>
+                    <el-radio-button label="true">隐藏</el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item
+                label="是否可隐藏"
+                prop="forbidden"
+                v-if="form.interface_id == undefined"
+            >
+                <el-switch v-model="form.forbidden"></el-switch>
             </el-form-item>
         </el-form>
         <span
@@ -90,13 +102,13 @@
         >
             <el-button
                 @click="handleClosed"
-                size="smaill"
+                size="mini"
             >取 消</el-button>
             <el-button
                 type="primary"
                 @click="handelInfo"
                 :loading="isSubmit"
-                size="smaill"
+                size="mini"
                 :disabled="btn"
             >确 定</el-button>
         </span>
@@ -119,15 +131,7 @@ export default {
     data() {
         return {
             Visible: this.centerDialogVisible,
-            form: {
-                name: '',
-                path: '',
-                method: 'GET',
-                description: '',
-                mark: '',
-                menu_id: '',
-                forbidden: false
-            },
+            form: {},
             rules: {
                 name: [
                     { required: true, message: '请输入名称', trigger: 'blur' }
@@ -146,9 +150,6 @@ export default {
                 ],
                 menu_id: [
                     { required: true, message: '请选择所属菜单', trigger: 'change' }
-                ],
-                forbidden: [
-                    { required: true, message: '请选择', trigger: 'change' }
                 ]
             },
             isSubmit: false,
@@ -168,7 +169,7 @@ export default {
             this.Visible = newVal
             if (newVal) {
                 // 菜单遍历
-                let menus = util.getMenuTree()
+                let menus = util.getMenuTree(true)
                 this.menuOption = []
                 this.pushMenu(menus)
 

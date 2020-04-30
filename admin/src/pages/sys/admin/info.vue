@@ -13,7 +13,7 @@
             ref="adminForm"
             :model="form"
             :rules="rules"
-            size="smaill"
+            size="mini"
             v-loading="loading"
         >
             <el-form-item
@@ -29,7 +29,7 @@
                     accept="image/jpeg, image/png, image/jpg"
                 >
                     <img
-                        v-if="avatarUrl != ''"
+                        v-if="avatarUrl != '' && avatarUrl"
                         :src="avatarUrl"
                         class="avatar"
                     >
@@ -39,6 +39,25 @@
                         class="avatar"
                     >
                 </el-upload>
+            </el-form-item>
+            <el-form-item
+                label="角色"
+                prop="role_id"
+                v-if="isTab == false"
+            >
+                <el-select
+                    v-model="form.role_id"
+                    placeholder="请选择角色"
+                >
+                    <el-option
+                        v-for="item in roleOption"
+                        :key="item.role_id"
+                        :label="item.name"
+                        :value="item.role_id"
+                        :disabled="item.disabled"
+                    >
+                    </el-option>
+                </el-select>
             </el-form-item>
             <el-form-item
                 label="用户名"
@@ -71,37 +90,23 @@
                 label="性别"
                 prop="sex"
             >
-                <el-select
+                <el-radio-group
                     v-model="form.sex"
-                    placeholder="请选择性别"
                 >
-                    <el-option
-                        v-for="item in sexOption"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    >
-                    </el-option>
-                </el-select>
+                    <el-radio-button label="1">男</el-radio-button>
+                    <el-radio-button label="2">女</el-radio-button>
+                </el-radio-group>
             </el-form-item>
             <el-form-item
-                label="角色"
-                prop="role_id"
-                v-if="isTab == false"
+                prop="is_disabled"
+                label="可见性"
             >
-                <el-select
-                    v-model="form.role_id"
-                    placeholder="请选择角色"
+                <el-radio-group
+                    v-model="form.is_disabled"
                 >
-                    <el-option
-                        v-for="item in roleOption"
-                        :key="item.role_id"
-                        :label="item.name"
-                        :value="item.role_id"
-                        :disabled="item.disabled"
-                    >
-                    </el-option>
-                </el-select>
+                    <el-radio-button label="false">显示</el-radio-button>
+                    <el-radio-button label="true">隐藏</el-radio-button>
+                </el-radio-group>
             </el-form-item>
         </el-form>
         <span
@@ -110,13 +115,13 @@
         >
             <el-button
                 @click="handleClosed"
-                size="smaill"
+                size="mini"
             >取 消</el-button>
             <el-button
                 type="primary"
                 @click="handelInfo"
                 :loading="isSubmit"
-                size="smaill"
+                size="mini"
                 :disabled="btn"
             >确 定</el-button>
         </span>
@@ -144,13 +149,8 @@ export default {
             circleUrl: defaultImg,
             Visible: this.centerDialogVisible,
             form: {
-                username: '',
-                nickname: '',
-                password: '',
-                email: '',
                 sex: 1,
-                role_id: '',
-                avatarUrl: ''
+                is_disabled: false
             },
             avatarUrl: '',
             rules: {
@@ -165,9 +165,6 @@ export default {
                 email: [
                     { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
                 ],
-                sex: [
-                    { required: true, message: '请选择性别', trigger: 'change' }
-                ],
                 role_id: [
                     { required: true, message: '请选择角色', trigger: 'change' }
                 ]
@@ -175,10 +172,6 @@ export default {
             isSubmit: false,
             loading: false,
             img_load: false,
-            sexOption: [
-                { label: '男', value: 1 },
-                { label: '女', value: 2 }
-            ],
             roleOption: this.role,
             API: '/API/v1/Document/GetDocument/',
             btn: this.submit
@@ -193,7 +186,7 @@ export default {
                     return i
                 })
                 this.form = cloneDeep(this.params)
-                if (this.form.avatarUrl != '') {
+                if (this.form.avatarUrl && this.form.avatarUrl != '') {
                     this.avatarUrl = this.API + this.form.avatarUrl
                 } else this.avatarUrl = ''
             }

@@ -60,7 +60,7 @@
                 align="center"
             >
                 <template slot-scope="scope">
-                    <el-tag size="smaill">登录</el-tag>
+                    <el-tag size="mini">登录</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -70,20 +70,20 @@
             >
                 <template slot-scope="scope">
                     <el-tag
-                        size="smaill"
+                        size="mini"
                         type="success"
                         v-if="scope.row.status == 0"
                     >成功</el-tag>
                     <el-tag
-                        size="smaill"
+                        size="mini"
                         type="danger"
                         v-else-if="scope.row.status == 1"
                     >失败</el-tag>
                     <el-tag
-                        size="smaill"
+                        size="mini"
                         type="info"
                         v-else
-                    >禁用</el-tag>
+                    >隐藏</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -130,7 +130,7 @@ export default {
             statusOption: [
                 { label: '成功', value: 0 },
                 { label: '失败', value: 1 },
-                { label: '禁用', value: 2 }
+                { label: '隐藏', value: 2 }
             ],
             loading: false
         }

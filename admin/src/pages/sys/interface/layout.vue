@@ -19,7 +19,7 @@
                 size="mini"
                 circle
                 @click="lockInterface(interface_id, false)"
-                title="启用"
+                title="显示"
                 :disabled="mark_btn.all_lock"
                 v-premissions="{
                     mark: mark.interface.all_lock,
@@ -33,7 +33,7 @@
                 icon="el-icon-close"
                 circle
                 @click="lockInterface(interface_id, true)"
-                title="禁用"
+                title="隐藏"
                 :disabled="mark_btn.all_lock"
                 v-premissions="{
                     mark: mark.interface.all_lock,
@@ -80,7 +80,7 @@
                 <el-form-item>
                     <el-select
                         v-model="lock"
-                        placeholder="接口状态"
+                        placeholder="可见性"
                         clearable
                         size="mini"
                         :clear="clear(lock)"
@@ -116,6 +116,7 @@
                         icon="el-icon-search"
                         size="mini"
                         type="primary"
+                        :loading="loading"
                         @click="changeAll"
                     >搜索</el-button>
                 </el-form-item>
@@ -125,6 +126,7 @@
         <el-table
             :data="interfaceData"
             style="width: 100%"
+            height="100%"
             size="mini"
             type="ghost"
             v-loading="loading"
@@ -148,52 +150,65 @@
                 prop="path"
                 label="路由"
                 align="left"
-                width="200"
             >
             </el-table-column>
             <el-table-column
                 prop="method"
                 label="请求方式"
                 align="center"
+                width="100"
             >
             </el-table-column>
             <el-table-column
                 prop="description"
                 label="描述"
                 align="left"
+                width="200"
             >
             </el-table-column>
             <el-table-column
                 prop="mark"
                 label="标识"
                 align="left"
+                width="200"
             >
                 <template slot-scope="scope">
-                    <el-tag size="smaill">{{scope.row.mark}}</el-tag>
+                    <el-tag size="mini">{{scope.row.mark}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
                 prop="is_disabled"
-                label="状态"
-                align="center"
+                label="可见性"
+                align="left"
+                width="150"
             >
                 <template slot-scope="scope">
-                    <el-tag
-                        size="smaill"
-                        type="success"
-                        v-if="!scope.row.is_disabled"
-                    >启用</el-tag>
-                    <el-tag
-                        size="smaill"
-                        type="info"
+                    <el-radio-group
+                        size="mini"
+                        v-model="scope.row.is_disabled"
+                        v-if="isSelect(scope.row) && !scope.row.forbidden"
+                        :disabled="mark_btn.lock"
+                        v-premissions="{
+                            mark: mark.interface.lock,
+                            type: 'lock'
+                        }"
+                        @change="(label) => {lockInterface([scope.row.interface_id], label, scope.row)}"
+                    >
+                        <el-radio-button :label="false">显示</el-radio-button>
+                        <el-radio-button :label="true">隐藏</el-radio-button>
+                    </el-radio-group>
+                    <el-button
+                        type="primary"
+                        size="mini"
                         v-else
-                    >禁用</el-tag>
+                    >显示</el-button>
                 </template>
             </el-table-column>
             <el-table-column
                 prop="content"
                 label="操作"
                 align="left"
+                width="100"
             >
                 <template slot-scope="scope">
                     <el-button
@@ -208,35 +223,6 @@
                             not_hidden: true
                         }"
                     ></el-button>
-                    <el-button
-                        type="info"
-                        v-if="!scope.row.is_disabled && isSelect(scope.row) && !scope.row.forbidden"
-                        icon="el-icon-close"
-                        size="mini"
-                        circle
-                        @click.native="lockInterface([scope.row.interface_id], true)"
-                        title="禁用"
-                        :disabled="mark_btn.lock"
-                        v-premissions="{
-                            mark: mark.interface.lock,
-                            type: 'lock'
-                        }"
-                    ></el-button>
-                    <el-button
-                        v-if="isSelect(scope.row) && scope.row.is_disabled && !scope.row.forbidden"
-                        type="success"
-                        icon="el-icon-check"
-                        size="mini"
-                        circle
-                        @click.native="lockInterface([scope.row.interface_id], false)"
-                        title="启用"
-                        :disabled="mark_btn.lock"
-                        v-premissions="{
-                            mark: mark.interface.lock,
-                            type: 'lock'
-                        }"
-                    >
-                    </el-button>
                     <el-button
                         type="danger"
                         icon="el-icon-delete"
@@ -296,8 +282,8 @@ export default {
             lock: '',
             is_disabled: '',
             lockOption: [
-                { label: '启用', value: 'false' },
-                { label: '禁用', value: 'true' }
+                { label: '显示', value: 'false' },
+                { label: '隐藏', value: 'true' }
             ],
             method: '',
             isMethod: '',
@@ -332,7 +318,7 @@ export default {
     methods: {
         init(isTrue) {
             this.changeSelect([])
-            
+
             if (isTrue) this.centerDialogVisible = false
             let params = {
                 page: this.page,
@@ -383,13 +369,9 @@ export default {
             this.btn_submit = disabled
             this.title = '新建接口'
             this.params = {
-                name: '',
-                path: '',
                 method: 'GET',
-                description: '',
-                mark: '',
-                menu_id: '',
-                forbidden: false
+                forbidden: true,
+                is_disabled: false
             }
             this.centerDialogVisible = true
         },
@@ -410,17 +392,17 @@ export default {
                 }), lock = data.filter((i) => {
                     return i.mark == this.mark.interface.all_lock
                 })
-                if (del.length > 0 && !del[0].is_disabled) 
+                if (del.length > 0 && !del[0].is_disabled)
                     this.mark_btn.all_del = this.interface_id.length == 0
-                if (lock.length > 0 && !lock[0].is_disabled) 
+                if (lock.length > 0 && !lock[0].is_disabled)
                     this.mark_btn.all_lock = this.interface_id.length == 0
             }
         },
-        lockInterface(keys, is_disabled) {
+        lockInterface(keys, is_disabled, row) {
             if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
-            this.$confirm(is_disabled ? '确定要禁用该接口吗' : '确定要启用该接口吗',
-                is_disabled ? '禁用接口' : '启用接口',
+            this.$confirm(is_disabled ? '确定要隐藏该接口吗' : '确定要显示该接口吗',
+                is_disabled ? '隐藏接口' : '显示接口',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -428,9 +410,11 @@ export default {
                 })
                 .then(() => {
                     this.Lock(keys, is_disabled)
+                }).catch(() => {
+                    if (row) row.is_disabled = !is_disabled
                 })
         },
-        delInterface (interface_id) {
+        delInterface(interface_id) {
             if (interface_id.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm('确定要删除该接口吗', '删除接口',
@@ -460,7 +444,7 @@ export default {
                         }
 
                         if (type == 2) {
-                            interfaces[j].is_disabled = is_disabled
+                            interfaces[j].is_disabled = is_disabled == 'true' ? true : false
                         }
 
                         break
@@ -476,7 +460,7 @@ export default {
                 is_disabled: is_disabled
             }).then(async res => {
                 this.getInterfaceInfo(keys, 2, is_disabled)
-                this.$message.success(is_disabled ? '接口禁用成功' : '接口启用成功')
+                this.$message.success(is_disabled ? '接口隐藏成功' : '接口显示成功')
                 this.init()
             })
         }

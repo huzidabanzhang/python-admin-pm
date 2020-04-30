@@ -7,6 +7,8 @@ export default {
         this.$message.warning('临时菜单')
       } else if (/^https:\/\/|http:\/\//.test(index)) {
         util.open(index)
+      } else if (index == '/system/base') {
+        this.$parent.handleVisible(true)
       } else {
         this.$router.push({
           path: index

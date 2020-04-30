@@ -9,6 +9,8 @@ src/views/demo/d2-crud/
 # node 覆盖率文件
 coverage/
 
+src/setting.js
+
 # 忽略文件
 **/*-min.js
 **/*.min.js

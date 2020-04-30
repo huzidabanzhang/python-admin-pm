@@ -22,7 +22,7 @@ export function CreateInterface(data) {
 }
 
 /**
- * 禁用接口
+ * 隐藏接口
  * @param {*} data 
  */
 export function LockInterface(data) {

@@ -100,12 +100,12 @@
             >
                 <template slot-scope="scope">
                     <el-tag
-                        size="smaill"
+                        size="mini"
                         type="success"
                         v-if="scope.row.status == 0"
                     >成功</el-tag>
                     <el-tag
-                        size="smaill"
+                        size="mini"
                         type="danger"
                         v-else
                     >失败</el-tag>

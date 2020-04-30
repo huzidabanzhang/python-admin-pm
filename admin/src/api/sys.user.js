@@ -46,7 +46,7 @@ export function CreateAdmin(data) {
 }
 
 /**
- * 禁用管理员用户
+ * 隐藏管理员用户
  * @param {*} data 
  */
 export function LockAdmin(data) {

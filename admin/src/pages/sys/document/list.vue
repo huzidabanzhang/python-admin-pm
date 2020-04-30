@@ -308,7 +308,7 @@
                 ref="adminForm"
                 :model="form"
                 disabled
-                size="smaill"
+                size="mini"
             >
                 <el-form-item
                     label="文件名"

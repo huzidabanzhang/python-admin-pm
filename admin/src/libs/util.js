@@ -68,7 +68,6 @@ util.initRoute = function (r, isAll = false) {
     ]
     
     componentToImport(data)
-    console.log(data)
 
     let routes = route.concat(data)
     router.$addRoutes(routes)
@@ -77,15 +76,6 @@ util.initRoute = function (r, isAll = false) {
         ...frameInRoutes,
         ...routes
     ])
-
-    if (isAll) {
-        Notification({
-            title: '提示',
-            message: '动态加载路由成功',
-            type: 'success',
-            offset: 100
-        })
-    }
 }
 
 /**
@@ -93,10 +83,8 @@ util.initRoute = function (r, isAll = false) {
  * @param {Object} m 菜单
  */
 util.initMenu = function (m, isAll = false) {
-    let params = isAll ? util.dealData(cloneDeep(m)) : m, menus = params.menu.filter((i) => {
-        return !i.is_disabled
-    })
-    store.commit('d2admin/menu/asideSet', menus)
+    let params = isAll ? util.dealData(cloneDeep(m)) : m
+    store.commit('d2admin/menu/asideSet', params.menu)
 
     if (isAll) {
         Notification({
@@ -131,8 +119,35 @@ util.initInterface = function (f) {
 /**
  * @description 获取菜单树
  */
-util.getMenuTree = function () {
-    return cloneDeep(store.getters['d2admin/user/menus'].menu)
+util.getMenuTree = function (isGet, params) {
+    if (isGet) {
+        return cloneDeep(store.getters['d2admin/user/menus'].menu)
+    } else {
+        let data = []
+        while (params.length > 0) {
+            for (let i = 0; i < params.length; i++) {
+                if (params[i].menu_id == undefined) {
+                    params.splice(i, 1)
+                    i--
+                    continue
+                }
+
+                if (params[i].pid == 0) {
+                    data.push(params[i])
+                    params.splice(i, 1)
+                    i--
+                } else {
+                    let index = data.findIndex(item => item.menu_id === params[i].pid)
+                    if (index == -1) continue
+                    if (!data[index]['children']) data[index]['children'] = []
+                    data[index]['children'].push(params[i])
+                    params.splice(i, 1)
+                    i--
+                }
+            }
+        }
+        return data
+    }
 }
 
 /**

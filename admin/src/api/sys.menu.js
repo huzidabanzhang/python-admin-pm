@@ -14,7 +14,7 @@ export function CreateMenu(data) {
 }
 
 /**
- * 禁用菜单
+ * 隐藏菜单
  * @param {*} data 
  */
 export function LockMenu(data) {

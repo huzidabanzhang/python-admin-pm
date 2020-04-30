@@ -71,7 +71,6 @@ export default {
             add: 'add_menu',
             del: 'del_menu',
             set: 'set_menu',
-            lock: 'lock_menu',
             inter: 'get_menu_to_interface'
         },
         interface: {
@@ -114,5 +113,5 @@ export default {
         }
     }
     // 禁止删除的菜单项
-    // 禁止禁用的菜单项
+    // 禁止隐藏的菜单项
 }

@@ -79,6 +79,10 @@
         </div>
       </div>
     </div>
+    <d2-base
+        :Visible="Visible"
+        @handleClose="handleVisible"
+    ></d2-base>
   </div>
 </template>
 
@@ -92,6 +96,7 @@ import d2HeaderFullscreen from './components/header-fullscreen'
 // import d2HeaderSize from './components/header-size'
 import d2HeaderTheme from './components/header-theme'
 import d2HeaderUser from './components/header-user'
+import d2Base from '@/pages/sys/base/index'
 // import d2HeaderLog from './components/header-log'
 // import d2HeaderColor from './components/header-color'
 import { mapState, mapGetters, mapActions } from 'vuex'
@@ -111,6 +116,7 @@ export default {
     // d2HeaderSize,
     d2HeaderTheme,
     d2HeaderUser,
+    d2Base
     // d2HeaderLog,
     // d2HeaderColor
   },
@@ -119,7 +125,8 @@ export default {
       // [侧边栏宽度] 正常状态
       asideWidth: '200px',
       // [侧边栏宽度] 折叠状态
-      asideWidthCollapse: '65px'
+      asideWidthCollapse: '65px',
+      Visible: false
     }
   },
   computed: {
@@ -152,6 +159,9 @@ export default {
      */
     handleToggleAside () {
       this.asideCollapseToggle()
+    },
+    handleVisible (isShow) {
+        this.Visible = isShow
     }
   }
 }

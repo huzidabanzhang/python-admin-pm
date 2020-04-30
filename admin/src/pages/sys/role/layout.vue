@@ -63,6 +63,7 @@
                         icon="el-icon-search"
                         size="mini"
                         type="primary"
+                        :loading="loading"
                         @click="changeStatus"
                     >搜索</el-button>
                 </el-form-item>
@@ -112,8 +113,8 @@ export default {
             value: '',
             is_disabled: '',
             statusOption: [
-                { label: '启用', value: 'true' },
-                { label: '禁用', value: 'false' }
+                { label: '显示', value: 'true' },
+                { label: '隐藏', value: 'false' }
             ],
             loading: false,
             title: '',
@@ -165,8 +166,7 @@ export default {
             this.btn_submit = disabled
             this.title = '新建角色'
             this.params = {
-                name: '',
-                mark: ''
+                is_disabled: false
             }
             this.centerDialogVisible = true
         },
@@ -212,8 +212,8 @@ export default {
         lockRole(keys, is_disabled) {
             if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
-            this.$confirm(is_disabled ? '确定要禁用该角色吗' : '确定要启用该角色吗',
-                is_disabled ? '禁用角色' : '启用角色',
+            this.$confirm(is_disabled ? '确定要隐藏该角色吗' : '确定要显示该角色吗',
+                is_disabled ? '隐藏角色' : '显示角色',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
