@@ -12,7 +12,7 @@
                 type="primary"
                 size="mini"
             ><a
-                href="http://wages.ye9418.com/attence.xlsx"
+                :href="'http://wages.ye9418.com/attence.xlsx?rand=' + t"
                 style="color: white;"
             ><i class="el-icon-download"></i>模板</a></el-button>
 
@@ -191,7 +191,8 @@ export default {
             params: {},
             centerDialogVisible: false,
             btn_submit: false,
-            rid: []
+            rid: [],
+            t: Math.random()
         }
     },
     created() {
