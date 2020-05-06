@@ -81,9 +81,7 @@
                 prop="is_disabled"
                 label="可见性"
             >
-                <el-radio-group
-                    v-model="form.is_disabled"
-                >
+                <el-radio-group v-model="form.is_disabled">
                     <el-radio-button label="false">显示</el-radio-button>
                     <el-radio-button label="true">隐藏</el-radio-button>
                 </el-radio-group>
@@ -106,7 +104,7 @@
             >取 消</el-button>
             <el-button
                 type="primary"
-                @click="handelInfo"
+                @click="handelInfo('interfaceForm')"
                 :loading="isSubmit"
                 size="mini"
                 :disabled="btn"
@@ -188,43 +186,38 @@ export default {
                 } else this.menuOption.push(i)
             });
         },
-        handelInfo() {
-            let isError = false
-            this.$refs.adminForm.validate((valid) => {
-                if (!valid) {
-                    isError = true
-                    return false
+        handelInfo(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.isSubmit = true
+                    let params = this.form, interfaces = cloneDeep(this.$store.getters['d2admin/user/interfaces'])
+
+                    if (this.form.interface_id) {
+                        ModifyInterface(params)
+                            .then(async res => {
+                                interfaces.map((i, index) => {
+                                    if (i.interface_id == params.interface_id)
+                                        return interfaces[index] = params
+                                })
+                                util.initInterface(interfaces)
+                                this.handleInitParent(1)
+                            })
+                            .catch(() => {
+                                this.isSubmit = false
+                            })
+                    } else {
+                        CreateInterface(params)
+                            .then(async res => {
+                                interfaces.push(res)
+                                util.initInterface(interfaces)
+                                this.handleInitParent(2)
+                            })
+                            .catch(() => {
+                                this.isSubmit = false
+                            })
+                    }
                 }
             })
-            if (isError) return true
-
-            this.isSubmit = true
-            let params = this.form, interfaces = cloneDeep(this.$store.getters['d2admin/user/interfaces'])
-
-            if (this.form.interface_id) {
-                ModifyInterface(params)
-                    .then(async res => {
-                        interfaces.map((i, index) => {
-                            if (i.interface_id == params.interface_id)
-                                return interfaces[index] = params
-                        })
-                        util.initInterface(interfaces)
-                        this.handleInitParent(1)
-                    })
-                    .catch(() => {
-                        this.isSubmit = false
-                    })
-            } else {
-                CreateInterface(params)
-                    .then(async res => {
-                        interfaces.push(res)
-                        util.initInterface(interfaces)
-                        this.handleInitParent(2)
-                    })
-                    .catch(() => {
-                        this.isSubmit = false
-                    })
-            }
         },
         handleInitParent(type) {
             this.$message.success(type == 1 ? '接口编辑成功' : '接口创建成功')

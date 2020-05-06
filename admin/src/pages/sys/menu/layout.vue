@@ -76,10 +76,16 @@
                     <d2-icon-select v-model="form.icon" />
                 </el-form-item>
                 <el-form-item
-                    label="名称"
+                    label="菜单名称"
                     prop="title"
                 >
                     <el-input v-model="form.title"></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="路由名称"
+                    prop="name"
+                >
+                    <el-input v-model="form.name"></el-input>
                 </el-form-item>
                 <el-form-item
                     label="标识"
@@ -103,7 +109,7 @@
                     ></el-cascader>
                 </el-form-item>
                 <el-form-item
-                    label="路由路径"
+                    label="路径"
                     prop="path"
                 >
                     <el-input v-model="form.path"></el-input>
@@ -154,7 +160,7 @@
                     <el-button
                         type="primary"
                         icon="el-icon-check"
-                        @click="submit"
+                        @click="submit('SYSMENU')"
                         :disabled="mark_btn.add"
                         v-premissions="{
                             mark: mark.menu.add,
@@ -167,7 +173,7 @@
                     <el-button
                         type="primary"
                         icon="el-icon-check"
-                        @click="submit"
+                        @click="submit('SYSMENU')"
                         :disabled="mark_btn.set"
                         v-premissions="{
                             mark: mark.menu.set,
@@ -285,7 +291,8 @@ export default {
             isAdd: true,
             menu_prop: { value: 'menu_id', label: 'title', emitPath: false, checkStrictly: true },
             rules: {
-                title: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+                title: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
+                name: [{ required: true, message: '请输入路由名称', trigger: 'blur' }],
                 mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
                 path: [{ required: true, message: '请输入路径', trigger: 'blur' }],
                 sort: [
@@ -339,26 +346,30 @@ export default {
                 return i == mark
             })
         },
-        submit() {
-            this.formLoad = true
-            if (this.form.pid == null) this.form.pid = '0'
-            if (this.form.menu_id) {
-                ModifyMenu(this.form)
-                    .then(async res => {
-                        this.handleInitParent(1)
-                    })
-                    .catch(() => {
-                        this.formLoad = false
-                    })
-            } else {
-                CreateMenu(this.form)
-                    .then(async res => {
-                        this.handleInitParent(2)
-                    })
-                    .catch(() => {
-                        this.formLoad = false
-                    })
-            }
+        submit(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.formLoad = true
+                    if (this.form.pid == null) this.form.pid = '0'
+                    if (this.form.menu_id) {
+                        ModifyMenu(this.form)
+                            .then(async res => {
+                                this.handleInitParent(1)
+                            })
+                            .catch(() => {
+                                this.formLoad = false
+                            })
+                    } else {
+                        CreateMenu(this.form)
+                            .then(async res => {
+                                this.handleInitParent(2)
+                            })
+                            .catch(() => {
+                                this.formLoad = false
+                            })
+                    }
+                }
+            })
         },
         handleInitParent(type) {
             this.$message.success(type == 1 ? '菜单编辑成功' : '菜单创建成功')

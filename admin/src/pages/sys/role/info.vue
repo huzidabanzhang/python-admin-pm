@@ -14,6 +14,7 @@
             :rules="rules"
             size="mini"
             v-loading="loading"
+            ref="roleForm"
         >
             <el-form-item
                 label="角色名"
@@ -25,7 +26,7 @@
                 label="标识"
                 prop="mark"
             >
-                <el-input 
+                <el-input
                     v-model="form.mark"
                     :disabled="form.role_id != undefined"
                 ></el-input>
@@ -34,23 +35,19 @@
                 prop="is_disabled"
                 label="可见性"
             >
-                <el-radio-group
-                    v-model="form.is_disabled"
-                >
+                <el-radio-group v-model="form.is_disabled">
                     <el-radio-button label="false">显示</el-radio-button>
                     <el-radio-button label="true">隐藏</el-radio-button>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item
-                label="菜单"
-            >
+            <el-form-item label="菜单">
                 <el-tree
                     ref="treeMenu"
                     :data="menu"
                     :props="prop"
                     :default-checked-keys="select"
                     node-key="menu_id"
-                    show-checkbox   
+                    show-checkbox
                 >
                     <span
                         class="custom-tree-node"
@@ -82,7 +79,7 @@
             >取 消</el-button>
             <el-button
                 type="primary"
-                @click="handelInfo"
+                @click="handelInfo('roleForm')"
                 :loading="isSubmit"
                 :disabled="btn_add"
                 size="mini"
@@ -183,45 +180,44 @@ export default {
                 }
             }
         },
-        handelInfo() {
-            let menu_id = [], interface_id = []
-            this.$refs.treeMenu.getCheckedNodes().map((i) => {
-                return i.type == 'MENU' ? menu_id.push(i.menu_id) : interface_id.push(i.menu_id)
+        handelInfo(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    let role_list = []
+                    this.$refs.treeMenu.getCheckedNodes().forEach((i) => {
+                        if (i.type != 'MENU') role_list.push(i.menu_id)
+                    })
+                    this.$refs.treeMenu.getHalfCheckedNodes().forEach((i) => {
+                        if (i.type != 'MENU') role_list.push(i.menu_id)
+                    })
+
+                    this.isSubmit = true
+                    let params = {
+                        role_list: role_list,
+                        name: this.form.name,
+                        mark: this.form.mark
+                    }
+
+                    if (this.params.role_id) {
+                        params['role_id'] = this.params.role_id
+                        ModifyRole(params)
+                            .then(async res => {
+                                this.handleInitParent(1)
+                            })
+                            .catch(() => {
+                                this.isSubmit = false
+                            })
+                    } else {
+                        CreateRole(params)
+                            .then(async res => {
+                                this.handleInitParent(2)
+                            })
+                            .catch(() => {
+                                this.isSubmit = false
+                            })
+                    }
+                }
             })
-            this.$refs.treeMenu.getHalfCheckedNodes().map((i) => {
-                return i.type == 'MENU' ? menu_id.push(i.menu_id) : interface_id.push(i.menu_id)
-            })
-
-            if (this.form.name == '') return this.$message.error('请输入角色名')
-
-            if (this.form.mark == '') this.$message.error('请输入标识')
-
-            this.isSubmit = true
-            let params = {
-                menu_id: menu_id,
-                interface_id: interface_id,
-                name: this.form.name,
-                mark: this.form.mark
-            }
-
-            if (this.params.role_id) {
-                params['role_id'] = this.params.role_id
-                ModifyRole(params)
-                    .then(async res => {
-                        this.handleInitParent(1)
-                    })
-                    .catch(() => {
-                        this.isSubmit = false
-                    })
-            } else {
-                CreateRole(params)
-                    .then(async res => {
-                        this.handleInitParent(2)
-                    })
-                    .catch(() => {
-                        this.isSubmit = false
-                    })
-            }
         },
         handleInitParent(type) {
             this.$message.success(type == 1 ? '角色编辑成功' : '角色创建成功')

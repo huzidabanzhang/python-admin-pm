@@ -63,7 +63,10 @@
                 label="用户名"
                 prop="username"
             >
-                <el-input v-model="form.username" :disabled="form.admin_id != undefined"></el-input>
+                <el-input
+                    v-model="form.username"
+                    :disabled="form.admin_id != undefined"
+                ></el-input>
             </el-form-item>
             <el-form-item
                 label="密码"
@@ -90,9 +93,7 @@
                 label="性别"
                 prop="sex"
             >
-                <el-radio-group
-                    v-model="form.sex"
-                >
+                <el-radio-group v-model="form.sex">
                     <el-radio-button label="1">男</el-radio-button>
                     <el-radio-button label="2">女</el-radio-button>
                 </el-radio-group>
@@ -101,9 +102,7 @@
                 prop="is_disabled"
                 label="可见性"
             >
-                <el-radio-group
-                    v-model="form.is_disabled"
-                >
+                <el-radio-group v-model="form.is_disabled">
                     <el-radio-button label="false">显示</el-radio-button>
                     <el-radio-button label="true">隐藏</el-radio-button>
                 </el-radio-group>
@@ -119,7 +118,7 @@
             >取 消</el-button>
             <el-button
                 type="primary"
-                @click="handelInfo"
+                @click="handelInfo('adminForm')"
                 :loading="isSubmit"
                 size="mini"
                 :disabled="btn"
@@ -196,41 +195,36 @@ export default {
         }
     },
     methods: {
-        handelInfo() {
-            let isError = false
-            this.$refs.adminForm.validate((valid) => {
-                if (!valid) {
-                    isError = true
-                    return false
+        handelInfo(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.isSubmit = true
+                    let params = this.form
+
+                    if (this.form.admin_id) {
+                        ModifyAdmin(params)
+                            .then(async res => {
+                                if (res.is_self == true) {
+                                    util.updateUserInfo(res)
+                                    this.$message.success('管理员编辑成功')
+                                    this.$emit('callback', res.user)
+                                    this.isSubmit = false
+                                } else this.handleInitParent(1)
+                            })
+                            .catch(() => {
+                                this.isSubmit = false
+                            })
+                    } else {
+                        CreateAdmin(params)
+                            .then(async res => {
+                                this.handleInitParent(2)
+                            })
+                            .catch(() => {
+                                this.isSubmit = false
+                            })
+                    }
                 }
             })
-            if (isError) return true
-
-            this.isSubmit = true
-            let params = this.form
-
-            if (this.form.admin_id) {
-                ModifyAdmin(params)
-                    .then(async res => {
-                        if (res.is_self == true) {
-                            util.updateUserInfo(res)
-                            this.$message.success('管理员编辑成功')
-                            this.$emit('callback', res.user)
-                            this.isSubmit = false
-                        } else this.handleInitParent(1)
-                    })
-                    .catch(() => {
-                        this.isSubmit = false
-                    })
-            } else {
-                CreateAdmin(params)
-                    .then(async res => {
-                        this.handleInitParent(2)
-                    })
-                    .catch(() => {
-                        this.isSubmit = false
-                    })
-            }
         },
         handleInitParent(type) {
             this.$message.success(type == 1 ? '管理员编辑成功' : '管理员创建成功')
