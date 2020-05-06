@@ -136,7 +136,7 @@
             </el-table-column>
             <el-table-column
                 prop="payment_time"
-                label="工资时间"
+                label="工资月份"
                 align="center"
             >
             </el-table-column>

@@ -122,6 +122,12 @@
             >
             </el-table-column>
             <el-table-column
+                prop="attendance_time"
+                label="考勤月份"
+                align="center"
+            >
+            </el-table-column>
+            <el-table-column
                 prop="content"
                 label="详情"
                 align="center"
