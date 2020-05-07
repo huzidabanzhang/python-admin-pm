@@ -60,16 +60,6 @@
                 ref="SYSMENU"
             >
                 <el-form-item
-                    label="ID"
-                    prop="menu_id"
-                    v-if="!isAdd"
-                >
-                    <el-input
-                        v-model="form.menu_id"
-                        disabled
-                    ></el-input>
-                </el-form-item>
-                <el-form-item
                     label="图标"
                     prop="icon"
                 >

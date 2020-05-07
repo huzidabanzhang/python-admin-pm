@@ -91,8 +91,13 @@ service.interceptors.request.use(
         }
 
         if (config.headers.isGet) {
-            for (let i in config.data) {
-                config.url += '/' + config.data[i]
+            if (Object.keys(config.data).length > 0) {
+                let count = 0
+                config.url += '?'
+                for (let i in config.data) {
+                    config.url += (count == 0 ? '' : '&') + i + '=' + config.data[i]
+                    count++
+                }
             }
         } else {
             if (!config.headers['content-type']) {

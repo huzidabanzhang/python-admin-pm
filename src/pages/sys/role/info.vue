@@ -183,17 +183,20 @@ export default {
         handelInfo(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    let role_list = []
+                    let role_list = [], menu = []
                     this.$refs.treeMenu.getCheckedNodes().forEach((i) => {
                         if (i.type != 'MENU') role_list.push(i.menu_id)
+                        else menu.push(i.menu_id)
                     })
                     this.$refs.treeMenu.getHalfCheckedNodes().forEach((i) => {
                         if (i.type != 'MENU') role_list.push(i.menu_id)
+                        else menu.push(i.menu_id)
                     })
 
                     this.isSubmit = true
                     let params = {
                         role_list: role_list,
+                        menu: menu,
                         name: this.form.name,
                         mark: this.form.mark
                     }

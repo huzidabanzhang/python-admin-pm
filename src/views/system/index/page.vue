@@ -54,7 +54,7 @@
                 </el-card>
             </el-col>
 
-            <el-col :span="8">
+            <el-col :span="8" v-if="!isAdmin()">
                 <el-card class="box-card">
                     <div
                         slot="header"
@@ -72,7 +72,7 @@
             </el-col>
         </el-row>
 
-        <el-card class="box-card">
+        <el-card class="box-card" v-if="!isAdmin()">
             <div
                 slot="header"
                 class="header"
