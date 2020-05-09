@@ -62,11 +62,13 @@
             </el-form-item>
             <el-form-item
                 label="所属菜单"
-                prop="menu_id"
+                prop="menus"
             >
                 <el-select
-                    v-model="form.menu_id"
+                    v-model="form.menus"
+                    multiple
                     placeholder="请选择所属菜单"
+                    class="inherit"
                 >
                     <el-option
                         v-for="item in menuOption"
@@ -146,7 +148,7 @@ export default {
                 mark: [
                     { required: true, message: '请输入标识', trigger: 'blur' }
                 ],
-                menu_id: [
+                menus: [
                     { required: true, message: '请选择所属菜单', trigger: 'change' }
                 ]
             },
@@ -235,5 +237,11 @@ export default {
 .el-form-width {
     width: 50%;
     display: inline-grid;
+}
+</style>
+
+<style scoped>
+.inherit {
+    display: inherit;
 }
 </style>
