@@ -80,7 +80,7 @@ export default {
             form: {
                 type: 1
             },
-            user: this.$store.getters['d2admin/user/user']
+            user: this.$store.getters['chubby/user/user']
         }
     },
     watch: {
@@ -89,7 +89,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('d2admin/account', [
+        ...mapActions('chubby/account', [
             'logout'
         ]),
         initBase() {
@@ -148,9 +148,7 @@ export default {
                     closeOnPressEscape: false,
                     closeOnHashChange: false
                 }).then(() => {
-                    this.logout({
-                        confirm: false
-                    })
+                    this.logout()
                 })
         },
         importSql(event) {

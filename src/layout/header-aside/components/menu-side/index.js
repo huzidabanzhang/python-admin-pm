@@ -31,7 +31,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('d2admin/menu', [
+    ...mapState('chubby/menu', [
       'aside',
       'asideCollapse'
     ])

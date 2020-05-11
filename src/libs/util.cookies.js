@@ -13,7 +13,7 @@ cookies.set = function (name = 'default', value = '', cookieSetting = {}) {
         expires: 1
     }
     Object.assign(currentCookieSetting, cookieSetting)
-    Cookies.set(`zpp-${process.env.VUE_APP_VERSION}-${name}`, value, currentCookieSetting)
+    Cookies.set(`chubby-${process.env.VUE_APP_VERSION}-${name}`, value, currentCookieSetting)
 }
 
 /**
@@ -21,7 +21,7 @@ cookies.set = function (name = 'default', value = '', cookieSetting = {}) {
  * @param {String} name cookie name
  */
 cookies.get = function (name = 'default') {
-    return Cookies.get(`zpp-${process.env.VUE_APP_VERSION}-${name}`)
+    return Cookies.get(`chubby-${process.env.VUE_APP_VERSION}-${name}`)
 }
 
 /**
@@ -36,7 +36,7 @@ cookies.getAll = function () {
  * @param {String} name cookie name
  */
 cookies.remove = function (name = 'default') {
-    return Cookies.remove(`zpp-${process.env.VUE_APP_VERSION}-${name}`)
+    return Cookies.remove(`chubby-${process.env.VUE_APP_VERSION}-${name}`)
 }
 
 export default cookies

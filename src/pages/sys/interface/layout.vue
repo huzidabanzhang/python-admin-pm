@@ -385,7 +385,7 @@ export default {
             this.interface_id = selection.map((i) => {
                 return i.interface_id
             })
-            let data = this.$store.getters['d2admin/user/interfaces']
+            let data = this.$store.getters['chubby/user/interfaces']
             if (data) {
                 let del = data.filter((i) => {
                     return i.mark == this.mark.interface.all_del
@@ -434,7 +434,7 @@ export default {
                 })
         },
         getInterfaceInfo(interface_id, type, is_disabled) {
-            let interfaces = cloneDeep(this.$store.getters['d2admin/user/interfaces'])
+            let interfaces = cloneDeep(this.$store.getters['chubby/user/interfaces'])
             interface_id.map((i) => {
                 for (let j = 0; j < interfaces.length; j++) {
                     if (i == interfaces[j].interface_id) {

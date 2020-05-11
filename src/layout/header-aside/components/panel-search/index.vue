@@ -69,7 +69,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('d2admin/search', [
+    ...mapState('chubby/search', [
       'hotkey',
       'pool'
     ]),

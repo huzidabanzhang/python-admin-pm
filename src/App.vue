@@ -19,10 +19,10 @@ export default {
     },
     methods: {
         isInit() {
-            if (!this.$store.getters['d2admin/user/isInit']) {
+            if (!this.$store.getters['chubby/user/isInit']) {
                 checkDb({})
                     .then(async res => {
-                        this.$store.commit('d2admin/user/setInit', res)
+                        this.$store.commit('chubby/user/setInit', res)
 
                         if (!res) this.$alert('系统暂不能正常使用, 是否初始化数据库', '重要提示', {
                             confirmButtonText: '确定',
@@ -40,7 +40,7 @@ export default {
             CreateDrop({})
                 .then(async res => {
                     loadingInstance.close()
-                    this.$store.commit('d2admin/user/setInit', true)
+                    this.$store.commit('chubby/user/setInit', true)
                     this.$notify.success({
                         title: '初始化数据库成功',
                         offset: 100,

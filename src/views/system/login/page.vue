@@ -153,7 +153,7 @@ export default {
         '$route': 'refresh'
     },
     methods: {
-        ...mapActions('d2admin/account', [
+        ...mapActions('chubby/account', [
             'login'
         ]),
         refresh() {
@@ -164,7 +164,7 @@ export default {
          */
         // 提交登录信息
         submit() {
-            if (!this.$store.getters['d2admin/user/isInit']) return true
+            if (!this.$store.getters['chubby/user/isInit']) return true
 
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {

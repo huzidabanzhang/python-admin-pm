@@ -246,7 +246,7 @@ export default {
                 ]
             },
             ip_list: {},
-            user: this.$store.getters['d2admin/user/user'],
+            user: this.$store.getters['chubby/user/user'],
             info: {},
             circleUrl: defaultImg,
             myChart: null,

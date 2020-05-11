@@ -21,7 +21,7 @@ const util = {
  * @param {String} title 标题
  */
 util.title = function (titleText) {
-    const processTitle = process.env.VUE_APP_TITLE || 'P_Admin'
+    const processTitle = process.env.VUE_APP_TITLE || 'chubby-admin'
     window.document.title = `${processTitle}${titleText ? ` | ${titleText}` : ''}`
 }
 
@@ -33,10 +33,10 @@ util.open = function (url) {
     var a = document.createElement('a')
     a.setAttribute('href', url)
     a.setAttribute('target', '_blank')
-    a.setAttribute('id', 'd2admin-link-temp')
+    a.setAttribute('id', 'chubby-link-temp')
     document.body.appendChild(a)
     a.click()
-    document.body.removeChild(document.getElementById('d2admin-link-temp'))
+    document.body.removeChild(document.getElementById('chubby-link-temp'))
 }
 
 function componentToImport(ary) {
@@ -72,7 +72,7 @@ util.initRoute = function (r, isAll = false) {
     let routes = route.concat(data)
     router.$addRoutes(routes)
     // 更新标签页池
-    store.commit('d2admin/page/init', [
+    store.commit('chubby/page/init', [
         ...frameInRoutes,
         ...routes
     ])
@@ -84,7 +84,7 @@ util.initRoute = function (r, isAll = false) {
  */
 util.initMenu = function (m, isAll = false) {
     let params = isAll ? util.dealData(cloneDeep(m)) : m
-    store.commit('d2admin/menu/asideSet', params.menu)
+    store.commit('chubby/menu/asideSet', params.menu)
 
     if (isAll) {
         Notification({
@@ -93,8 +93,8 @@ util.initMenu = function (m, isAll = false) {
             type: 'success',
             offset: 100
         })
-        let info = store.getters['d2admin/user/info']
-        store.dispatch('d2admin/user/set', {
+        let info = store.getters['chubby/user/info']
+        store.dispatch('chubby/user/set', {
             user: info.user,
             menus: params,
             interfaces: info.interfaces
@@ -108,8 +108,8 @@ util.initMenu = function (m, isAll = false) {
  * @param {Object} m 菜单
  */
 util.initInterface = function (f) {
-    let info = store.getters['d2admin/user/info']
-    store.dispatch('d2admin/user/set', {
+    let info = store.getters['chubby/user/info']
+    store.dispatch('chubby/user/set', {
         user: info.user,
         menus: info.menus,
         interfaces: f
@@ -121,7 +121,7 @@ util.initInterface = function (f) {
  */
 util.getMenuTree = function (isGet, params) {
     if (isGet) {
-        return cloneDeep(store.getters['d2admin/user/menus'].menu)
+        return cloneDeep(store.getters['chubby/user/menus'].menu)
     } else {
         let data = []
         while (params.length > 0) {
@@ -155,14 +155,14 @@ util.getMenuTree = function (isGet, params) {
  * @param {Object} u 数据
  */
 util.updateUserInfo = function (u) {
-    let info = cloneDeep(store.getters['d2admin/user/info'])
+    let info = cloneDeep(store.getters['chubby/user/info'])
     
-    store.dispatch('d2admin/user/set', {}, { root: true })
+    store.dispatch('chubby/user/set', {}, { root: true })
 
     util.cookies.set('token', u.token)
     util.cookies.set('password', u.user.password)
 
-    store.dispatch('d2admin/user/set', {
+    store.dispatch('chubby/user/set', {
         user: u.user,
         menus: info.menus,
         interfaces: info.interfaces

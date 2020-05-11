@@ -367,7 +367,7 @@ export default {
             pid: '0',
             src: '/API/v1/Document/GetDocument/',
             mark: setting.SYS_ADMIN.mark,
-            user: this.$store.getters['d2admin/user/user'],
+            user: this.$store.getters['chubby/user/user'],
             Visible: false,
             form: {},
             is_sys: false,

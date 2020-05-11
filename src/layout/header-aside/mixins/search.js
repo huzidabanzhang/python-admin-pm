@@ -23,15 +23,15 @@ export default {
     hotkeys.unbind(this.searchHotkey.close)
   },
   computed: {
-    ...mapState('d2admin', {
+    ...mapState('chubby', {
       searchActive: state => state.search.active,
       searchHotkey: state => state.search.hotkey
     })
   },
   methods: {
     ...mapMutations({
-      searchToggle: 'd2admin/search/toggle',
-      searchSet: 'd2admin/search/set'
+      searchToggle: 'chubby/search/toggle',
+      searchSet: 'chubby/search/set'
     }),
     /**
      * 接收点击搜索按钮

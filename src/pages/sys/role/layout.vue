@@ -178,7 +178,7 @@ export default {
                 return true
             }
 
-            let data = this.$store.getters['d2admin/user/interfaces']
+            let data = this.$store.getters['chubby/user/interfaces']
             if (data) {
                 let del = data.filter((i) => {
                     return i.mark == this.mark.role.del
@@ -189,7 +189,7 @@ export default {
             } else return true
         },
         editRole(params) {
-            let data = this.$store.getters['d2admin/user/interfaces']
+            let data = this.$store.getters['chubby/user/interfaces']
 
             if (params.mark == setting.SYS_ADMIN.mark) this.btn_submit = true
             else {

@@ -376,7 +376,7 @@ export default {
                     admin_id: i.admin_id
                 })
             })
-            let data = this.$store.getters['d2admin/user/interfaces']
+            let data = this.$store.getters['chubby/user/interfaces']
             if (data) {
                 let del = data.filter((i) => {
                     return i.mark == this.mark.admin.all_del

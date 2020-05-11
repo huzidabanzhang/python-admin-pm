@@ -26,7 +26,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('d2admin/color', [
+    ...mapState('chubby/color', [
       'value'
     ])
   },
@@ -36,7 +36,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('d2admin/color', [
+    ...mapActions('chubby/color', [
       'set'
     ])
   }

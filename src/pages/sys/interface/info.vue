@@ -192,7 +192,7 @@ export default {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.isSubmit = true
-                    let params = this.form, interfaces = cloneDeep(this.$store.getters['d2admin/user/interfaces'])
+                    let params = this.form, interfaces = cloneDeep(this.$store.getters['chubby/user/interfaces'])
 
                     if (this.form.interface_id) {
                         ModifyInterface(params)

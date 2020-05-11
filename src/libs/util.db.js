@@ -3,7 +3,7 @@ import LocalStorage from 'lowdb/adapters/LocalStorage'
 import util from '@/libs/util'
 import { cloneDeep } from 'lodash'
 
-const adapter = new LocalStorage(`zpp-${process.env.VUE_APP_VERSION}`)
+const adapter = new LocalStorage(`chubby-${process.env.VUE_APP_VERSION}`)
 const db = low(adapter)
 
 db

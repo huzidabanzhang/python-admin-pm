@@ -51,7 +51,7 @@ export default {
     components: { Info },
     data() {
         return {
-            user: this.$store.getters['d2admin/user/user'],
+            user: this.$store.getters['chubby/user/user'],
             mark: setting.SYS_ADMIN.mark,
             title: '',
             params: {},
@@ -69,7 +69,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('d2admin/account', [
+        ...mapActions('chubby/account', [
             'logout'
         ]),
         /**
@@ -115,9 +115,7 @@ export default {
                                     closeOnPressEscape: false,
                                     closeOnHashChange: false
                                 }).then(() => {
-                                    this.logout({
-                                        confirm: false
-                                    })
+                                    this.logout()
                                 })
                         })
                         .catch(async res => {

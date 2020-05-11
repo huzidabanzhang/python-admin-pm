@@ -61,7 +61,7 @@ service.interceptors.request.use(
         // API接口权限判断
         let isCheck = true
         if (config.headers.isCheck) {
-            let interfaces = cloneDeep(store.getters['d2admin/user/interfaces'])
+            let interfaces = cloneDeep(store.getters['chubby/user/interfaces'])
             isCheck = interfaces.some((item) => {
                 return item.path == config.url && !item.is_disabled
             })
@@ -128,7 +128,7 @@ service.interceptors.response.use(
         const { code } = dataAxios
         // 根据 code 进行判断
         if (code === undefined) {
-            // 如果没有 code 代表这不是项目后端开发的接口 比如可能是 D2Admin 请求最新版本
+            // 如果没有 code 代表这不是项目后端开发的接口 比如可能是 Admin 请求最新版本
             return response
         } else {
             // 有 code 代表这是一个后端接口 可以进行进一步的判断
