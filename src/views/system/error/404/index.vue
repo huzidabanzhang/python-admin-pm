@@ -1,6 +1,9 @@
 <template>
     <div class="page">
-        <img :src="imgSrc" class="imgException" />
+        <img
+            :src="imgSrc"
+            class="imgException"
+        />
         <div class="description">
             <h3 v-text="title"></h3>
             <p v-html="description"></p>
@@ -11,7 +14,7 @@
 <script>
 export default {
     name: 'BasicNotFound',
-    data() {
+    data () {
         return {
             imgSrc: 'https://img.alicdn.com/tfs/TB1txw7bNrI8KJjy0FpXXb5hVXa-260-260.png',
             title: '抱歉，你访问的页面不存在',

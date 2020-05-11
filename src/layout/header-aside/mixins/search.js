@@ -4,7 +4,7 @@ import hotkeys from 'hotkeys-js'
 
 export default {
   components: {
-    'd2-panel-search': () => import('../components/panel-search')
+    'chubby-panel-search': () => import('../components/panel-search')
   },
   mounted () {
     // 绑定搜索功能快捷键 [ 打开 ]

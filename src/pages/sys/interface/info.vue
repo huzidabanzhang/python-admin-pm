@@ -128,7 +128,7 @@ export default {
         centerDialogVisible: Boolean,
         submit: Boolean
     },
-    data() {
+    data () {
         return {
             Visible: this.centerDialogVisible,
             form: {},
@@ -165,7 +165,7 @@ export default {
         }
     },
     watch: {
-        centerDialogVisible(newVal) {
+        centerDialogVisible (newVal) {
             this.Visible = newVal
             if (newVal) {
                 // 菜单遍历
@@ -176,19 +176,19 @@ export default {
                 this.form = cloneDeep(this.params)
             }
         },
-        submit(newVal) {
+        submit (newVal) {
             this.btn = newVal
         }
     },
     methods: {
-        pushMenu(ary) {
+        pushMenu (ary) {
             ary.map((i) => {
                 if (i.children && i.children.length > 0) {
                     this.pushMenu(i.children)
                 } else this.menuOption.push(i)
             });
         },
-        handelInfo(formName) {
+        handelInfo (formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.isSubmit = true
@@ -221,12 +221,12 @@ export default {
                 }
             })
         },
-        handleInitParent(type) {
+        handleInitParent (type) {
             this.$message.success(type == 1 ? '接口编辑成功' : '接口创建成功')
             this.$emit('callback', true)
             this.isSubmit = false
         },
-        handleClosed() {
+        handleClosed () {
             this.$emit('handleClose', false)
         }
     }

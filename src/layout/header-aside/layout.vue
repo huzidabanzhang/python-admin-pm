@@ -1,15 +1,15 @@
 <template>
   <div
-    class="d2-layout-header-aside-group"
+    class="chubby-layout-header-aside-group"
     :style="styleLayoutMainGroup"
     :class="{grayMode: grayActive}">
     <!-- 半透明遮罩 -->
-    <div class="d2-layout-header-aside-mask"></div>
+    <div class="chubby-layout-header-aside-mask"></div>
     <!-- 主体内容 -->
-    <div class="d2-layout-header-aside-content" flex="dir:top">
+    <div class="chubby-layout-header-aside-content" flex="dir:top">
       <!-- 顶栏 -->
       <div
-        class="d2-theme-header"
+        class="chubby-theme-header"
         :style="{
           opacity: this.searchActive ? 0.5 : 1
         }"
@@ -20,52 +20,53 @@
           <img v-else :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`">
         </div>
         <div class="toggle-aside-btn" @click="handleToggleAside" flex-box="0">
-          <d2-icon name="bars"/>
+          <chubby-icon name="bars"/>
         </div>
-        <d2-menu-header flex-box="1"/>
+        <chubby-menu-header flex-box="1"/>
         <!-- 顶栏右侧 -->
-        <div class="d2-header-right" flex-box="0">
+        <div class="chubby-header-right" flex-box="0">
           <!-- 如果你只想在开发环境显示这个按钮请添加 v-if="$env === 'development'" -->
-          <!-- <d2-header-search @click="handleSearchClick"/> -->
-          <d2-header-fullscreen/>
-          <d2-header-theme/>
-          <!-- <d2-header-locales/> -->
-          <!-- <d2-header-color/> -->
-          <d2-header-user/>
+          <!-- <chubby-header-search @click="handleSearchClick"/> -->
+          <chubby-header-fullscreen/>
+          <chubby-header-url/>
+          <chubby-header-theme/>
+          <!-- <chubby-header-locales/> -->
+          <!-- <chubby-header-color/> -->
+          <chubby-header-user/>
         </div>
       </div>
       <!-- 下面 主体 -->
-      <div class="d2-theme-container" flex-box="1" flex>
+      <div class="chubby-theme-container" flex-box="1" flex>
         <!-- 主体 侧边栏 -->
         <div
           flex-box="0"
           ref="aside"
-          class="d2-theme-container-aside"
+          class="chubby-theme-container-aside"
           :style="{
             width: asideCollapse ? asideWidthCollapse : asideWidth,
             opacity: this.searchActive ? 0.5 : 1
           }">
-          <d2-menu-side/>
+          <chubby-menu-side/>
         </div>
         <!-- 主体 -->
-        <div class="d2-theme-container-main" flex-box="1" flex>
+        <div class="chubby-theme-container-main" flex-box="1" flex>
           <!-- 搜索 -->
             <!-- <transition name="fade-scale">
-                <div v-if="searchActive" class="d2-theme-container-main-layer" flex>
-                <d2-panel-search
+                <div v-if="searchActive" class="chubby-theme-container-main-layer" flex>
+                <chubby-panel-search
                     ref="panelSearch"
                     @close="searchPanelClose"/>
                 </div>
             </transition> -->
           <!-- 内容 -->
           <transition name="fade-scale">
-            <div v-if="!searchActive" class="d2-theme-container-main-layer" flex="dir:top">
+            <div v-if="!searchActive" class="chubby-theme-container-main-layer" flex="dir:top">
               <!-- tab -->
-              <div class="d2-theme-container-main-header" flex-box="0">
-                <d2-tabs/>
+              <div class="chubby-theme-container-main-header" flex-box="0">
+                <chubby-tabs/>
               </div>
               <!-- 页面 -->
-              <div class="d2-theme-container-main-body" flex-box="1">
+              <div class="chubby-theme-container-main-body" flex-box="1">
                 <transition :name="transitionActive ? 'fade-transverse' : ''">
                   <keep-alive :include="keepAlive">
                     <router-view/>
@@ -77,42 +78,44 @@
         </div>
       </div>
     </div>
-    <d2-base
+    <chubby-base
         :Visible="Visible"
         @handleClose="handleVisible"
-    ></d2-base>
+    ></chubby-base>
   </div>
 </template>
 
 <script>
-import d2MenuSide from './components/menu-side'
-import d2MenuHeader from './components/menu-header'
-import d2Tabs from './components/tabs'
-import d2HeaderFullscreen from './components/header-fullscreen'
-// import d2HeaderLocales from './components/header-locales'
-// import d2HeaderSearch from './components/header-search'
-import d2HeaderTheme from './components/header-theme'
-import d2HeaderUser from './components/header-user'
-import d2Base from '@/pages/sys/base/index'
-// import d2HeaderColor from './components/header-color'
+import chubbyMenuSide from './components/menu-side'
+import chubbyMenuHeader from './components/menu-header'
+import chubbyTabs from './components/tabs'
+import chubbyHeaderFullscreen from './components/header-fullscreen'
+import chubbyHeaderUrl from '@/pages/base-url'
+// import chubbyHeaderLocales from './components/header-locales'
+// import chubbyHeaderSearch from './components/header-search'
+import chubbyHeaderTheme from './components/header-theme'
+import chubbyHeaderUser from './components/header-user'
+import chubbyBase from '@/pages/sys/base/index'
+// import chubbyHeaderColor from './components/header-color'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import mixinSearch from './mixins/search'
 export default {
-  name: 'd2-layout-header-aside',
+  name: 'chubby-layout-header-aside',
   mixins: [
     mixinSearch
   ],
   components: {
-    d2MenuSide,
-    d2MenuHeader,
-    d2Tabs,
-    d2HeaderFullscreen,
-    // d2HeaderLocales,
-    // d2HeaderSearch,
-    d2HeaderTheme,
-    d2HeaderUser,
-    d2Base
-    // d2HeaderColor
+    chubbyMenuSide,
+    chubbyMenuHeader,
+    chubbyTabs,
+    chubbyHeaderFullscreen,
+    chubbyHeaderUrl,
+    // chubbyHeaderLocales,
+    // chubbyHeaderSearch,
+    chubbyHeaderTheme,
+    chubbyHeaderUser,
+    chubbyBase
+    // chubbyHeaderColor
   },
   data () {
     return {

@@ -1,19 +1,17 @@
 <template>
-    <Docment
-        :visible="visible"
-    ></Docment>
+    <Docment :visible="visible"></Docment>
 </template>
 
 <script>
 import Docment from './list.vue'
 export default {
     components: { Docment },
-    data() {
+    data () {
         return {
             visible: false
         }
     },
-    created() {
+    created () {
         this.visible = true
     }
 }

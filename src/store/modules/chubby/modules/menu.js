@@ -4,13 +4,12 @@ import setting from '@/setting.js'
 
 /**
  * 给菜单数据补充上 path 字段
- * https://github.com/d2-projects/d2-admin/issues/209
  * @param {Array} menu 原始的菜单数据
  */
 function supplementMenuPath (menu) {
   return menu.map(e => ({
     ...e,
-    path: e.path || uniqueId('d2-menu-empty-'),
+    path: e.path || uniqueId('chubby-menu-empty-'),
     ...e.children ? {
       children: supplementMenuPath(e.children)
     } : {}

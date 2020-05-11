@@ -1,5 +1,5 @@
 <template>
-    <d2-container>
+    <chubby-container>
         <div slot="header">
             <el-button
                 title="返回上一级"
@@ -330,7 +330,7 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
-    </d2-container>
+    </chubby-container>
 </template>
 
 <script>
@@ -348,7 +348,7 @@ export default {
         visible: Boolean
     },
     components: { Pagination, Upload },
-    data() {
+    data () {
         return {
             data: [],
             checked: [],
@@ -393,7 +393,7 @@ export default {
         }
     },
     methods: {
-        init() {
+        init () {
             let params = {
                 page: this.page,
                 page_size: this.size,
@@ -423,7 +423,7 @@ export default {
                     this.loading = false
                 })
         },
-        changeFolder(isDel) {
+        changeFolder (isDel) {
             this.isDel = isDel
             if (isDel) {
                 this.data = []
@@ -431,7 +431,7 @@ export default {
                 this.init()
             } else this.getFolder(this.pid, true)
         },
-        getFolder(pid, isInit) {
+        getFolder (pid, isInit) {
             this.loading = true
             QueryFolderByParam({
                 pid: pid
@@ -449,7 +449,7 @@ export default {
                     this.loading = false
                 })
         },
-        down(src, name) {
+        down (src, name) {
             DownDocument({
                 src: src,
                 name: name
@@ -464,21 +464,21 @@ export default {
                 window.URL.revokeObjectURL(href) //释放blob对象
             })
         },
-        handleSize(size) {
+        handleSize (size) {
             this.size = size
             this.page = 1
             this.init()
         },
-        handleCurrent(page) {
+        handleCurrent (page) {
             this.page = page
             this.init()
         },
-        handleClose(params) {
+        handleClose (params) {
             this.centerDialogVisible = params.change
             this.page = 1
             this.init()
         },
-        bytesToSize(bytes) {
+        bytesToSize (bytes) {
             if (bytes === 0) return '0 B'
             let k = 1024,
                 sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
@@ -486,7 +486,7 @@ export default {
 
             return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
         },
-        addFolder() {
+        addFolder () {
             this.$prompt('', '新建文件夹', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -516,7 +516,7 @@ export default {
                 this.$message.success('创建文件夹成功')
             }).catch()
         },
-        setFolder(item) {
+        setFolder (item) {
             this.$prompt('', '重命名文件夹', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -546,7 +546,7 @@ export default {
                 this.$message.success('重命名文件夹成功')
             }).catch()
         },
-        delFile(id) {
+        delFile (id) {
             this.$confirm('确定将文件删除吗？', '提示',
                 {
                     confirmButtonText: '确定',
@@ -563,7 +563,7 @@ export default {
                         })
                 })
         },
-        retrieveFile(id, deleted) {
+        retrieveFile (id, deleted) {
             this.$confirm(deleted ? '确定将文件移到回收站吗？' : '确定还原文件吗？', '提示',
                 {
                     confirmButtonText: '确定',
@@ -581,7 +581,7 @@ export default {
                         })
                 })
         },
-        delFolder(id) {
+        delFolder (id) {
             this.$confirm('删除该文件夹，其中的文件将转移到根目录下，确定要删除吗？', '提示',
                 {
                     confirmButtonText: '确定',
@@ -598,7 +598,7 @@ export default {
                         })
                 })
         },
-        handleCommand(command) {
+        handleCommand (command) {
             if (this.checked.length == 0) return this.$message.warning('未选择任何记录')
             switch (command) {
                 case '1':
@@ -612,7 +612,7 @@ export default {
                     break;
             }
         },
-        openFolder(item) {
+        openFolder (item) {
             let data = cloneDeep(item)
             data.index = this.tree.length
             this.prev = data
@@ -621,7 +621,7 @@ export default {
             this.is_sys = item.is_sys
             this.getFolder(this.pid, true)
         },
-        backFolder(item) {
+        backFolder (item) {
             let data = cloneDeep(item), count = this.tree.length - data.index
             this.tree.splice(item.index, count)
             this.pid = data.pid
@@ -630,7 +630,7 @@ export default {
             this.is_sys = item.is_sys
             this.getFolder(this.pid, true)
         },
-        toFolder(item) {
+        toFolder (item) {
             let data = cloneDeep(item), count = this.tree.length - data.index + 1
             this.tree.splice(item.index + 1, count)
             this.pid = data.folder_id
@@ -639,7 +639,7 @@ export default {
             this.is_sys = item.is_sys
             this.getFolder(this.pid, true)
         },
-        getFile(item) {
+        getFile (item) {
             this.form = cloneDeep(item)
             this.form.size = this.bytesToSize(this.form.size)
             this.Visible = true

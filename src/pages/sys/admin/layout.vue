@@ -1,5 +1,5 @@
 <template>
-    <d2-container>
+    <chubby-container>
         <div slot="header">
             <el-button
                 type="primary"
@@ -248,7 +248,7 @@
             @handleClose="handleClose"
             @callback="init"
         ></Info>
-    </d2-container>
+    </chubby-container>
 </template>
 
 <script>
@@ -260,7 +260,7 @@ import setting from '@/setting.js'
 export default {
     name: 'sys-admin',
     components: { Info, Pagination },
-    data() {
+    data () {
         return {
             adminData: [],
             page: 1,
@@ -294,11 +294,11 @@ export default {
             }
         }
     },
-    created() {
+    created () {
         this.getRoleList()
     },
     methods: {
-        init(isTrue) {
+        init (isTrue) {
             this.changeSelect([])
 
             if (isTrue) this.centerDialogVisible = false
@@ -320,7 +320,7 @@ export default {
                     this.loading = false
                 })
         },
-        getRoleList() {
+        getRoleList () {
             QueryRoleByParam({
                 is_disabled: false
             })
@@ -332,39 +332,39 @@ export default {
                     this.init()
                 })
         },
-        getRoleName(role_id) {
+        getRoleName (role_id) {
             let item = this.roleOption.find((i) => {
                 return i.value == role_id
             })
             return item ? item.label : '未选择角色'
         },
-        handleSize(size) {
+        handleSize (size) {
             this.size = size
             this.page = 1
             this.init()
         },
-        handleCurrent(page) {
+        handleCurrent (page) {
             this.page = page
             this.init()
         },
-        changeAdmin() {
+        changeAdmin () {
             this.is_disabled = this.lock
             this.isRole = this.role
             this.init()
         },
-        clearLock() {
+        clearLock () {
             this.lock = ''
         },
-        clearRole() {
+        clearRole () {
             this.role = ''
         },
-        isSelect(row) {
+        isSelect (row) {
             return row.username != setting.SYS_ADMIN.name
         },
-        handleClose() {
+        handleClose () {
             this.centerDialogVisible = false
         },
-        changeSelect(selection) {
+        changeSelect (selection) {
             this.admin_id = selection.map((i) => {
                 return i.admin_id
             })
@@ -383,13 +383,13 @@ export default {
                 }), lock = data.filter((i) => {
                     return i.mark == this.mark.admin.all_lock
                 })
-                if (del.length > 0 && !del[0].is_disabled) 
+                if (del.length > 0 && !del[0].is_disabled)
                     this.mark_btn.all_del = this.admin_id.length == 0
-                if (lock.length > 0 && !lock[0].is_disabled) 
+                if (lock.length > 0 && !lock[0].is_disabled)
                     this.mark_btn.all_lock = this.admin_id.length == 0
             }
         },
-        addAdmin(disabled) {
+        addAdmin (disabled) {
             this.btn_submit = disabled
             this.title = '新建管理员'
             this.params = {
@@ -398,13 +398,13 @@ export default {
             }
             this.centerDialogVisible = true
         },
-        editAdmin(params, disabled) {
+        editAdmin (params, disabled) {
             this.btn_submit = disabled
             this.title = '编辑管理员'
             this.params = params
             this.centerDialogVisible = true
         },
-        lockAdmin(keys, is_disabled, row) {
+        lockAdmin (keys, is_disabled, row) {
             if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm(is_disabled ? '确定要隐藏该管理员吗' : '确定要显示该管理员吗',
@@ -420,7 +420,7 @@ export default {
                     if (row) row.is_disabled = !is_disabled
                 })
         },
-        Lock(keys, is_disabled) {
+        Lock (keys, is_disabled) {
             LockAdmin({
                 admin_id: keys,
                 is_disabled: is_disabled
@@ -428,7 +428,7 @@ export default {
                 this.init()
             })
         },
-        delAdmin(admins) {
+        delAdmin (admins) {
             if (admins.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm('确定要删除该管理员吗', '删除管理员',

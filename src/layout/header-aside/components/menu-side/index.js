@@ -4,20 +4,20 @@ import { elMenuItem, elSubmenu } from '../libs/util.menu'
 import BScroll from 'better-scroll'
 
 export default {
-  name: 'd2-layout-header-aside-menu-side',
+  name: 'chubby-layout-header-aside-menu-side',
   mixins: [
     menuMixin
   ],
   render (createElement) {
-    return createElement('div', { attrs: { class: 'd2-layout-header-aside-menu-side' } }, [
+    return createElement('div', { attrs: { class: 'chubby-layout-header-aside-menu-side' } }, [
       createElement('el-menu', {
         props: { collapse: this.asideCollapse, uniqueOpened: true, defaultActive: this.active },
         ref: 'menu',
         on: { select: this.handleMenuSelect }
       }, this.aside.map(menu => (menu.children === undefined ? elMenuItem : elSubmenu).call(this, createElement, menu))),
       ...this.aside.length === 0 && !this.asideCollapse ? [
-        createElement('div', { attrs: { class: 'd2-layout-header-aside-menu-empty', flex: 'dir:top main:center cross:center' } }, [
-          createElement('d2-icon', { props: { name: 'inbox' } }),
+        createElement('div', { attrs: { class: 'chubby-layout-header-aside-menu-empty', flex: 'dir:top main:center cross:center' } }, [
+          createElement('chubby-icon', { props: { name: 'inbox' } }),
           createElement('span', {}, '没有侧栏菜单')
         ])
       ] : []
@@ -71,7 +71,6 @@ export default {
       })
     },
     scrollDestroy () {
-      // https://github.com/d2-projects/d2-admin/issues/75
       try {
         this.BS.destroy()
       } catch (e) {

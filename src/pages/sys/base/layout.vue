@@ -68,7 +68,7 @@ export default {
         Visible: Boolean
     },
     components: { Info },
-    data() {
+    data () {
         return {
             admin: setting.SYS_ADMIN.mark,
             mark: setting.mark,
@@ -84,7 +84,7 @@ export default {
         }
     },
     watch: {
-        Visible(newVal) {
+        Visible (newVal) {
             this.Show = newVal
         }
     },
@@ -92,7 +92,7 @@ export default {
         ...mapActions('chubby/account', [
             'logout'
         ]),
-        initBase() {
+        initBase () {
             this.$confirm('重置数据库将清空所有数据，确定要重置吗？', '提示',
                 {
                     confirmButtonText: '确定',
@@ -111,22 +111,22 @@ export default {
                         })
                 })
         },
-        close() {
+        close () {
             this.$emit('handleClose', false)
         },
-        handleClose() {
+        handleClose () {
             this.centerDialogVisible = false
         },
-        isMark() {
+        isMark () {
             if (this.user && Object.keys(this.user).length > 0)
                 return this.user.mark == this.admin
             return false
         },
-        exportBase() {
+        exportBase () {
             this.form.type = 1
             this.centerDialogVisible = true
         },
-        importBase() {
+        importBase () {
             this.$confirm('导入数据库将覆盖所有数据，确定要导入吗？', '提示',
                 {
                     confirmButtonText: '确定',
@@ -137,7 +137,7 @@ export default {
                     this.$refs.SQL_FILE.click()
                 })
         },
-        sqlognout() {
+        sqlognout () {
             this.$confirm('请重新登录', '提示',
                 {
                     confirmButtonText: '确定',
@@ -151,7 +151,7 @@ export default {
                     this.logout()
                 })
         },
-        importSql(event) {
+        importSql (event) {
             let formData = new FormData(), file = event.target.files
 
             if (file.length == 0) return this.$message.warning('请选择上传文件')

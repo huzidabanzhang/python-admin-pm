@@ -1,5 +1,5 @@
 <template>
-    <d2-container>
+    <chubby-container>
         <div slot="header">
             <el-button
                 type="primary"
@@ -70,16 +70,21 @@
             </el-form>
         </div>
 
-        <ul v-loading="loading" class="role-ul">
-            <li v-for="(item, key) in roleData" 
-                :key="key" 
-                class="role-group" 
-                :class="select.role_id == item.role_id ? 'select' : ''" 
+        <ul
+            v-loading="loading"
+            class="role-ul"
+        >
+            <li
+                v-for="(item, key) in roleData"
+                :key="key"
+                class="role-group"
+                :class="select.role_id == item.role_id ? 'select' : ''"
                 @dblclick="editRole(item)"
                 @click="getRole(item)"
             >
                 <i class="fa fa-group role-icon"></i>
-                <i class="icon role-top" 
+                <i
+                    class="icon role-top"
                     :class="item.is_disabled ? 'el-icon-close disabled' : 'el-icon-check'"
                     @click="lockRole([item.role_id], !item.is_disabled)"
                 ></i>
@@ -97,7 +102,7 @@
             @handleClose="handleClose"
             @callback="init"
         ></Info>
-    </d2-container>
+    </chubby-container>
 </template>
 
 <script>
@@ -107,7 +112,7 @@ import setting from '@/setting.js'
 export default {
     name: 'sys-role',
     components: { Info },
-    data() {
+    data () {
         return {
             roleData: [],
             value: '',
@@ -133,11 +138,11 @@ export default {
             }
         }
     },
-    created() {
+    created () {
         this.init()
     },
     methods: {
-        init(isTrue) {
+        init (isTrue) {
             if (isTrue == true) this.centerDialogVisible = false
             let params = {}
             if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
@@ -152,17 +157,17 @@ export default {
                     this.loading = false
                 })
         },
-        changeStatus() {
+        changeStatus () {
             this.is_disabled = this.value
             this.init()
         },
-        clearStatus() {
+        clearStatus () {
             this.value = ''
         },
-        handleClose() {
+        handleClose () {
             this.centerDialogVisible = false
         },
-        addRole(disabled) {
+        addRole (disabled) {
             this.btn_submit = disabled
             this.title = '新建角色'
             this.params = {
@@ -170,7 +175,7 @@ export default {
             }
             this.centerDialogVisible = true
         },
-        getRole(item) {
+        getRole (item) {
             this.select = item
 
             if (item.mark == setting.SYS_ADMIN.mark) {
@@ -188,7 +193,7 @@ export default {
                 } else return true
             } else return true
         },
-        editRole(params) {
+        editRole (params) {
             let data = this.$store.getters['chubby/user/interfaces']
 
             if (params.mark == setting.SYS_ADMIN.mark) this.btn_submit = true
@@ -209,7 +214,7 @@ export default {
             this.params = params
             this.centerDialogVisible = true
         },
-        lockRole(keys, is_disabled) {
+        lockRole (keys, is_disabled) {
             if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm(is_disabled ? '确定要隐藏该角色吗' : '确定要显示该角色吗',
@@ -223,16 +228,16 @@ export default {
                     this.Lock(keys, is_disabled)
                 })
         },
-        Lock(keys, is_disabled) {
+        Lock (keys, is_disabled) {
             LockRole({
                 role_id: keys,
                 is_disabled: is_disabled
             }).then(async res => {
-                this.select = {role_id: null}
+                this.select = { role_id: null }
                 this.init()
             })
         },
-        delRole() {
+        delRole () {
             if (this.select.role_id != null && this.select.mark != 'SYS_ADMIN') {
                 this.$confirm('确定要删除该角色吗', '删除角色',
                     {
@@ -245,7 +250,7 @@ export default {
                             role_id: [this.select.role_id]
                         }).then(async res => {
                             this.$message.success('删除角色成功')
-                            this.select = {role_id: null}
+                            this.select = { role_id: null }
                             this.init()
                         })
                     })
@@ -306,12 +311,12 @@ export default {
     color: white;
     padding: 1px;
     border-radius: 50%;
-    background: #67C23A;
+    background: #67c23a;
     right: 5px;
 }
 
 .role-top.disabled {
-    background: #F56C6C;
+    background: #f56c6c;
 }
 
 .el-form--inline .el-form-item:last-child {

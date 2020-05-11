@@ -1,5 +1,5 @@
 <template>
-    <d2-container>
+    <chubby-container>
         <el-form
             :inline="true"
             slot="header"
@@ -108,7 +108,7 @@
             @handleSize="handleSize"
             @handleCurrent="handleCurrent"
         ></Pagination>
-    </d2-container>
+    </chubby-container>
 </template>
 
 <script>
@@ -119,7 +119,7 @@ export default {
     components: {
         Pagination
     },
-    data() {
+    data () {
         return {
             logData: [],
             page: 1,
@@ -135,11 +135,11 @@ export default {
             loading: false
         }
     },
-    created() {
+    created () {
         this.init()
     },
     methods: {
-        init() {
+        init () {
             let params = {
                 type: [1], // 登录类型
                 page: this.page,
@@ -158,19 +158,19 @@ export default {
                     this.loading = false
                 })
         },
-        changeStatus() {
+        changeStatus () {
             this.status = this.value
             this.init()
         },
-        clearStatus() {
+        clearStatus () {
             this.value = ''
         },
-        handleSize(size) {
+        handleSize (size) {
             this.size = size
             this.page = 1
             this.init()
         },
-        handleCurrent(page) {
+        handleCurrent (page) {
             this.page = page
             this.init()
         }

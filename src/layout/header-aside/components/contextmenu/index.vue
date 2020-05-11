@@ -1,6 +1,6 @@
 <template>
   <div
-    class="d2-contextmenu"
+    class="chubby-contextmenu"
     v-show="flag"
     :style="style">
     <slot/>
@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: 'd2-contextmenu',
+  name: 'chubby-contextmenu',
   props: {
     visible: {
       type: Boolean,
@@ -59,7 +59,7 @@ export default {
 </script>
 
 <style>
-.d2-contextmenu {
+.chubby-contextmenu {
   position: absolute;
   padding: 5px 0;
   z-index: 2018;

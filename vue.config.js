@@ -118,7 +118,7 @@ module.exports = {
             .use('svg-sprite-loader')
             .loader('svg-sprite-loader')
             .options({
-                symbolId: 'd2-[name]'
+                symbolId: 'chubby-[name]'
             })
             .end()
         // image exclude

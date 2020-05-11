@@ -5,10 +5,10 @@
       content="主题"
       placement="bottom">
       <el-button
-        class="d2-ml-0 d2-mr btn-text can-hover"
+        class="chubby-ml-0 chubby-mr btn-text can-hover"
         type="text"
         @click="dialogVisible = true">
-        <d2-icon
+        <chubby-icon
           name="diamond"
           style="font-size: 16px"/>
       </el-button>
@@ -18,16 +18,16 @@
       width="600px"
       :visible.sync="dialogVisible"
       :append-to-body="true">
-      <d2-theme-list style="margin-top: -25px;"/>
+      <chubby-theme-list style="margin-top: -25px;"/>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import themeList from './components/d2-theme-list'
+import themeList from './components/chubby-theme-list'
 export default {
   components: {
-    'd2-theme-list': themeList
+    'chubby-theme-list': themeList
   },
   data () {
     return {

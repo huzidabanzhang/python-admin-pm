@@ -1,5 +1,5 @@
 <template>
-    <d2-container>
+    <chubby-container>
         <div slot="header">
             <el-button
                 type="primary"
@@ -260,7 +260,7 @@
             @handleClose="handleClose"
             @callback="init"
         ></Info>
-    </d2-container>
+    </chubby-container>
 </template>
 
 <script>
@@ -273,7 +273,7 @@ import setting from '@/setting.js'
 export default {
     name: 'sys-interface',
     components: { Pagination, Info },
-    data() {
+    data () {
         return {
             interfaceData: [],
             page: 1,
@@ -312,11 +312,11 @@ export default {
             }
         }
     },
-    created() {
+    created () {
         this.init()
     },
     methods: {
-        init(isTrue) {
+        init (isTrue) {
             this.changeSelect([])
 
             if (isTrue) this.centerDialogVisible = false
@@ -339,33 +339,33 @@ export default {
                     this.loading = false
                 })
         },
-        changeAll() {
+        changeAll () {
             this.is_disabled = this.lock
             this.isName = this.name
             this.isMethod = this.method
             this.init()
         },
-        clear(val) {
+        clear (val) {
             val = ''
         },
-        handleSize(size) {
+        handleSize (size) {
             this.size = size
             this.page = 1
             this.init()
         },
-        handleCurrent(page) {
+        handleCurrent (page) {
             this.page = page
             this.init()
         },
-        handleClose() {
+        handleClose () {
             this.centerDialogVisible = false
         },
-        isSelect(row) {
+        isSelect (row) {
             return !setting.lock_interface.some((i) => {
                 return i == row.mark
             })
         },
-        addInterface(disabled) {
+        addInterface (disabled) {
             this.btn_submit = disabled
             this.title = '新建接口'
             this.params = {
@@ -375,13 +375,13 @@ export default {
             }
             this.centerDialogVisible = true
         },
-        editInterface(params, disabled) {
+        editInterface (params, disabled) {
             this.btn_submit = disabled
             this.title = '编辑接口'
             this.params = params
             this.centerDialogVisible = true
         },
-        changeSelect(selection) {
+        changeSelect (selection) {
             this.interface_id = selection.map((i) => {
                 return i.interface_id
             })
@@ -398,7 +398,7 @@ export default {
                     this.mark_btn.all_lock = this.interface_id.length == 0
             }
         },
-        lockInterface(keys, is_disabled, row) {
+        lockInterface (keys, is_disabled, row) {
             if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm(is_disabled ? '确定要隐藏该接口吗' : '确定要显示该接口吗',
@@ -414,7 +414,7 @@ export default {
                     if (row) row.is_disabled = !is_disabled
                 })
         },
-        delInterface(interface_id) {
+        delInterface (interface_id) {
             if (interface_id.length == 0) return this.$message.warning('未选择任何记录')
 
             this.$confirm('确定要删除该接口吗', '删除接口',
@@ -433,7 +433,7 @@ export default {
                     })
                 })
         },
-        getInterfaceInfo(interface_id, type, is_disabled) {
+        getInterfaceInfo (interface_id, type, is_disabled) {
             let interfaces = cloneDeep(this.$store.getters['chubby/user/interfaces'])
             interface_id.map((i) => {
                 for (let j = 0; j < interfaces.length; j++) {
@@ -454,7 +454,7 @@ export default {
 
             util.initInterface(interfaces)
         },
-        Lock(keys, is_disabled) {
+        Lock (keys, is_disabled) {
             LockInterface({
                 interface_id: keys,
                 is_disabled: is_disabled

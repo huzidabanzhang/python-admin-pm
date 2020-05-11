@@ -59,7 +59,7 @@ export default {
         centerDialogVisible: Boolean,
         folder_id: String
     },
-    data() {
+    data () {
         return {
             Visible: this.centerDialogVisible,
             fileList: {},
@@ -69,13 +69,13 @@ export default {
         }
     },
     watch: {
-        centerDialogVisible(newVal) {
+        centerDialogVisible (newVal) {
             this.Visible = newVal
             if (newVal) this.fileList = {}
         }
     },
     methods: {
-        handleClosed() {
+        handleClosed () {
             let count = 0
             for (let i in this.fileList) {
                 if (this.fileList[i].type == 'ready') count++
@@ -94,26 +94,26 @@ export default {
                     .catch(() => { })
             }
         },
-        close() {
+        close () {
             this.$emit('handleClose', {
                 data: this.fileList,
                 change: false
             })
         },
-        handleExceed(files, fileList) {
+        handleExceed (files, fileList) {
             let count = this.maxLimit - fileList.length
             this.$message.warning(`您一次选择的文件过多，还能选择` + count + `个文件`)
         },
-        handleRemove(file) {
+        handleRemove (file) {
             if (this.fileList[file.uid]) delete this.fileList[file.uid]
         },
-        beforeUpload(file) {
+        beforeUpload (file) {
             if (file.size > 1024 * 1024 * this.maxSize) {
                 this.$message.warning(`文件` + file.name + `超过了` + this.maxSize + `MB`)
                 return false
             }
         },
-        addUpload(params) {
+        addUpload (params) {
             this.fileList[params.file.uid] = {
                 file: params.file,
                 onSuccess: params.onSuccess,
@@ -123,12 +123,12 @@ export default {
                 type: 'ready'
             }
         },
-        handelProgress(params) {
+        handelProgress (params) {
             for (let i in this.fileList) {
                 this.fileList[i].onProgress(params)
             }
         },
-        CreateUpload() {
+        CreateUpload () {
             let self = this, formData = new FormData()
             for (let i in this.fileList) {
                 if (this.fileList[i].type == 'ready') {

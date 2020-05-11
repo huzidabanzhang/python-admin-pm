@@ -11,7 +11,7 @@
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  name: 'd2-header-color',
+  name: 'chubby-header-color',
   data () {
     return {
       predefine: [

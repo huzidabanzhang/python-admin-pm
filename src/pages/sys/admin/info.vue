@@ -143,7 +143,7 @@ export default {
         isTab: Boolean,
         submit: Boolean
     },
-    data() {
+    data () {
         return {
             circleUrl: defaultImg,
             Visible: this.centerDialogVisible,
@@ -177,7 +177,7 @@ export default {
         }
     },
     watch: {
-        centerDialogVisible(newVal) {
+        centerDialogVisible (newVal) {
             this.Visible = newVal
             if (newVal) {
                 this.roleOption = this.role.map((i) => {
@@ -190,12 +190,12 @@ export default {
                 } else this.avatarUrl = ''
             }
         },
-        submit(newVal) {
+        submit (newVal) {
             this.btn = newVal
         }
     },
     methods: {
-        handelInfo(formName) {
+        handelInfo (formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.isSubmit = true
@@ -226,15 +226,15 @@ export default {
                 }
             })
         },
-        handleInitParent(type) {
+        handleInitParent (type) {
             this.$message.success(type == 1 ? '管理员编辑成功' : '管理员创建成功')
             this.$emit('callback', true)
             this.isSubmit = false
         },
-        handleClosed() {
+        handleClosed () {
             this.$emit('handleClose', false)
         },
-        CreateUpload(params) {
+        CreateUpload (params) {
             const isLt2M = params.file.size / 1024 / 1024 < 2
             if (!isLt2M) {
                 this.$message.error('上传头像图片大小不能超过 2MB!')

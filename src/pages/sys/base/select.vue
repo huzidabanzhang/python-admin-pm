@@ -54,7 +54,7 @@ export default {
         params: Object,
         centerDialogVisible: Boolean
     },
-    data() {
+    data () {
         return {
             Visible: this.centerDialogVisible,
             loading: false,
@@ -74,16 +74,16 @@ export default {
         }
     },
     watch: {
-        centerDialogVisible(newVal) {
+        centerDialogVisible (newVal) {
             this.Visible = newVal
             if (newVal) this.form = cloneDeep(this.params)
         }
     },
     methods: {
-        handleClosed() {
+        handleClosed () {
             this.$emit('handleClose', false)
         },
-        exportSql() {
+        exportSql () {
             this.loading = true
             ExportSql({
                 type: this.form.type

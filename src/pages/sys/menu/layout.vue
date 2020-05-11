@@ -1,5 +1,5 @@
 <template>
-    <d2-container>
+    <chubby-container>
         <div slot="header">
             <el-button
                 type="primary"
@@ -63,7 +63,7 @@
                     label="图标"
                     prop="icon"
                 >
-                    <d2-icon-select v-model="form.icon" />
+                    <chubby-icon-select v-model="form.icon" />
                 </el-form-item>
                 <el-form-item
                     label="菜单名称"
@@ -256,7 +256,7 @@
                 </el-table-column>
             </el-table>
         </el-dialog>
-    </d2-container>
+    </chubby-container>
 </template>
 
 <script>
@@ -266,7 +266,7 @@ import util from '@/libs/util.js'
 import setting from '@/setting.js'
 export default {
     name: 'sys-menu',
-    data() {
+    data () {
         return {
             menuData: [],
             treeData: [],
@@ -309,11 +309,11 @@ export default {
             }
         }
     },
-    created() {
+    created () {
         this.init()
     },
     methods: {
-        init(isTrue) {
+        init (isTrue) {
             if (isTrue != true) this.addMenu(false)
 
             let params = {}
@@ -331,12 +331,12 @@ export default {
                     this.loading = false
                 })
         },
-        isHidden(mark) {
+        isHidden (mark) {
             return !setting.hidden_menu.some((i) => {
                 return i == mark
             })
         },
-        submit(formName) {
+        submit (formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.formLoad = true
@@ -361,12 +361,12 @@ export default {
                 }
             })
         },
-        handleInitParent(type) {
+        handleInitParent (type) {
             this.$message.success(type == 1 ? '菜单编辑成功' : '菜单创建成功')
             this.formLoad = false
             this.init(true)
         },
-        addMenu(isClear) {
+        addMenu (isClear) {
             this.form = {
                 cache: true,
                 is_disabled: false,
@@ -376,20 +376,20 @@ export default {
             if (isClear) this.$refs['SYSMENU'].clearValidate()
             this.isAdd = true
         },
-        getMenuItem(data) {
+        getMenuItem (data) {
             this.form = cloneDeep(data)
             this.treeData = cloneDeep(this.menuData)
             this.disabledMenu(this.form, this.treeData)
             this.$refs['SYSMENU'].clearValidate()
             this.isAdd = false
         },
-        disabledMenu(item, data) {
+        disabledMenu (item, data) {
             data.map((i) => {
                 if (i.menu_id == item.menu_id) i.disabled = true
                 if (i.children) this.disabledMenu(item, i.children)
             })
         },
-        delMenu(menu_id) {
+        delMenu (menu_id) {
             this.$confirm('删除后子菜单将自动到根菜单下，确定删除该菜单吗', '删除菜单',
                 {
                     confirmButtonText: '确定',
@@ -404,7 +404,7 @@ export default {
                     })
                 })
         },
-        getMenuToInterface(title, menu_id) {
+        getMenuToInterface (title, menu_id) {
             this.dialogTitle = title + '关联接口'
             this.dialogTableVisible = true
             this.dialogLoading = true
@@ -436,7 +436,6 @@ export default {
 }
 .el-card {
     display: inline;
-    width: 60%;
     margin-left: 7%;
     position: absolute;
 }

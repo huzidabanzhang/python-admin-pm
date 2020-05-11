@@ -90,7 +90,7 @@
                 <div class="page-login--content-footer">
                     <p class="page-login--content-footer-copyright">
                         Copyright
-                        <d2-icon name="copyright" />
+                        <chubby-icon name="copyright" />
                         2019 章胖胖
                         <a href="https://github.com/huzidabanzhang/python-admin-pm/tree/master/admin">
                             @huzidabanzhang
@@ -110,7 +110,7 @@
 <script>
 import { mapActions } from 'vuex'
 export default {
-    data() {
+    data () {
         return {
             // 表单
             formLogin: {
@@ -156,14 +156,14 @@ export default {
         ...mapActions('chubby/account', [
             'login'
         ]),
-        refresh() {
+        refresh () {
             this.captcha = '/API/v1/Admin/Captcha?rand=' + Math.random()
         },
         /**
          * @description 提交表单
          */
         // 提交登录信息
-        submit() {
+        submit () {
             if (!this.$store.getters['chubby/user/isInit']) return true
 
             this.$refs.loginForm.validate((valid) => {

@@ -12,7 +12,7 @@ export default {
     pool: [],
     // 当前显示的多页面列表
     opened: setting.page.opened,
-    // 已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201
+    // 已经加载多标签页数据 
     openedLoaded: false,
     // 当前页面
     current: '',
@@ -21,7 +21,7 @@ export default {
   },
   actions: {
     /**
-     * @description 确认已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201
+     * @description 确认已经加载多标签页数据 
      * @param {Object} context
      */
     isLoaded ({ state }) {
@@ -68,7 +68,7 @@ export default {
           // 新的数据中一般不会携带 params 和 query, 所以旧的参数会留存
           return Object.assign({}, opened, find)
         }).filter((opened, index) => valid[index] === 1)
-        // 标记已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201
+        
         state.openedLoaded = true
         // 根据 opened 数据生成缓存设置
         commit('keepAliveRefresh')
@@ -80,7 +80,7 @@ export default {
      * 将 opened 属性赋值并持久化 在这之前请先确保已经更新了 state.opened
      * @param {Object} context
      */
-    opend2db ({ state, dispatch }) {
+    openchubbydb ({ state, dispatch }) {
       return new Promise(async resolve => {
         // 设置数据
         dispatch('chubby/db/set', {
@@ -108,7 +108,7 @@ export default {
         page.fullPath = fullPath || page.fullPath
         state.opened.splice(index, 1, page)
         // 持久化
-        await dispatch('opend2db')
+        await dispatch('openchubbydb')
         // end
         resolve()
       })
@@ -133,7 +133,7 @@ export default {
           commit('keepAlivePush', tag.name)
         }
         // 持久化
-        await dispatch('opend2db')
+        await dispatch('openchubbydb')
         // end
         resolve()
       })
@@ -216,7 +216,7 @@ export default {
           state.opened.splice(index, 1)
         }
         // 持久化
-        await dispatch('opend2db')
+        await dispatch('openchubbydb')
         // 最后需要判断是否需要跳到首页
         if (isCurrent) {
           const { name = '', params = {}, query = {} } = newPage
@@ -255,7 +255,7 @@ export default {
           router.push(pageAim)
         }
         // 持久化
-        await dispatch('opend2db')
+        await dispatch('openchubbydb')
         // end
         resolve()
       })
@@ -283,7 +283,7 @@ export default {
           router.push(pageAim)
         }
         // 持久化
-        await dispatch('opend2db')
+        await dispatch('openchubbydb')
         // end
         resolve()
       })
@@ -316,7 +316,7 @@ export default {
           router.push(pageAim)
         }
         // 持久化
-        await dispatch('opend2db')
+        await dispatch('openchubbydb')
         // end
         resolve()
       })
@@ -331,7 +331,7 @@ export default {
         // 删除打开的页面 并在缓存设置中删除
         state.opened.splice(1).forEach(({ name }) => commit('keepAliveRemove', name))
         // 持久化
-        await dispatch('opend2db')
+        await dispatch('openchubbydb')
         // 关闭所有的标签页后需要判断一次现在是不是在首页
         if (router.app.$route.name !== 'index') {
           router.push({

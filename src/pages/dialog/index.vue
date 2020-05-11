@@ -19,18 +19,18 @@ export default {
         content: String,
         centerDialogVisible: Boolean
     },
-    data() {
+    data () {
         return {
             Visible: this.centerDialogVisible
         }
     },
     watch: {
-        centerDialogVisible(newVal) {
+        centerDialogVisible (newVal) {
             this.Visible = newVal
         }
     },
     methods: {
-        handleClosed() {
+        handleClosed () {
             this.$emit('handleClose', false)
         }
     }

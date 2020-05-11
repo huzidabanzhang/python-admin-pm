@@ -31,10 +31,10 @@ export default {
         }
     },
     methods: {
-        handleSizeChange(val) {
+        handleSizeChange (val) {
             this.$emit('handleSize', val)
         },
-        handleCurrentChange(val) {
+        handleCurrentChange (val) {
             this.$emit('handleCurrent', val)
         }
     }

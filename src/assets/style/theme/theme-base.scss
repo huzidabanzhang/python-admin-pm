@@ -11,7 +11,7 @@
 }
 
 // 整体框架结构
-.d2-layout-header-aside-group {
+.chubby-layout-header-aside-group {
   height: 100%;
   width: 100%;
   min-width: 900px;
@@ -20,28 +20,28 @@
   overflow: hidden;
   position: relative;
   // 背景上面的半透明遮罩
-  .d2-layout-header-aside-mask {
+  .chubby-layout-header-aside-mask {
     @extend %full;
   }
   // 内容层
-  .d2-layout-header-aside-content {
+  .chubby-layout-header-aside-content {
     @extend %full;
-    .d2-theme-header {
+    .chubby-theme-header {
       height: 60px;
-      .d2-theme-header-menu {
+      .chubby-theme-header-menu {
         overflow: hidden;
         &.is-scrollable {
           position: relative;
           padding: 0 20px;
-          .d2-theme-header-menu__prev, .d2-theme-header-menu__next {
+          .chubby-theme-header-menu__prev, .chubby-theme-header-menu__next {
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
           }
         }
-        .d2-theme-header-menu__content {
+        .chubby-theme-header-menu__content {
           overflow: hidden;
-          .d2-theme-header-menu__scroll {
+          .chubby-theme-header-menu__scroll {
             white-space: nowrap;
             position: relative;
             -webkit-transition: -webkit-transform .3s;
@@ -52,7 +52,7 @@
             float: left;
           }
         }
-        .d2-theme-header-menu__prev, .d2-theme-header-menu__next {
+        .chubby-theme-header-menu__prev, .chubby-theme-header-menu__next {
           height: 60px;
           position: absolute;
           top: 0;
@@ -60,39 +60,39 @@
           cursor: pointer;
           display: none;
         }
-        .d2-theme-header-menu__prev {
+        .chubby-theme-header-menu__prev {
           left: 0;
           border-top-left-radius: 2px;
           border-bottom-left-radius: 2px;
         }
-        .d2-theme-header-menu__next {
+        .chubby-theme-header-menu__next {
           right: 0;
           border-top-right-radius: 2px;
           border-bottom-right-radius: 2px;
         }
       }
     }
-    .d2-theme-container {
-      .d2-theme-container-aside {
+    .chubby-theme-container {
+      .chubby-theme-container-aside {
         transition: width .3s;
         position: relative;
-        .d2-layout-header-aside-menu-side {
+        .chubby-layout-header-aside-menu-side {
           @extend %full;
           overflow: hidden;
         }
       }
-      .d2-theme-container-main {
+      .chubby-theme-container-main {
         padding: 0px;
         position: relative;
         overflow: hidden;
-        .d2-theme-container-main-layer {
+        .chubby-theme-container-main-layer {
           position: absolute;
           top: 0px;
           bottom: 0px;
           left: 0px;
           right: 0px;
         }
-        .d2-theme-container-main-body {
+        .chubby-theme-container-main-body {
           position: relative;
         }
       }
@@ -101,7 +101,7 @@
 }
 
 // 主题公用
-.d2-layout-header-aside-group {
+.chubby-layout-header-aside-group {
   &.grayMode {
     -webkit-filter: grayscale(100%);
     -moz-filter: grayscale(100%);
@@ -111,9 +111,9 @@
     filter: gray;
   }
   // 主体
-  .d2-layout-header-aside-content {
+  .chubby-layout-header-aside-content {
     // [布局] 顶栏
-    .d2-theme-header {
+    .chubby-theme-header {
       // logo区域
       .logo-group {
         transition: width .3s;
@@ -163,7 +163,7 @@
         }
       }
       // 顶栏右侧的按钮
-      .d2-header-right {
+      .chubby-header-right {
         float: right;
         height: 60px;
         display: flex;
@@ -182,10 +182,10 @@
       }
     }
     // [布局] 顶栏下面
-    .d2-theme-container {
+    .chubby-theme-container {
       // 侧边栏
-      .d2-theme-container-aside {
-        %d2-theme-container-aside-menu-icon {
+      .chubby-theme-container-aside {
+        %chubby-theme-container-aside-menu-icon {
           width: 20px;
           text-align: center;
           font-size: 16px;
@@ -197,7 +197,7 @@
           border-right: none;
           .el-menu-item {
             i {
-              @extend %d2-theme-container-aside-menu-icon;
+              @extend %chubby-theme-container-aside-menu-icon;
             }
           }
         }
@@ -205,7 +205,7 @@
           @extend %unable-select;
           .el-submenu__title {
             i {
-              @extend %d2-theme-container-aside-menu-icon;
+              @extend %chubby-theme-container-aside-menu-icon;
             }
             .el-submenu__icon-arrow {
               margin-top: -10px;
@@ -213,7 +213,7 @@
           }
         }
         // 菜单为空的时候显示的信息
-        .d2-layout-header-aside-menu-empty {
+        .chubby-layout-header-aside-menu-empty {
           height: 160px;
           margin: 10px;
           margin-top: 0px;
@@ -236,18 +236,18 @@
         }
       }
       // 右下 主体
-      .d2-theme-container-main {
+      .chubby-theme-container-main {
         // 主体部分分为多页面控制器 和主体
-        .d2-theme-container-main-header {
+        .chubby-theme-container-main-header {
           height: 41px;
           // 多页面控制器
-          .d2-multiple-page-control-group {
+          .chubby-multiple-page-control-group {
             padding-right: 20px;
-            .d2-multiple-page-control-content {
+            .chubby-multiple-page-control-content {
               overflow: auto;
               position: relative;
-              .d2-multiple-page-control-content-inner {
-                .d2-multiple-page-control {
+              .chubby-multiple-page-control-content-inner {
+                .chubby-multiple-page-control {
                   .el-tabs__header.is-top {
                     margin: 0px;
                   }
@@ -257,7 +257,7 @@
                 }
               }
             }
-            .d2-multiple-page-control-btn {
+            .chubby-multiple-page-control-btn {
               position: relative;
               bottom: -1px;
               .el-dropdown {
@@ -274,13 +274,13 @@
           }
         }
         // 主体
-        .d2-theme-container-main-body {
+        .chubby-theme-container-main-body {
           // 布局组件
           .container-component {
             @extend %full;
             overflow: hidden;
             // 填充式布局组件
-            .d2-container-full {
+            .chubby-container-full {
               position: absolute;
               top: 0px;
               right: 20px;
@@ -289,22 +289,22 @@
               display: flex;
               flex-direction: column;
               overflow: hidden;
-              .d2-container-full__header {
+              .chubby-container-full__header {
                 padding: 20px;
               }
-              .d2-container-full__body {
+              .chubby-container-full__body {
                 flex-grow: 1;
                 height: 100%;
                 padding: 20px 20px;
                 overflow: auto;
                 position: relative;
               }
-              .d2-container-full__footer {
+              .chubby-container-full__footer {
                 padding: 20px;
               }
             }
             // 填充式布局组件 - 滚动优化
-            .d2-container-full-bs {
+            .chubby-container-full-bs {
               position: absolute;
               top: 0px;
               right: 20px;
@@ -313,24 +313,24 @@
               display: flex;
               flex-direction: column;
               overflow: hidden;
-              .d2-container-full-bs__header {
+              .chubby-container-full-bs__header {
                 padding: 20px;
               }
-              .d2-container-full-bs__body {
+              .chubby-container-full-bs__body {
                 flex-grow: 1;
                 overflow: hidden;
                 position: relative;
-                .d2-container-full-bs__body-wrapper-inner {
+                .chubby-container-full-bs__body-wrapper-inner {
                   padding: 20px;
                   position: relative;
                 }
               }
-              .d2-container-full-bs__footer {
+              .chubby-container-full-bs__footer {
                 padding: 20px;
               }
             }
             // 隐形布局组件
-            .d2-container-ghost {
+            .chubby-container-ghost {
               position: absolute;
               top: 0px;
               right: 20px;
@@ -339,24 +339,24 @@
               display: flex;
               flex-direction: column;
               overflow: hidden;
-              .d2-container-ghost__header {
+              .chubby-container-ghost__header {
                 padding: 20px;
                 border-bottom-left-radius: 4px;
                 border-bottom-right-radius: 4px;
               }
-              .d2-container-ghost__body {
+              .chubby-container-ghost__body {
                 flex-grow: 1;
                 overflow: auto;
                 position: relative;
               }
-              .d2-container-ghost__footer {
+              .chubby-container-ghost__footer {
                 padding: 20px;
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;
               }
             }
             // 隐形布局组件 - 滚动优化
-            .d2-container-ghost-bs {
+            .chubby-container-ghost-bs {
               position: absolute;
               top: 0px;
               right: 20px;
@@ -365,24 +365,24 @@
               display: flex;
               flex-direction: column;
               overflow: hidden;
-              .d2-container-ghost-bs__header {
+              .chubby-container-ghost-bs__header {
                 padding: 20px;
                 border-bottom-left-radius: 4px;
                 border-bottom-right-radius: 4px;
               }
-              .d2-container-ghost-bs__body {
+              .chubby-container-ghost-bs__body {
                 flex-grow: 1;
                 overflow: hidden;
                 position: relative;
               }
-              .d2-container-ghost-bs__footer {
+              .chubby-container-ghost-bs__footer {
                 padding: 20px;
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;
               }
             }
             // 卡片式布局组件
-            .d2-container-card {
+            .chubby-container-card {
               position: absolute;
               top: 0px;
               right: 20px;
@@ -391,13 +391,13 @@
               display: flex;
               flex-direction: column;
               overflow: hidden;
-              .d2-container-card__header {
+              .chubby-container-card__header {
                 padding: 20px;
               }
-              .d2-container-card__body {
+              .chubby-container-card__body {
                 flex-grow: 1;
                 overflow: auto;
-                .d2-container-card__body-card {
+                .chubby-container-card__body-card {
                   position: relative;
                   margin-bottom: 20px;
                   padding: 20px;
@@ -405,14 +405,14 @@
                   border-bottom-right-radius: 4px;
                 }
               }
-              .d2-container-card__footer {
+              .chubby-container-card__footer {
                 padding: 20px;
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;
               }
             }
             // 卡片式布局组件 - 滚动优化
-            .d2-container-card-bs {
+            .chubby-container-card-bs {
               position: absolute;
               top: 0px;
               right: 20px;
@@ -421,24 +421,24 @@
               display: flex;
               flex-direction: column;
               overflow: hidden;
-              .d2-container-card-bs__header {
+              .chubby-container-card-bs__header {
                 padding: 20px;
               }
-              .d2-container-card-bs__body {
+              .chubby-container-card-bs__body {
                 position: relative;
                 flex-grow: 1;
                 overflow: hidden;
-                .d2-container-card-bs__body-wrapper-inner {
+                .chubby-container-card-bs__body-wrapper-inner {
                   padding-bottom: 20px;
                 }
-                .d2-container-card-bs__body-card {
+                .chubby-container-card-bs__body-card {
                   position: relative;
                   padding: 20px;
                   border-bottom-left-radius: 4px;
                   border-bottom-right-radius: 4px;
                 }
               }
-              .d2-container-card-bs__footer {
+              .chubby-container-card-bs__footer {
                 padding: 20px;
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;

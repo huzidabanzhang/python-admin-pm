@@ -1,5 +1,5 @@
 <template>
-    <d2-container>
+    <chubby-container>
         <el-form
             :inline="true"
             slot="header"
@@ -97,7 +97,7 @@
             :centerDialogVisible="centerDialogVisible"
             @handleClose="handleClose"
         ></Dialog>
-    </d2-container>
+    </chubby-container>
 </template>
 
 <script>
@@ -110,7 +110,7 @@ export default {
         Pagination,
         Dialog
     },
-    data() {
+    data () {
         return {
             logData: [],
             page: 1,
@@ -121,11 +121,11 @@ export default {
             loading: false
         }
     },
-    created() {
+    created () {
         this.init()
     },
     methods: {
-        init() {
+        init () {
             let params = {
                 type: [0, 1], // 其他类型
                 status: [1, 2],
@@ -144,16 +144,16 @@ export default {
                     this.loading = false
                 })
         },
-        handleSize(size) {
+        handleSize (size) {
             this.size = size
             this.page = 1
             this.init()
         },
-        handleCurrent(page) {
+        handleCurrent (page) {
             this.page = page
             this.init()
         },
-        handleClose(isShow, error) {
+        handleClose (isShow, error) {
             if (error) this.error = error
             this.centerDialogVisible = isShow
         }

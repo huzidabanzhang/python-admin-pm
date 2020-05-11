@@ -1,17 +1,17 @@
 <template>
-  <div class="d2-multiple-page-control-group" flex>
-    <div class="d2-multiple-page-control-content" flex-box="1">
-      <div class="d2-multiple-page-control-content-inner">
-        <d2-contextmenu
+  <div class="chubby-multiple-page-control-group" flex>
+    <div class="chubby-multiple-page-control-content" flex-box="1">
+      <div class="chubby-multiple-page-control-content-inner">
+        <chubby-contextmenu
           :visible.sync="contextmenuFlag"
           :x="contentmenuX"
           :y="contentmenuY">
-          <d2-contextmenu-list
+          <chubby-contextmenu-list
             :menulist="tagName === '/index' ? contextmenuListIndex : contextmenuList"
             @rowClick="contextmenuClick"/>
-        </d2-contextmenu>
+        </chubby-contextmenu>
         <el-tabs
-          class="d2-multiple-page-control"
+          class="chubby-multiple-page-control"
           :value="current"
           type="card"
           :closable="true"
@@ -27,29 +27,29 @@
       </div>
     </div>
     <div
-      class="d2-multiple-page-control-btn"
+      class="chubby-multiple-page-control-btn"
       flex-box="0">
       <el-dropdown
         size="default"
         split-button
         @click="closeAll"
         @command="command => handleControlItemClick(command)">
-        <d2-icon name="times-circle"/>
+        <chubby-icon name="times-circle"/>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="left">
-            <d2-icon name="arrow-left" class="d2-mr-10"/>
+            <chubby-icon name="arrow-left" class="chubby-mr-10"/>
             关闭左侧
           </el-dropdown-item>
           <el-dropdown-item command="right">
-            <d2-icon name="arrow-right" class="d2-mr-10"/>
+            <chubby-icon name="arrow-right" class="chubby-mr-10"/>
             关闭右侧
           </el-dropdown-item>
           <el-dropdown-item command="other">
-            <d2-icon name="times" class="d2-mr-10"/>
+            <chubby-icon name="times" class="chubby-mr-10"/>
             关闭其它
           </el-dropdown-item>
           <el-dropdown-item command="all">
-            <d2-icon name="times-circle" class="d2-mr-10"/>
+            <chubby-icon name="times-circle" class="chubby-mr-10"/>
             全部关闭
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -62,8 +62,8 @@
 import { mapState, mapActions } from 'vuex'
 export default {
   components: {
-    D2Contextmenu: () => import('../contextmenu'),
-    D2ContextmenuList: () => import('../contextmenu/components/contentmenuList')
+    ChubbyContextmenu: () => import('../contextmenu'),
+    ChubbyContextmenuList: () => import('../contextmenu/components/contentmenuList')
   },
   data () {
     return {
@@ -101,7 +101,7 @@ export default {
      */
     handleContextmenu (event) {
       let target = event.target
-      // 解决 https://github.com/d2-projects/d2-admin/issues/54
+      // 解决 
       let flag = false
       if (target.className.indexOf('el-tabs__item') > -1) flag = true
       else if (target.parentNode.className.indexOf('el-tabs__item') > -1) {

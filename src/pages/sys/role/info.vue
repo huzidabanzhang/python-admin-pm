@@ -100,7 +100,7 @@ export default {
         submit: Boolean,
         del: Boolean
     },
-    data() {
+    data () {
         return {
             Visible: this.centerDialogVisible,
             form: { name: this.params.name },
@@ -126,22 +126,22 @@ export default {
         }
     },
     watch: {
-        centerDialogVisible(newVal) {
+        centerDialogVisible (newVal) {
             this.Visible = newVal
             if (newVal) {
                 this.form = cloneDeep(this.params)
                 this.getMenuList()
             }
         },
-        submit(newVal) {
+        submit (newVal) {
             this.btn_add = newVal
         },
-        del(newVal) {
+        del (newVal) {
             this.btn_del = newVal
         }
     },
     methods: {
-        getMenuList() {
+        getMenuList () {
             this.menu = []
             this.interface = []
 
@@ -163,7 +163,7 @@ export default {
                     this.loading = false
                 })
         },
-        dealData(data) {
+        dealData (data) {
             while (data.length > 0) {
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].pid == '0') {
@@ -180,7 +180,7 @@ export default {
                 }
             }
         },
-        handelInfo(formName) {
+        handelInfo (formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     let role_list = [], menu = []
@@ -222,15 +222,15 @@ export default {
                 }
             })
         },
-        handleInitParent(type) {
+        handleInitParent (type) {
             this.$message.success(type == 1 ? '角色编辑成功' : '角色创建成功')
             this.$emit('callback', true)
             this.isSubmit = false
         },
-        handleClosed() {
+        handleClosed () {
             this.$emit('handleClose', false)
         },
-        delRole() {
+        delRole () {
             this.$confirm('确定要删除该角色吗', '删除角色',
                 {
                     confirmButtonText: '确定',

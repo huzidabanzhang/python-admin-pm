@@ -13,12 +13,12 @@ export default {
     watch: {
         '$i18n.locale': 'i18nHandle'
     },
-    created() {
+    created () {
         this.isInit()
         this.i18nHandle(this.$i18n.locale)
     },
     methods: {
-        isInit() {
+        isInit () {
             if (!this.$store.getters['chubby/user/isInit']) {
                 checkDb({})
                     .then(async res => {
@@ -34,7 +34,7 @@ export default {
                     })
             }
         },
-        init() {
+        init () {
             let loadingInstance = this.$loading(this.loadOption('系统初始化中，请耐心等待.....'))
 
             CreateDrop({})
@@ -61,7 +61,7 @@ export default {
                     })
                 })
         },
-        i18nHandle(val, oldVal) {
+        i18nHandle (val, oldVal) {
             util.cookies.set('lang', val)
             document.querySelector('html').setAttribute('lang', val)
         }
