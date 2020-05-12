@@ -3,7 +3,6 @@
         <div slot="header">
             <el-button
                 type="primary"
-                size="mini"
                 icon="el-icon-plus"
                 circle
                 @click="addInterface(mark_btn.add)"
@@ -16,7 +15,6 @@
             <el-button
                 type="success"
                 icon="el-icon-check"
-                size="mini"
                 circle
                 @click="lockInterface(interface_id, false)"
                 title="显示"
@@ -29,7 +27,6 @@
             ></el-button>
             <el-button
                 type="info"
-                size="mini"
                 icon="el-icon-close"
                 circle
                 @click="lockInterface(interface_id, true)"
@@ -43,7 +40,6 @@
             ></el-button>
             <el-button
                 type="danger"
-                size="mini"
                 icon="el-icon-delete"
                 circle
                 @click="delInterface(interface_id)"
@@ -57,7 +53,6 @@
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
-                size="mini"
                 @click="init"
                 circle
                 title="刷新"
@@ -65,7 +60,6 @@
 
             <el-form
                 :inline="true"
-                size="mini"
                 class="form-right"
             >
                 <el-form-item>
@@ -82,7 +76,6 @@
                         v-model="lock"
                         placeholder="可见性"
                         clearable
-                        size="mini"
                         :clear="clear(lock)"
                     >
                         <el-option
@@ -99,7 +92,6 @@
                         v-model="method"
                         placeholder="请求方式"
                         clearable
-                        size="mini"
                         :clear="clear(method)"
                     >
                         <el-option
@@ -114,7 +106,6 @@
                 <el-form-item>
                     <el-button
                         icon="el-icon-search"
-                        size="mini"
                         type="primary"
                         :loading="loading"
                         @click="changeAll"
@@ -127,7 +118,6 @@
             :data="interfaceData"
             style="width: 100%"
             height="100%"
-            size="mini"
             type="ghost"
             v-loading="loading"
             @select="changeSelect"
@@ -173,7 +163,7 @@
                 width="200"
             >
                 <template slot-scope="scope">
-                    <el-tag size="mini">{{scope.row.mark}}</el-tag>
+                    <el-tag>{{scope.row.mark}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -184,7 +174,6 @@
             >
                 <template slot-scope="scope">
                     <el-radio-group
-                        size="mini"
                         v-model="scope.row.is_disabled"
                         v-if="isSelect(scope.row) && !scope.row.forbidden"
                         :disabled="mark_btn.lock"
@@ -199,7 +188,6 @@
                     </el-radio-group>
                     <el-button
                         type="primary"
-                        size="mini"
                         v-else
                     >显示</el-button>
                 </template>
@@ -213,7 +201,6 @@
                 <template slot-scope="scope">
                     <el-button
                         icon="el-icon-edit"
-                        size="mini"
                         circle
                         @click.native="editInterface(scope.row, mark_btn.set)"
                         title="编辑"
@@ -226,7 +213,6 @@
                     <el-button
                         type="danger"
                         icon="el-icon-delete"
-                        size="mini"
                         circle
                         @click.native="delInterface([scope.row.interface_id], false)"
                         v-if="isSelect(scope.row)"

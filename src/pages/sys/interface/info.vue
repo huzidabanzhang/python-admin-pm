@@ -13,7 +13,6 @@
             ref="interfaceForm"
             :model="form"
             :rules="rules"
-            size="mini"
             v-loading="loading"
         >
             <el-form-item
@@ -100,15 +99,11 @@
             slot="footer"
             class="dialog-footer"
         >
-            <el-button
-                @click="handleClosed"
-                size="mini"
-            >取 消</el-button>
+            <el-button @click="handleClosed">取 消</el-button>
             <el-button
                 type="primary"
                 @click="handelInfo('interfaceForm')"
                 :loading="isSubmit"
-                size="mini"
                 :disabled="btn"
             >确 定</el-button>
         </span>

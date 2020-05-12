@@ -3,7 +3,6 @@
         <div slot="header">
             <el-button
                 type="primary"
-                size="mini"
                 icon="el-icon-plus"
                 circle
                 @click="addAdmin(mark_btn.add)"
@@ -17,7 +16,6 @@
             <el-button
                 type="success"
                 icon="el-icon-check"
-                size="mini"
                 circle
                 @click="lockAdmin(admin_id, false)"
                 title="显示"
@@ -31,7 +29,6 @@
             </el-button>
             <el-button
                 type="info"
-                size="mini"
                 icon="el-icon-close"
                 circle
                 @click="lockAdmin(admin_id, true)"
@@ -45,7 +42,6 @@
             ></el-button>
             <el-button
                 type="danger"
-                size="mini"
                 icon="el-icon-delete"
                 circle
                 @click="delAdmin(admins)"
@@ -59,7 +55,6 @@
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
-                size="mini"
                 @click="init"
                 circle
                 title="刷新"
@@ -67,7 +62,6 @@
 
             <el-form
                 :inline="true"
-                size="mini"
                 class="form-right"
             >
                 <el-form-item>
@@ -75,7 +69,6 @@
                         v-model="lock"
                         placeholder="管理员状态"
                         clearable
-                        size="mini"
                         :clear="clearLock"
                     >
                         <el-option
@@ -92,7 +85,6 @@
                         v-model="role"
                         placeholder="角色"
                         clearable
-                        size="mini"
                         :clear="clearRole"
                     >
                         <el-option
@@ -108,7 +100,6 @@
                     <el-button
                         icon="el-icon-search"
                         :loading="loading"
-                        size="mini"
                         type="primary"
                         @click="changeAdmin"
                     >搜索</el-button>
@@ -119,7 +110,6 @@
         <el-table
             :data="adminData"
             style="width: 100%"
-            size="mini"
             type="ghost"
             v-loading="loading"
             @select="changeSelect"
@@ -144,7 +134,6 @@
             >
                 <template slot-scope="scope">
                     <el-tag
-                        size="mini"
                         type="primary"
                         v-html="getRoleName(scope.row.role_id)"
                     ></el-tag>
@@ -157,7 +146,6 @@
             >
                 <template slot-scope="scope">
                     <el-radio-group
-                        size="mini"
                         v-model="scope.row.is_disabled"
                         v-if="isSelect(scope.row)"
                         :disabled="mark_btn.lock"
@@ -172,7 +160,6 @@
                     </el-radio-group>
                     <el-button
                         type="primary"
-                        size="mini"
                         v-else
                     >显示</el-button>
                 </template>
@@ -200,7 +187,6 @@
                 >
                     <el-button
                         icon="el-icon-edit"
-                        size="mini"
                         circle
                         @click.native="editAdmin(scope.row, mark_btn.set)"
                         title="编辑"
@@ -213,7 +199,6 @@
                     <el-button
                         type="danger"
                         icon="el-icon-delete"
-                        size="mini"
                         circle
                         @click.native="delAdmin([scope.row], false)"
                         title="删除"

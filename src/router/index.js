@@ -31,15 +31,19 @@ function ResetRoute (to, next) {
       defaultValue: {},
       user: true
     }, { root: true }).then(res => {
-      const m = res.menus || {
-        'menu': [],
-        'route': []
-      }
-      util.initMenu(m, false)
+      if (Object.keys(res).length == 0) {
+        next({ name: 'login' })
+      } else {
+        const m = res.menus || {
+          'menu': [],
+          'route': []
+        }
+        util.initMenu(m, false)
 
-      if (to.path != '/login') RouteFresh = false
-      if (process.env.NODE_ENV !== 'development') next()
-      else next({ ...to, replace: true })
+        if (to.path != '/login') RouteFresh = false
+        if (process.env.NODE_ENV !== 'development') next()
+        else next({ ...to, replace: true })
+      }
     }).catch(err => {
       console.log(err)
     })

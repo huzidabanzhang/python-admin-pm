@@ -3,14 +3,12 @@
         <el-form
             :inline="true"
             slot="header"
-            size="mini"
         >
             <el-form-item>
                 <el-select
                     v-model="value"
                     placeholder="请选择"
                     clearable
-                    size="mini"
                     :clear="clearStatus"
                 >
                     <el-option
@@ -25,7 +23,6 @@
             <el-form-item>
                 <el-button
                     icon="el-icon-search"
-                    size="mini"
                     type="primary"
                     @click="changeStatus"
                 ></el-button>
@@ -33,7 +30,6 @@
             <el-form-item>
                 <el-button
                     icon="el-icon-refresh-right"
-                    size="mini"
                     @click="init"
                     circle
                     title="刷新"
@@ -44,7 +40,6 @@
         <el-table
             :data="logData"
             style="width: 100%"
-            size="mini"
             type="ghost"
             v-loading="loading"
         >
@@ -60,7 +55,7 @@
                 align="center"
             >
                 <template slot-scope="scope">
-                    <el-tag size="mini">登录</el-tag>
+                    <el-tag>登录</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -70,17 +65,14 @@
             >
                 <template slot-scope="scope">
                     <el-tag
-                        size="mini"
                         type="success"
                         v-if="scope.row.status == 0"
                     >成功</el-tag>
                     <el-tag
-                        size="mini"
                         type="danger"
                         v-else-if="scope.row.status == 1"
                     >失败</el-tag>
                     <el-tag
-                        size="mini"
                         type="info"
                         v-else
                     >隐藏</el-tag>

@@ -1,7 +1,7 @@
 <template>
   <el-button-group>
-    <el-button v-if="title" size="mini" @click="$open(link)">{{title}}</el-button>
-    <el-button size="mini" @click="$open(link)">
+    <el-button v-if="title" @click="$open(link)">{{title}}</el-button>
+    <el-button @click="$open(link)">
       <chubby-icon :name="icon"/>
       {{link}}
     </el-button>

@@ -10,7 +10,6 @@
         <el-button
           type="danger"
           icon="el-icon-delete"
-          size="mini"
           class="chubby-fr"
           @click="selectIcon()">
           清空

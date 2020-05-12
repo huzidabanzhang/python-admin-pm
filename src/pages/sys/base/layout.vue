@@ -9,12 +9,10 @@
     >
         <el-form
             :inline="true"
-            size="mini"
             class="form-right"
         >
             <el-form-item>
                 <el-button
-                    size="mini"
                     type="primary"
                     :disabled="mark_btn.export"
                     @click="exportBase"
@@ -26,14 +24,12 @@
             </el-form-item>
             <el-form-item>
                 <el-button
-                    size="mini"
                     @click="importBase"
                     v-if="isMark()"
                 >导入数据库</el-button>
             </el-form-item>
             <el-form-item>
                 <el-button
-                    size="mini"
                     type="danger"
                     @click="initBase"
                     v-if="isMark()"

@@ -3,7 +3,6 @@
         <div slot="header">
             <el-button
                 title="返回上一级"
-                size="mini"
                 style="float: left;"
                 circle
                 v-if="pid != '0' && !isDel"
@@ -23,29 +22,23 @@
 
             <el-form
                 :inline="true"
-                size="mini"
                 style="float: right;"
             >
                 <el-form-item v-if="!isDel">
                     <el-button
                         type="danger"
-                        size="mini"
                         @click="changeFolder(true)"
                     >回收站
                     </el-button>
                 </el-form-item>
 
                 <el-form-item v-if="isDel">
-                    <el-button
-                        size="mini"
-                        @click="changeFolder(false)"
-                    >文件夹
+                    <el-button @click="changeFolder(false)">文件夹
                     </el-button>
                 </el-form-item>
 
                 <el-form-item v-if="isDel">
                     <el-dropdown
-                        size="mini"
                         split-button
                         @command="handleCommand"
                     >
@@ -73,7 +66,6 @@
 
                 <el-form-item v-if="!isDel">
                     <el-dropdown
-                        size="mini"
                         split-button
                         @command="handleCommand"
                     >
@@ -102,7 +94,6 @@
                 <el-form-item v-if="!isDel">
                     <el-button
                         type="primary"
-                        size="mini"
                         icon="el-icon-circle-plus-outline"
                         @click="addFolder"
                         :disabled="mark_btn.folder_add"
@@ -117,7 +108,6 @@
                 <el-form-item v-if="!isDel">
                     <el-button
                         type="primary"
-                        size="mini"
                         @click="centerDialogVisible = true"
                         :disabled="mark_btn.file_add"
                         v-premissions="{
@@ -152,7 +142,6 @@
                             <el-dropdown
                                 class="button"
                                 trigger="click"
-                                size="mini"
                                 placement="bottom-start"
                             >
                                 <span class="el-dropdown-link">
@@ -202,7 +191,6 @@
                             <el-dropdown
                                 class="button"
                                 trigger="click"
-                                size="mini"
                                 placement="bottom-start"
                             >
                                 <span class="el-dropdown-link">
@@ -308,7 +296,6 @@
                 ref="adminForm"
                 :model="form"
                 disabled
-                size="mini"
             >
                 <el-form-item
                     label="文件名"

@@ -30,7 +30,6 @@
                         class="item"
                     >
                         <el-button
-                            size="mini"
                             :type="isItemActive(option.value) ? 'primary' : 'default'"
                             style="width: 100%;"
                             @click="onSelect(option.value)"
@@ -67,19 +66,16 @@
             <el-divider>或者</el-divider>
             <div flex="main:justify cross:center">
                 <el-input
-                    size="mini"
                     v-model="custom"
                     class="chubby-mr-5"
                 />
                 <el-button
-                    size="mini"
                     :disabled="custom.length === 0"
                     @click="onSelect(custom)"
                 >好</el-button>
             </div>
             <el-divider />
             <el-button
-                size="mini"
                 type="primary"
                 style="width:100%;"
                 @click="onClose"

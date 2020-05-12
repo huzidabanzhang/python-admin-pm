@@ -11,6 +11,10 @@ export default {
   menu: {
     asideCollapse: false
   },
+  // 整体风格大小
+  size: {
+    type: 'mini'
+  },
   // 在读取持久化数据失败时默认页面
   page: {
     opened: [
@@ -112,6 +116,4 @@ export default {
       import: 'import_sql'
     }
   }
-  // 禁止删除的菜单项
-  // 禁止隐藏的菜单项
 }

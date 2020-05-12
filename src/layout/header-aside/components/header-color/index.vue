@@ -3,7 +3,6 @@
     class="btn-text can-hover"
     :value="value"
     :predefine="predefine"
-    size="mini"
     @change="set"/>
 </template>
 

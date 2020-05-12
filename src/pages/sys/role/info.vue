@@ -12,7 +12,6 @@
             label-width="80px"
             :model="form"
             :rules="rules"
-            size="mini"
             v-loading="loading"
             ref="roleForm"
         >
@@ -68,21 +67,18 @@
                 type="danger"
                 icon="el-icon-delete"
                 @click="delRole"
-                size="mini"
                 style="float: left;"
                 v-if="params.role_id"
                 :disabled="btn_del"
             ></el-button>
             <el-button
                 @click="handleClosed"
-                size="mini"
             >取 消</el-button>
             <el-button
                 type="primary"
                 @click="handelInfo('roleForm')"
                 :loading="isSubmit"
                 :disabled="btn_add"
-                size="mini"
             >确 定</el-button>
         </span>
     </el-dialog>

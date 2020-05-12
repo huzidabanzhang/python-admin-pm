@@ -3,7 +3,6 @@
         <div slot="header">
             <el-button
                 type="primary"
-                size="mini"
                 icon="el-icon-plus"
                 circle
                 @click="addRole(mark_btn.add)"
@@ -16,7 +15,6 @@
             </el-button>
             <el-button
                 type="danger"
-                size="mini"
                 icon="el-icon-delete"
                 circle
                 @click="delRole"
@@ -30,7 +28,6 @@
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
-                size="mini"
                 @click="init"
                 circle
                 title="刷新"
@@ -38,7 +35,6 @@
 
             <el-form
                 :inline="true"
-                size="mini"
                 class="form-right"
             >
                 <el-form-item>
@@ -46,7 +42,6 @@
                         v-model="value"
                         placeholder="角色状态"
                         clearable
-                        size="mini"
                         :clear="clearStatus"
                     >
                         <el-option
@@ -61,7 +56,6 @@
                 <el-form-item>
                     <el-button
                         icon="el-icon-search"
-                        size="mini"
                         type="primary"
                         :loading="loading"
                         @click="changeStatus"

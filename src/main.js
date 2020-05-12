@@ -16,6 +16,8 @@ import router from './router'
 import { menuHeader, menuAside } from '@/menu'
 import { frameInRoutes } from '@/router/routes'
 
+import setting from '@/setting'
+
 // 核心插件
 Vue.use(Chubby)
 
@@ -63,5 +65,7 @@ new Vue({
     this.$store.dispatch('chubby/fullscreen/listen')
     // 加载接口配置
     this.$store.dispatch('chubby/api/load')
+    // 控制整体尺寸大小
+    this.$ELEMENT.size = setting.size.type
   }
 }).$mount('#app')

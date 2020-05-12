@@ -3,7 +3,6 @@
         <div slot="header">
             <el-button
                 type="primary"
-                size="mini"
                 icon="el-icon-plus"
                 circle
                 @click="addMenu(true)"
@@ -17,7 +16,6 @@
             </el-button>
             <el-button
                 icon="el-icon-refresh-right"
-                size="mini"
                 @click="init"
                 circle
                 title="刷新"
@@ -55,7 +53,6 @@
             <el-form
                 label-width="80px"
                 :model="form"
-                size="mini"
                 :rules="rules"
                 ref="SYSMENU"
             >
@@ -201,10 +198,7 @@
             v-loading="dialogLoading"
             width="800px"
         >
-            <el-table
-                :data="interfaceData"
-                size="mini"
-            >
+            <el-table :data="interfaceData">
                 <el-table-column
                     prop="name"
                     label="名称"
@@ -435,7 +429,8 @@ export default {
     display: inline-block;
 }
 .el-card {
-    display: inline;
+    display: initial;
+    width: 60%;
     margin-left: 7%;
     position: absolute;
 }

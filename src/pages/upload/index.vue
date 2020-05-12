@@ -34,18 +34,15 @@
             <el-button
                 type="primary"
                 @click="CreateUpload"
-                size="mini"
                 :loading="loading"
                 style="float: left"
             >上 传</el-button>
             <el-button
                 @click="handleClosed"
-                size="mini"
             >取 消</el-button>
             <el-button
                 type="primary"
                 @click="handleClosed"
-                size="mini"
             >确 定</el-button>
         </span>
     </el-dialog>

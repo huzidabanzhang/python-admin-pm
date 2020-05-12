@@ -3,12 +3,10 @@
         <el-form
             :inline="true"
             slot="header"
-            size="mini"
         >
             <el-form-item>
                 <el-button
                     icon="el-icon-refresh-right"
-                    size="mini"
                     @click="init"
                     circle
                     title="刷新"
@@ -19,7 +17,6 @@
         <el-table
             :data="logData"
             style="width: 100%"
-            size="mini"
             type="ghost"
             v-loading="loading"
         >

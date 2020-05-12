@@ -11,7 +11,6 @@
             label-width="80px"
             :model="form"
             :rules="rules"
-            size="mini"
         >
             <el-form-item
                 label="备份方式"
@@ -32,15 +31,11 @@
             slot="footer"
             class="dialog-footer"
         >
-            <el-button
-                @click="handleClosed"
-                size="mini"
-            >取 消</el-button>
+            <el-button @click="handleClosed">取 消</el-button>
             <el-button
                 type="primary"
                 @click="exportSql"
                 :loading="loading"
-                size="mini"
             >确 定</el-button>
         </span>
     </el-dialog>
