@@ -17,6 +17,7 @@ import { menuHeader, menuAside } from '@/menu'
 import { frameInRoutes } from '@/router/routes'
 
 import setting from '@/setting'
+import util from '@/libs/util'
 
 // 核心插件
 Vue.use(Chubby)
@@ -48,13 +49,17 @@ new Vue({
   store,
   i18n,
   render: h => h(App),
-  created () {
+  async created () {
+    // 加载接口配置
+    await this.$store.dispatch('chubby/api/load')
     // 处理路由 得到每一级的路由设置
     this.$store.commit('chubby/page/init', frameInRoutes)
     // 设置顶栏菜单
     this.$store.commit('chubby/menu/headerSet', menuHeader)
     // 初始化菜单搜索功能
     this.$store.commit('chubby/search/init', menuHeader)
+
+    util.isInitialized()
   },
   mounted () {
     // 用户登录后从数据库加载一系列的设置
@@ -63,8 +68,6 @@ new Vue({
     this.$store.commit('chubby/ua/get')
     // 初始化全屏监听
     this.$store.dispatch('chubby/fullscreen/listen')
-    // 加载接口配置
-    this.$store.dispatch('chubby/api/load')
     // 控制整体尺寸大小
     this.$ELEMENT.size = setting.size.type
   }

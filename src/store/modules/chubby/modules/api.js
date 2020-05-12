@@ -68,8 +68,30 @@ export default {
             user: false
           }, { root: true })
         }
-        // 注销当前登录
-        dispatch('chubby/user/logout', { focus: true, remote: false, back: true }, { root: true })
+
+        // 判断是否登录
+        let user = await dispatch('chubby/db/get', {
+          dbName: 'sys',
+          path: 'user.info',
+          defaultValue: {},
+          user: true
+        }, { root: true })
+        if (Object.keys(user).length == 0) {
+          // 显示提示
+          Notification({
+            title: '环境变更',
+            message: value
+          })
+        } else {
+          // 注销当前登录
+          await dispatch('chubby/account/logout', {}, { root: true })
+          // 显示提示
+          Notification({
+            title: '环境变更，请重新登录',
+            message: value
+          })
+        }
+
         // 应用变更
         state.base = value
         // 持久化接口地址设置
@@ -79,12 +101,7 @@ export default {
           value: state.base,
           user: false
         }, { root: true })
-        // 显示提示
-        Notification({
-          title: '接口地址变更',
-          message: value
-        })
-        resolve()
+        resolve(user)
       })
     },
     /**

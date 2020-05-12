@@ -29,7 +29,6 @@ function errorLog (error) {
 
 // 创建一个 axios 实例
 const service = axios.create({
-  baseURL: process.env.VUE_APP_API,
   timeout: 30000 // 请求超时时间
 })
 
@@ -105,6 +104,9 @@ service.interceptors.request.use(
         config.data = qs.stringify(config.data, { arrayFormat: 'brackets' }) // 传数组到后端接收为 type[] = xxx
       }
     }
+
+    config.baseURL = store.state.chubby.api.base + '/API'
+
     return config
   },
   error => {

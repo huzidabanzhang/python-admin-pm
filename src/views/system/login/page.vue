@@ -89,6 +89,13 @@
                 </div>
                 <div class="page-login--content-footer">
                     <p class="page-login--content-footer-copyright">
+                        <a>
+                            构建于 {{ $buildTime }}
+                        </a>
+                        <el-divider direction="vertical" />
+                        <chubby-header-url style="display: inline-block;" />
+                    </p>
+                    <p class="page-login--content-footer-copyright">
                         Copyright
                         <chubby-icon name="copyright" />
                         2019 章胖胖
@@ -109,7 +116,11 @@
 
 <script>
 import { mapActions } from 'vuex'
+import chubbyHeaderUrl from '@/pages/base-url'
+import util from '@/libs/util'
 export default {
+    name: 'sys-login',
+    components: { chubbyHeaderUrl },
     data () {
         return {
             // 表单
@@ -118,8 +129,9 @@ export default {
                 password: '',
                 code: ''
             },
+            captcha_url: this.$store.state.chubby.api.base + '/API/v1/Admin/Captcha',
             // 验证码url
-            captcha: '/API/v1/Admin/Captcha?rand=' + Math.random(),
+            captcha: '',
             // 表单校验
             rules: {
                 username: [
@@ -150,14 +162,26 @@ export default {
         }
     },
     watch: {
-        '$route': 'refresh'
+        base: function (value) {
+            util.isInitialized()
+            this.captcha_url = value + '/API/v1/Admin/Captcha'
+            this.refresh()
+        }
+    },
+    computed: {
+        base () {
+            return this.$store.state.chubby.api.base
+        }
+    },
+    created () {
+        this.refresh()
     },
     methods: {
         ...mapActions('chubby/account', [
             'login'
         ]),
         refresh () {
-            this.captcha = '/API/v1/Admin/Captcha?rand=' + Math.random()
+            this.captcha = this.captcha_url + '?rand=' + Math.random()
         },
         /**
          * @description 提交表单

@@ -2,7 +2,7 @@
     <div>
         <el-tooltip
             effect="dark"
-            content="环境"
+            content="切换环境"
             placement="bottom"
         >
             <el-button
@@ -20,7 +20,10 @@
             title="切换环境"
             width="300px"
             :visible.sync="dialogVisible"
-            :append-to-body="true"
+            append-to-body
+            destroy-on-close
+            :close-on-click-modal="false"
+            @closed="onClose"
         >
             <el-scrollbar>
                 <div class="wrapper">
@@ -63,7 +66,7 @@
                     </div>
                 </div>
             </el-scrollbar>
-            <el-divider>或者</el-divider>
+            <el-divider>自定义</el-divider>
             <div flex="main:justify cross:center">
                 <el-input
                     v-model="custom"
@@ -72,14 +75,8 @@
                 <el-button
                     :disabled="custom.length === 0"
                     @click="onSelect(custom)"
-                >好</el-button>
+                >使用</el-button>
             </div>
-            <el-divider />
-            <el-button
-                type="primary"
-                style="width:100%;"
-                @click="onClose"
-            >确定</el-button>
         </el-dialog>
     </div>
 </template>
@@ -91,7 +88,7 @@ export default {
     data () {
         return {
             dialogVisible: false,
-            custom: 'http://127.0.0.1:8080'
+            custom: ''
         }
     },
     computed: {
@@ -103,17 +100,42 @@ export default {
         ])
     },
     methods: {
+        ...mapActions('chubby/api', {
+            baseUrlSet: 'set',
+            baseUrlOptionRemove: 'remove'
+        }),
         onClose () {
             this.dialogVisible = false
         },
         onSelect (value) {
-            // this.baseUrlSet(value)
+            this.$confirm('确定切换该环境嘛？', '提示',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    let is_route = this.baseUrlSet(value)
+                    this.$store.commit('chubby/user/setInit', false)
+                    if (Object.keys(is_route).length == 0) this.$router.push({
+                        path: '/'
+                    },  () => {}, () => {})
+                    this.onClose()
+                }).catch()
         },
         onRemove (value) {
-            // this.baseUrlOptionRemove(value)
+            this.$confirm('确定删除该环境嘛？', '提示',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    this.baseUrlOptionRemove(value)
+                }).catch()
         },
         isItemActive (value) {
-            // return this.base === value
+            return this.base === value
         }
     }
 }

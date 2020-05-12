@@ -3,12 +3,15 @@ import db from './util.db'
 import log from './util.log'
 
 // 菜单路由 初始化需要
+import Vue from 'vue'
 import router from '@/router/index'
 import store from '@/store/index'
 import layoutHeaderAside from '@/layout/header-aside'
 import { cloneDeep } from 'lodash'
 import { frameInRoutes } from '@/router/routes'
-import { Notification } from 'element-ui'
+import { Notification, MessageBox, Loading } from 'element-ui'
+import { checkDb } from '@api/sys.user'
+import { CreateDrop } from '@api/sys.base'
 
 const util = {
   cookies,
@@ -229,6 +232,55 @@ util.dealData = function (params) {
     }
   }
   return data
+}
+
+/**
+ * @description 检测是否初始化过数据库
+ */
+util.isInitialized = function () {
+  if (!store.getters['chubby/user/isInit']) {
+    checkDb({})
+      .then(async res => {
+        store.commit('chubby/user/setInit', res)
+
+        if (!res) MessageBox.alert('系统暂不能正常使用, 是否初始化数据库', '重要提示', {
+          confirmButtonText: '确定',
+          showClose: false,
+          callback: action => {
+            sys_to_init()
+          }
+        })
+      })
+  }
+}
+
+function sys_to_init () {
+  let loadingInstance = Loading(Vue.loadOption('系统初始化中，请耐心等待.....'))
+
+  CreateDrop({})
+    .then(async res => {
+      loadingInstance.close()
+      store.commit('chubby/user/setInit', true)
+      Notification({
+        type: 'success',
+        title: '初始化数据库成功',
+        offset: 100,
+        duration: 5000,
+        dangerouslyUseHTMLString: true,
+        message: '<div>管理员: ' + res.username + '<div><div>初始密码：' + res.password + '<div>',
+        showClose: false
+      })
+    })
+    .catch(() => {
+      loadingInstance.close()
+      MessageBox.alert('初始化失败，点击重新初始化', '错误提示', {
+        confirmButtonText: '确定',
+        showClose: false,
+        callback: action => {
+          this.init()
+        }
+      })
+    })
 }
 
 export default util

@@ -7,7 +7,7 @@
             class="header">
             <span>
               <img v-if="info.avatarUrl && info.avatarUrl != ''"
-                :src="'/API/v1/Document/GetDocument/' + info.avatarUrl"
+                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument/' + info.avatarUrl"
                 class="avatar">
               <img v-else
                 :src="circleUrl"
