@@ -79,6 +79,7 @@
                                     size="default"
                                     @click="submit"
                                     type="primary"
+                                    :disabled="!isDis"
                                     class="button-login"
                                 >
                                     登录
@@ -158,7 +159,8 @@ export default {
                     }
                 ]
             },
-            menus: []
+            menus: [],
+            isDis: false
         }
     },
     watch: {
@@ -166,11 +168,17 @@ export default {
             util.isInitialized()
             this.captcha_url = value + '/API/v1/Admin/Captcha'
             this.refresh()
+        },
+        isInit: function (value) {
+            this.isDis = value
         }
     },
     computed: {
         base () {
             return this.$store.state.chubby.api.base
+        },
+        isInit () {
+            return this.$store.state.chubby.user.isInit
         }
     },
     created () {
@@ -188,8 +196,7 @@ export default {
          */
         // 提交登录信息
         submit () {
-            if (!this.$store.getters['chubby/user/isInit']) return true
-
+            if (!this.isDis) return true
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
                     let loadingInstance = this.$loading(this.loadOption('正在登陆中.....'))

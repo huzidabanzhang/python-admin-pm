@@ -109,7 +109,7 @@
                     <el-button
                         type="primary"
                         @click="centerDialogVisible = true"
-                        :disabled="mark_btn.file_add"
+                        :disabled="mark_btn.file_add || pid == '0'"
                         v-premissions="{
                             mark: mark.file.add,
                             type: 'add'
