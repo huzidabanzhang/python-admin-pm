@@ -114,9 +114,9 @@ export default {
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
-                .then(() => {
+                .then(async () => {
+                    await this.$store.commit('chubby/user/setInit', false)
                     let is_route = this.baseUrlSet(value)
-                    this.$store.commit('chubby/user/setInit', false)
                     if (Object.keys(is_route).length == 0) this.$router.push({
                         path: '/'
                     },  () => {}, () => {})

@@ -101,6 +101,7 @@ export default {
           value: state.base,
           user: false
         }, { root: true })
+        
         resolve(user)
       })
     },

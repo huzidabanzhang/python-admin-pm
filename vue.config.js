@@ -8,6 +8,9 @@ const CompressionPlugin = require('compression-webpack-plugin')
 // 拼接路径
 const resolve = dir => require('path').join(__dirname, dir)
 
+// 打包时间戳
+const version = new Date().getTime()
+
 // 增加环境变量
 process.env.VUE_APP_VERSION = require('./package.json').version
 process.env.VUE_APP_BUILD_TIME = require('dayjs')().format('YYYY年M月D日 HH时mm分ss秒')
@@ -52,6 +55,8 @@ module.exports = {
       config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
       config.optimization.minimizer[0].options.terserOptions.compress.drop_debugger = true
       config.optimization.minimizer[0].options.terserOptions.compress.pure_funcs = ['console.log']
+      config.output.filename = `js/[name].${process.env.VUE_APP_VERSION}.${version}.js`
+      config.output.chunkFilename = `js/[name].${process.env.VUE_APP_VERSION}.${version}.js`
 
       return {
         plugins: [

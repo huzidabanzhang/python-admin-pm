@@ -164,13 +164,19 @@ export default {
         }
     },
     watch: {
-        base: function (value) {
-            util.isInitialized()
-            this.captcha_url = value + '/API/v1/Admin/Captcha'
-            this.refresh()
+        base: {
+            handler (value) {
+                this.captcha_url = value + '/API/v1/Admin/Captcha'
+                this.refresh()
+            },
+            immediate: true
         },
-        isInit: function (value) {
-            this.isDis = value
+        isInit: {
+            handler (value) {
+                this.isDis = value
+                if (value == false) util.isInitialized()
+            },
+            immediate: true
         }
     },
     computed: {
@@ -180,9 +186,6 @@ export default {
         isInit () {
             return this.$store.state.chubby.user.isInit
         }
-    },
-    created () {
-        this.refresh()
     },
     methods: {
         ...mapActions('chubby/account', [
