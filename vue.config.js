@@ -26,18 +26,7 @@ module.exports = {
     port: 5001,
     publicPath, // 和 publicPath 保持一致
     https: false,
-    hotOnly: false,
-    proxy: {
-      '/API': {
-        target: 'http://127.0.0.1:92/',
-        ws: true,
-        changeOrigin: true,
-        secure: false,
-        pathRewrite: {
-          '^/API': ''
-        }
-      }
-    }
+    hotOnly: false
   },
   productionSourceMap: false,
   css: {

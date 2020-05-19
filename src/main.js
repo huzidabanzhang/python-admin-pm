@@ -6,6 +6,9 @@ import App from './App'
 import Chubby from '@/plugin/chubby'
 // store
 import store from '@/store/index'
+// socket
+import VueSocketIO from 'vue-socket.io'
+import io from 'socket.io-client'
 
 // [ 可选组件 ]D2-Crud
 import D2Crud from '@d2-projects/d2-crud'
@@ -43,6 +46,17 @@ Vue.directive('premissions', function (el, binding, node) {
     }
   } else node.context.mark_btn[params.type] = true
 })
+
+// socket插件
+Vue.use(new VueSocketIO({
+  debug: process.env.NODE_ENV === 'development',
+  connection: io(store.state.chubby.api.base),
+  vuex: {
+    store,
+    actionPrefix: 'SOCKET_',
+    mutationPrefix: 'SOCKET_'
+  }
+}))
 
 new Vue({
   router,

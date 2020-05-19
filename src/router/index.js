@@ -6,6 +6,8 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
 import store from '@/store/index'
+// socket
+import VueSocketIO from 'vue-socket.io'
 
 import util from '@/libs/util.js'
 

@@ -116,6 +116,10 @@
 </template>
 
 <script>
+import VueSocketIO from 'vue-socket.io'
+import io from 'socket.io-client'
+import store from '@/store/index'
+import Vue from 'vue'
 import { mapActions } from 'vuex'
 import chubbyHeaderUrl from '@/pages/base-url'
 import util from '@/libs/util'
@@ -168,6 +172,17 @@ export default {
             handler (value) {
                 this.captcha_url = value + '/API/v1/Admin/Captcha'
                 this.refresh()
+                // socket插件
+                Vue.use(new VueSocketIO({
+                    debug: process.env.NODE_ENV === 'development',
+                    connection: io(value),
+                    vuex: {
+                        store,
+                        actionPrefix: 'SOCKET_',
+                        mutationPrefix: 'SOCKET_'
+                    }
+                }))
+                this.$socket.emit('my_response', '111')
             },
             immediate: true
         },

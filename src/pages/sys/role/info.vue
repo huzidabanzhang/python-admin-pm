@@ -2,7 +2,7 @@
     <el-dialog
         :title="title"
         :visible.sync="Visible"
-        width="50%"
+        width="500px"
         append-to-body
         destroy-on-close
         :close-on-click-modal="false"
@@ -71,9 +71,7 @@
                 v-if="params.role_id"
                 :disabled="btn_del"
             ></el-button>
-            <el-button
-                @click="handleClosed"
-            >取 消</el-button>
+            <el-button @click="handleClosed">取 消</el-button>
             <el-button
                 type="primary"
                 @click="handelInfo('roleForm')"
