@@ -51,6 +51,7 @@ Vue.directive('premissions', function (el, binding, node) {
 Vue.use(new VueSocketIO({
   debug: process.env.NODE_ENV === 'development',
   connection: io(store.state.chubby.api.base),
+  reconnectionDelayMax: 30000,
   vuex: {
     store,
     actionPrefix: 'SOCKET_',
@@ -63,6 +64,24 @@ new Vue({
   store,
   i18n,
   render: h => h(App),
+  sockets: {
+    connect (data) {
+      console.log(data)
+      this.$socket.emit('my_response', '111')
+    },
+    reconnect () {
+      console.log('重新连接')
+    },
+    disconnect () {
+      console.log('断开连接')
+    },
+    my_response (data) {
+      console.log(data)
+    }
+  },
+  destroyed () {
+    this.$socket.emit('disconnect')
+  },
   async created () {
     // 加载接口配置
     await this.$store.dispatch('chubby/api/load')

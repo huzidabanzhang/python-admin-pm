@@ -47,7 +47,7 @@
     "vue-i18n": "^8.11.2",
     "vue-json-tree-view": "^2.1.4",
     "vue-router": "^3.1.6",
-    "vue-socket.io": "^3.0.9",
+    "vue-socket.io": "^3.0.7",
     "vue-splitpane": "^1.0.4",
     "vue-ueditor-wrap": "^2.4.1",
     "vuex": "^3.1.1"
