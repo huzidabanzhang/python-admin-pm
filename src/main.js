@@ -6,9 +6,6 @@ import App from './App'
 import Chubby from '@/plugin/chubby'
 // store
 import store from '@/store/index'
-// socket
-import VueSocketIO from 'vue-socket.io'
-import io from 'socket.io-client'
 
 // [ 可选组件 ]D2-Crud
 import D2Crud from '@d2-projects/d2-crud'
@@ -47,41 +44,11 @@ Vue.directive('premissions', function (el, binding, node) {
   } else node.context.mark_btn[params.type] = true
 })
 
-// socket插件
-Vue.use(new VueSocketIO({
-  debug: process.env.NODE_ENV === 'development',
-  connection: io(store.state.chubby.api.base),
-  reconnectionDelayMax: 30000,
-  vuex: {
-    store,
-    actionPrefix: 'SOCKET_',
-    mutationPrefix: 'SOCKET_'
-  }
-}))
-
 new Vue({
   router,
   store,
   i18n,
   render: h => h(App),
-  sockets: {
-    connect (data) {
-      console.log(data)
-      this.$socket.emit('my_response', '111')
-    },
-    reconnect () {
-      console.log('重新连接')
-    },
-    disconnect () {
-      console.log('断开连接')
-    },
-    my_response (data) {
-      console.log(data)
-    }
-  },
-  destroyed () {
-    this.$socket.emit('disconnect')
-  },
   async created () {
     // 加载接口配置
     await this.$store.dispatch('chubby/api/load')
@@ -92,7 +59,7 @@ new Vue({
     // 初始化菜单搜索功能
     this.$store.commit('chubby/search/init', menuHeader)
 
-    util.isInitialized()
+    await util.isInitialized()
   },
   mounted () {
     // 用户登录后从数据库加载一系列的设置

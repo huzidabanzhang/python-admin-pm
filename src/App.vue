@@ -14,9 +14,6 @@ export default {
     created () {
         this.i18nHandle(this.$i18n.locale)
     },
-    mounted () {
-        this.$socket.emit('my_response', '111')
-    },
     methods: {
         i18nHandle (val, oldVal) {
             util.cookies.set('lang', val)
