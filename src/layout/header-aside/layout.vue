@@ -167,36 +167,36 @@ export default {
             Visible: false
         }
     },
-    sockets: {
-        //查看socket是否渲染成功
-        connect () {
-            console.log("链接成功")
-        },
-        disconnect () {
-            console.log("断开链接")
-        },//检测socket断开链接 
-        reconnect () {
-            console.log("重新链接")
-        },
-        //客户端接收后台传输的socket事件
-        my_response (data) {
-            console.log('my_response', data)//接收的消息
-            setInterval(() => {
-                this.$socket.emit('heart', 'client')
-            }, 5000)
-        },
-        error (err) {
-            console.log(err)
-        },
-        heart (data) {
-            console.log(data)
-        }
-    },
-    created () {
-        window.addEventListener('beforeunload', e => {
-            if (this.$socket) this.$socket.close()
-        })
-    },
+    // sockets: {
+    //     //查看socket是否渲染成功
+    //     connect () {
+    //         console.log("链接成功")
+    //     },
+    //     disconnect () {
+    //         console.log("断开链接")
+    //     },//检测socket断开链接 
+    //     reconnect () {
+    //         console.log("重新链接")
+    //     },
+    //     //客户端接收后台传输的socket事件
+    //     my_response (data) {
+    //         console.log('my_response', data)//接收的消息
+    //         setInterval(() => {
+    //             this.$socket.emit('heart', 'client')
+    //         }, 5000)
+    //     },
+    //     error (err) {
+    //         console.log(err)
+    //     },
+    //     heart (data) {
+    //         console.log(data)
+    //     }
+    // },
+    // created () {
+    //     window.addEventListener('beforeunload', e => {
+    //         if (this.$socket) this.$socket.close()
+    //     })
+    // },
     computed: {
         ...mapState('chubby', {
             keepAlive: state => state.page.keepAlive,

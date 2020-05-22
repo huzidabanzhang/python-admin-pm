@@ -27,10 +27,11 @@ export default {
     // 构建时间
     Vue.prototype.$buildTime = process.env.VUE_APP_BUILD_TIME
     // 加载框
-    Vue.prototype.loadOption = (title) => {
+    Vue.prototype.loadOption = (title, dom = document.body) => {
       return {
         lock: true,
         text: title,
+        target: dom,
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       }

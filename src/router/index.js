@@ -7,8 +7,8 @@ import 'nprogress/nprogress.css'
 
 import store from '@/store/index'
 // socket
-import VueSocketIO from 'vue-socket.io'
-import io from 'socket.io-client'
+// import VueSocketIO from 'vue-socket.io'
+// import io from 'socket.io-client'
 
 import util from '@/libs/util.js'
 
@@ -60,20 +60,21 @@ function ResetRoute (to, next) {
  * 权限验证
  */
 router.beforeEach(async (to, from, next) => {
-  if ((to.name == 'index' && from.name == 'login') || (from.name == null && to.name != 'login')) {
-    Vue.use(new VueSocketIO({
-      debug: true,
-      // 服务器端地址
-      connection: io(store.state.chubby.api.base, {
-        reconnectionDelayMax: 10000
-      }),
-      vuex: {
-        store,
-        actionPrefix: 'SOCKET_',
-        mutationPrefix: 'SOCKET_'
-      }
-    }))
-  }
+  // socket 暂时用不到注释了
+  // if ((to.name == 'index' && from.name == 'login') || (from.name == null && to.name != 'login')) {
+  //   Vue.use(new VueSocketIO({
+  //     debug: true,
+  //     // 服务器端地址
+  //     connection: io(store.state.chubby.api.base, {
+  //       reconnectionDelayMax: 10000
+  //     }),
+  //     vuex: {
+  //       store,
+  //       actionPrefix: 'SOCKET_',
+  //       mutationPrefix: 'SOCKET_'
+  //     }
+  //   }))
+  // }
   // 进度条
   NProgress.start()
   // 确认已经加载多标签页数据 
