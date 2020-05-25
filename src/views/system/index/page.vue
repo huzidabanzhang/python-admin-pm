@@ -8,7 +8,14 @@
                 slot="dateCell"
                 slot-scope="{date, data}"
             >
-                <p>{{ data.day.split('-').slice(1).join('-') }}</p>
+                <div>{{ data.day.split('-').slice(1).join('-') }}</div>
+                <span
+                    v-for="(item, index) in info[data.day]"
+                    :key="index"
+                    class="calendar_span"
+                >
+                    {{item.name}}登录了{{item.count}}次
+                </span>
             </template>
         </el-calendar>
     </chubby-container>
@@ -22,7 +29,6 @@ export default {
         return {
             user: this.$store.getters['chubby/user/user'],
             info: {},
-            users: {},
             value: new Date()
         }
     },
@@ -59,21 +65,18 @@ export default {
                 lock: true,
                 target: this.$refs.calendar_info.$el
             })
-            setTimeout(() => {
-                loadingInstance.close()
-            }, 1000)
-            // GetLoginInfo({})
-            //     .then(async res => {
-            //         this.userLogin.chartData = {
-            //             rows: res.rows,
-            //             columns: res.columns
-            //         }
-            //         this.info = res.info
-            //         this.userLogin.loading = false
-            //     })
-            //     .catch(() => {
-            //         this.userLogin.loading = false
-            //     })
+
+            GetLoginInfo({
+                time: this.getDate(this.value),
+                admin_id: this.user.admin_id
+            })
+                .then(async res => {
+                    this.info = res
+                    loadingInstance.close()
+                })
+                .catch(() => {
+                    loadingInstance.close()
+                })
         },
         getDate (time) {
             return time.getFullYear() + '-' + (time.getMonth() + 1)
@@ -88,6 +91,18 @@ export default {
     &:last-child {
         margin-bottom: 0;
     }
+}
+
+.calendar_span {
+    font-size: 12px;
+    text-align: right;
+    width: 100%;
+    display: inline-block;
+    color: #909399;
+}
+
+.el-calendar-table .el-calendar-day {
+    overflow: auto;
 }
 
 .header {
