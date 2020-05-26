@@ -259,7 +259,7 @@ import { cloneDeep } from 'lodash'
 import util from '@/libs/util.js'
 import setting from '@/setting.js'
 export default {
-    name: 'sys-menu',
+    name: 'MenuPage',
     data () {
         return {
             menuData: [],

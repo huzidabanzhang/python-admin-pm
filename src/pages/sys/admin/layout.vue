@@ -243,7 +243,7 @@ import Info from './info.vue'
 import Pagination from '@/pages/pagination/index.vue'
 import setting from '@/setting.js'
 export default {
-    name: 'sys-admin',
+    name: 'AdminPage',
     components: { Info, Pagination },
     data () {
         return {

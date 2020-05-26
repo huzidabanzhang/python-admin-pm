@@ -107,7 +107,7 @@
 import { QueryLogByParam } from '@api/sys.log'
 import Pagination from '@/pages/pagination/index.vue'
 export default {
-    name: 'sys-login-log',
+    name: 'LogLogin',
     components: {
         Pagination
     },

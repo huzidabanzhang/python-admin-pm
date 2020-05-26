@@ -257,7 +257,7 @@ import Info from './info.vue'
 import util from '@/libs/util.js'
 import setting from '@/setting.js'
 export default {
-    name: 'sys-interface',
+    name: 'InterfacePage',
     components: { Pagination, Info },
     data () {
         return {

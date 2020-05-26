@@ -59,7 +59,7 @@ import { AgainCreateDrop, ImportSql } from '@api/sys.base'
 import util from '@/libs/util.js'
 import setting from '@/setting.js'
 export default {
-    name: 'sys-base',
+    name: 'BasePage',
     props: {
         Visible: Boolean
     },

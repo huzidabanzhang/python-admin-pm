@@ -102,7 +102,7 @@ import { QueryLogByParam } from '@api/sys.log'
 import Pagination from '@/pages/pagination/index.vue'
 import Dialog from '@/pages/dialog/index.vue'
 export default {
-    name: 'sys-login-log',
+    name: 'LorError',
     components: {
         Pagination,
         Dialog

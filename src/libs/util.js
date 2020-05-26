@@ -61,7 +61,7 @@ function componentToImport (ary) {
  * @description 动态加载路由
  * @param {Object} r 路由
  */
-util.initRoute = function (r, isAll = false) {
+util.initRoute = function (r) {
   let data = cloneDeep(r), route = [
     {
       path: '/',
@@ -103,7 +103,7 @@ util.initMenu = function (m, isAll = false) {
       interfaces: info.interfaces
     }, { root: true })
   }
-  util.initRoute(params.route, isAll)
+  util.initRoute(params.route)
 }
 
 /**

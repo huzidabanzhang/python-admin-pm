@@ -68,7 +68,7 @@ export default {
           // 新的数据中一般不会携带 params 和 query, 所以旧的参数会留存
           return Object.assign({}, opened, find)
         }).filter((opened, index) => valid[index] === 1)
-        
+
         state.openedLoaded = true
         // 根据 opened 数据生成缓存设置
         commit('keepAliveRefresh')
@@ -358,7 +358,7 @@ export default {
      * @param {String} name name
      */
     keepAliveRemove (state, name) {
-      const list = [ ...state.keepAlive ]
+      const list = [...state.keepAlive]
       const index = list.findIndex(item => item === name)
 
       if (index !== -1) {
@@ -372,7 +372,7 @@ export default {
      * @param {String} name name
      */
     keepAlivePush (state, name) {
-      const keep = [ ...state.keepAlive ]
+      const keep = [...state.keepAlive]
       keep.push(name)
       state.keepAlive = keep
     },

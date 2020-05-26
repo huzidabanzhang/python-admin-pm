@@ -104,7 +104,7 @@ import { QueryRoleByParam, LockRole, DelRole } from '@api/sys.role'
 import Info from './info.vue'
 import setting from '@/setting.js'
 export default {
-    name: 'sys-role',
+    name: 'RolePage',
     components: { Info },
     data () {
         return {

@@ -5,6 +5,7 @@
 <script>
 import Docment from './list.vue'
 export default {
+    name: 'DocumentPage',
     components: { Docment },
     data () {
         return {
