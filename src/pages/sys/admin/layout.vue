@@ -424,7 +424,9 @@ export default {
                 })
                 .then(() => {
                     DelAdmin({
-                        admins: JSON.stringify(admins)
+                        admin_id: admins.map(i => {
+                            return i.admin_id
+                        })
                     }).then(async res => {
                         this.$message.success('删除管理员成功')
                         this.init()

@@ -37,9 +37,7 @@
                 :loading="loading"
                 style="float: left"
             >上 传</el-button>
-            <el-button
-                @click="handleClosed"
-            >取 消</el-button>
+            <el-button @click="handleClosed">取 消</el-button>
             <el-button
                 type="primary"
                 @click="handleClosed"
@@ -126,23 +124,26 @@ export default {
             }
         },
         CreateUpload () {
-            let self = this, formData = new FormData()
+            let self = this, formData = new FormData(), uids = []
             for (let i in this.fileList) {
                 if (this.fileList[i].type == 'ready') {
                     formData.append('document', this.fileList[i].file)
-                    formData.append('uid', this.fileList[i].uid)
+                    uids.push(this.fileList[i].uid)
                 }
             }
+            formData.append('uid[]', uids)
             formData.append('admin_id', util.cookies.get('uuid'))
             formData.append('folder_id', this.folder_id)
             formData.append('status', 1)
 
-            if (formData.get('uid') == null) return this.$message.error('请选择上传文件')
+            if (formData.get('document') == null) return this.$message.error('请选择上传文件')
 
             this.loading = true
             CreateDocument(formData, this.handelProgress)
-                .then(async res => {
+                .then(res => {
+                    console.log(this.fileList)
                     res.map(i => {
+                        console.log(i)
                         if (i.res == 1) {
                             this.fileList[i.uid].onSuccess()
                             this.fileList[i.uid].type = 'success'

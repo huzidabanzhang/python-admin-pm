@@ -295,6 +295,7 @@
                 label-width="80px"
                 ref="adminForm"
                 :model="form"
+                class="show"
                 disabled
             >
                 <el-form-item
@@ -717,6 +718,10 @@ export default {
 
 .el-form--inline .el-form-item:last-child {
     margin-right: 0;
+}
+
+.show .el-form-item {
+    padding-bottom: 10px;
 }
 </style>
 
