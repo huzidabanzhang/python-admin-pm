@@ -192,7 +192,8 @@ export default {
                         role_list: role_list,
                         menu: menu,
                         name: this.form.name,
-                        mark: this.form.mark
+                        mark: this.form.mark,
+                        is_disabled: this.form.is_disabled
                     }
 
                     if (this.params.role_id) {

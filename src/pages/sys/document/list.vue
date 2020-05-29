@@ -151,7 +151,7 @@
                                     <el-dropdown-item @click.native="openFolder(item)">打开文件夹</el-dropdown-item>
                                     <el-dropdown-item
                                         @click.native="setFolder(item)"
-                                        v-if="user && user.mark == mark"
+                                        v-if="item.admin_id && (user.admin_id == item.admin_id || user.mark == marks)"
                                         :disabled="mark_btn.folder_set"
                                         v-premissions="{
                                             mark: mark.folder.set,
@@ -160,7 +160,7 @@
                                     >重命名</el-dropdown-item>
                                     <el-dropdown-item
                                         @click.native="delFolder(item)"
-                                        v-if="user && user.mark == mark"
+                                        v-if="item.admin_id && (user.admin_id == item.admin_id || user.mark == marks)"
                                         :disabled="mark_btn.folder_del"
                                         v-premissions="{
                                             mark: mark.folder.del,
@@ -354,7 +354,7 @@ export default {
             prev: {},
             pid: '0',
             src: this.$store.state.chubby.api.base + '/API/v1/Document/GetDocument/',
-            mark: setting.SYS_ADMIN.mark,
+            marks: setting.SYS_ADMIN.mark,
             user: this.$store.getters['chubby/user/user'],
             Visible: false,
             form: {},
@@ -422,7 +422,8 @@ export default {
         getFolder (pid, isInit) {
             this.loading = true
             QueryFolderByParam({
-                pid: pid
+                pid: pid,
+                admin_id: this.user.admin_id
             })
                 .then(async res => {
                     this.data = res.map(i => {
@@ -486,7 +487,8 @@ export default {
                         CreateFolder({
                             name: instance.inputValue,
                             pid: this.pid,
-                            is_sys: this.is_sys
+                            is_sys: this.is_sys,
+                            admin_id: this.user.admin_id
                         })
                             .then(async res => {
                                 instance.confirmButtonLoading = false
@@ -578,7 +580,7 @@ export default {
                 })
                 .then(() => {
                     DelFolder({
-                        folder_id: id
+                        folder_id: id.folder_id
                     })
                         .then(async res => {
                             this.$message.success('删除文件夹成功')
@@ -613,18 +615,26 @@ export default {
             let data = cloneDeep(item), count = this.tree.length - data.index
             this.tree.splice(item.index, count)
             this.pid = data.pid
-            if (this.pid == '0') this.prev = {}
-            else this.prev = this.tree[item.index - 1]
-            this.is_sys = item.is_sys
+            if (this.pid == '0') {
+                this.prev = {}
+                this.is_sys = false
+            } else {
+                this.prev = this.tree[item.index - 1]
+                this.is_sys = item.is_sys
+            }
             this.getFolder(this.pid, true)
         },
         toFolder (item) {
             let data = cloneDeep(item), count = this.tree.length - data.index + 1
             this.tree.splice(item.index + 1, count)
             this.pid = data.folder_id
-            if (this.pid == '0') this.prev = {}
-            else this.prev = this.tree[item.index]
-            this.is_sys = item.is_sys
+            if (this.pid == '0') {
+                this.prev = {}
+                this.is_sys = false
+            } else {
+                this.prev = this.tree[item.index]
+                this.is_sys = item.is_sys
+            }
             this.getFolder(this.pid, true)
         },
         getFile (item) {
