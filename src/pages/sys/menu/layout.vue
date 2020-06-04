@@ -7,11 +7,8 @@
                 circle
                 @click="addMenu(true)"
                 title="新增"
-                :disabled="mark_btn.add"
-                v-premissions="{
-                    mark: mark.menu.add,
-                    type: 'add'
-                }"
+                :disabled="auth.add"
+                v-auth:add_menu
             >
             </el-button>
             <el-button
@@ -32,7 +29,7 @@
             v-loading="loading"
         >
             <span
-                :class="!data.is_disabled ? '' : 'disabled'"
+                :class="!data.disable ? '' : 'disabled'"
                 class="custom-tree-node"
                 slot-scope="{ node, data }"
             >
@@ -123,11 +120,11 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item
-                    prop="is_disabled"
+                    prop="disable"
                     label="可见性"
                 >
                     <el-radio-group
-                        v-model="form.is_disabled"
+                        v-model="form.disable"
                         :disabled="!isHidden(form.mark)"
                     >
                         <el-radio-button label="false">显示</el-radio-button>
@@ -148,11 +145,8 @@
                         type="primary"
                         icon="el-icon-check"
                         @click="submit('SYSMENU')"
-                        :disabled="mark_btn.add"
-                        v-premissions="{
-                            mark: mark.menu.add,
-                            type: 'add'
-                        }"
+                        :disabled="auth.add"
+                        v-auth:add_menu
                     >保存
                     </el-button>
                 </el-form-item>
@@ -161,11 +155,8 @@
                         type="primary"
                         icon="el-icon-check"
                         @click="submit('SYSMENU')"
-                        :disabled="mark_btn.set"
-                        v-premissions="{
-                            mark: mark.menu.set,
-                            type: 'set'
-                        }"
+                        :disabled="auth.set"
+                        v-auth:set_menu
                     >保存
                     </el-button>
                     <el-button
@@ -173,20 +164,14 @@
                         type="danger"
                         icon="el-icon-delete"
                         @click="delMenu(form.menu_id)"
-                        :disabled="mark_btn.del"
-                        v-premissions="{
-                            mark: mark.menu.del,
-                            type: 'del'
-                        }"
+                        :disabled="auth.del"
+                        v-auth:del_menu
                     >删除</el-button>
                     <el-button
                         icon="el-icon-position"
                         @click="getMenuToInterface(form.title, form.menu_id)"
-                        :disabled="mark_btn.inter"
-                        v-premissions="{
-                            mark: mark.menu.inter,
-                            type: 'inter'
-                        }"
+                        :disabled="auth.interface"
+                        v-auth:interface_menu
                     >关联接口</el-button>
                 </el-form-item>
             </el-form>
@@ -195,10 +180,13 @@
         <el-dialog
             :title="dialogTitle"
             :visible.sync="dialogTableVisible"
-            v-loading="dialogLoading"
+            ref="menuToInter"
             width="800px"
         >
-            <el-table :data="interfaceData">
+            <el-table
+                :data="interfaceData"
+                v-loading="dialogLoading"
+            >
                 <el-table-column
                     prop="name"
                     label="名称"
@@ -233,14 +221,14 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="is_disabled"
+                    prop="disable"
                     label="可见性"
                     align="center"
                 >
                     <template slot-scope="scope">
                         <el-tag
                             type="success"
-                            v-if="!scope.row.is_disabled"
+                            v-if="!scope.row.disable"
                         >显示</el-tag>
                         <el-tag
                             type="info"
@@ -267,7 +255,7 @@ export default {
             loading: false,
             form: {},
             lock: '',
-            is_disabled: '',
+            disable: '',
             tree_prop: {
                 label: 'title',
                 children: 'children'
@@ -294,11 +282,10 @@ export default {
             interfaceData: [],
             dialogTitle: '',
             dialogLoading: false,
-            mark: setting.mark,
-            mark_btn: {
+            auth: {
                 add: false,
                 set: false,
-                inter: false,
+                interface: false,
                 del: false
             }
         }
@@ -311,7 +298,7 @@ export default {
             if (isTrue != true) this.addMenu(false)
 
             let params = {}
-            if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
+            if (this.disable != '') params['disable'] = this.disable
             this.loading = true
             QueryMenuByParam(params)
                 .then(async res => {
@@ -363,7 +350,7 @@ export default {
         addMenu (isClear) {
             this.form = {
                 cache: true,
-                is_disabled: false,
+                disable: false,
                 sort: 1
             }
             this.treeData = cloneDeep(this.menuData)

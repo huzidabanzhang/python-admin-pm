@@ -141,9 +141,7 @@ export default {
             this.loading = true
             CreateDocument(formData, this.handelProgress)
                 .then(res => {
-                    console.log(this.fileList)
                     res.map(i => {
-                        console.log(i)
                         if (i.res == 1) {
                             this.fileList[i.uid].onSuccess()
                             this.fileList[i.uid].type = 'success'

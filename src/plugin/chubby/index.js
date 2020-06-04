@@ -12,6 +12,7 @@ import '@/assets/svg-icons'
 import pluginError from '@/plugin/error'
 import pluginLog from '@/plugin/log'
 import pluginOpen from '@/plugin/open'
+import premission from '@/plugin/premission'
 
 export default {
   async install (Vue, options) {
@@ -42,5 +43,6 @@ export default {
     Vue.use(pluginError)
     Vue.use(pluginLog)
     Vue.use(pluginOpen)
+    Vue.use(premission)
   }
 }

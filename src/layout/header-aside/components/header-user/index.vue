@@ -5,16 +5,14 @@
     >
         <span class="btn-text">{{user | getUsername}}</span>
         <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item
-                @click.native="getInfo"
-            >
+            <el-dropdown-item @click.native="getInfo">
                 <i class="fa fa-user-circle"></i>
                 个人中心
             </el-dropdown-item>
 
             <el-dropdown-item
                 @click.native="initBase"
-                v-show="!isMark()"
+                v-show="isMark()"
             >
                 <i class="fa fa-refresh"></i>
                 重置数据库
@@ -49,10 +47,9 @@ import Info from '@/pages/sys/admin/info.vue'
 import setting from '@/setting.js'
 export default {
     components: { Info },
-    data() {
+    data () {
         return {
             user: this.$store.getters['chubby/user/user'],
-            mark: setting.SYS_ADMIN.mark,
             title: '',
             params: {},
             roleParams: [],
@@ -60,7 +57,7 @@ export default {
         }
     },
     filters: {
-        getUsername(info) {
+        getUsername (info) {
             if (info && Object.keys(info).length > 0) {
                 let name = info.nickname ? info.nickname : info.username
                 return name ? `你好 ${name}` : '未登录'
@@ -75,25 +72,24 @@ export default {
         /**
          * @description 登出
          */
-        logOff() {
+        logOff () {
             this.logout({
                 confirm: true
             })
-        },  
-        isMark() {
-            if (this.user && Object.keys(this.user).length > 0) 
-                return this.user.mark != this.mark
+        },
+        isMark () {
+            if (this.user) return this.user.is_admin
             return false
-        },  
-        getInfo() {
+        },
+        getInfo () {
             this.params = this.user
             this.centerDialogVisible = true
         },
-        handleClose(data) {
+        handleClose (data) {
             if (data.admin_id) this.user = data
             this.centerDialogVisible = false
         },
-        initBase() {
+        initBase () {
             this.$confirm('重置数据库将清空所有数据，确定要重置吗？', '提示',
                 {
                     confirmButtonText: '确定',

@@ -46,19 +46,13 @@
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item
                                 command="3"
-                                :disabled="mark_btn.file_retrieve"
-                                v-premissions="{
-                                    mark: mark.file.retrieve,
-                                    type: 'retrieve'
-                                }"
+                                :disabled="auth.retrieve"
+                                v-auth:retrieve_document
                             >还原</el-dropdown-item>
                             <el-dropdown-item
                                 command="2"
-                                :disabled="mark_btn.file_del"
-                                v-premissions="{
-                                    mark: mark.file.del,
-                                    type: 'del'
-                                }"
+                                :disabled="auth.del"
+                                v-auth:del_document
                             >删除</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
@@ -73,19 +67,13 @@
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item
                                 command="1"
-                                :disabled="mark_btn.file_retrieve"
-                                v-premissions="{
-                                    mark: mark.file.retrieve,
-                                    type: 'retrieve'
-                                }"
+                                :disabled="auth.retrieve"
+                                v-auth:retrieve_document
                             >移动回收站</el-dropdown-item>
                             <el-dropdown-item
                                 command="2"
-                                :disabled="mark_btn.file_del"
-                                v-premissions="{
-                                    mark: mark.file.del,
-                                    type: 'del'
-                                }"
+                                :disabled="auth.del"
+                                v-auth:del_document
                             >删除</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
@@ -96,11 +84,8 @@
                         type="primary"
                         icon="el-icon-circle-plus-outline"
                         @click="addFolder"
-                        :disabled="mark_btn.folder_add"
-                        v-premissions="{
-                            mark: mark.folder.add,
-                            type: 'add'
-                        }"
+                        :disabled="auth.addf"
+                        v-auth:addf_folder
                     >新建文件夹
                     </el-button>
                 </el-form-item>
@@ -109,11 +94,8 @@
                     <el-button
                         type="primary"
                         @click="centerDialogVisible = true"
-                        :disabled="mark_btn.file_add || pid == '0'"
-                        v-premissions="{
-                            mark: mark.file.add,
-                            type: 'add'
-                        }"
+                        :disabled="auth.add || pid == '0'"
+                        v-auth:add_document
                     >上传<i class="el-icon-upload el-icon--right"></i></el-button>
                 </el-form-item>
             </el-form>
@@ -151,21 +133,15 @@
                                     <el-dropdown-item @click.native="openFolder(item)">打开文件夹</el-dropdown-item>
                                     <el-dropdown-item
                                         @click.native="setFolder(item)"
-                                        v-if="item.admin_id && (user.admin_id == item.admin_id || user.mark == marks)"
-                                        :disabled="mark_btn.folder_set"
-                                        v-premissions="{
-                                            mark: mark.folder.set,
-                                            type: 'set'
-                                        }"
+                                        v-if="item.admin_id && (user.admin_id == item.admin_id || user.is_admin)"
+                                        :disabled="auth.setf"
+                                        v-auth:setf_folder
                                     >重命名</el-dropdown-item>
                                     <el-dropdown-item
                                         @click.native="delFolder(item)"
-                                        v-if="item.admin_id && (user.admin_id == item.admin_id || user.mark == marks)"
-                                        :disabled="mark_btn.folder_del"
-                                        v-premissions="{
-                                            mark: mark.folder.del,
-                                            type: 'del'
-                                        }"
+                                        v-if="item.admin_id && (user.admin_id == item.admin_id || user.is_admin)"
+                                        :disabled="auth.delf"
+                                        v-auth:delf_folder
                                     >删除</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -200,36 +176,24 @@
                                     <el-dropdown-item
                                         v-if="!isDel"
                                         @click.native="retrieveFile([item.document_id], true)"
-                                        :disabled="mark_btn.file_retrieve"
-                                        v-premissions="{
-                                            mark: mark.file.retrieve,
-                                            type: 'retrieve'
-                                        }"
+                                        :disabled="auth.retrieve"
+                                        v-auth:retrieve_document
                                     >移到回收站</el-dropdown-item>
                                     <el-dropdown-item
                                         v-if="isDel"
                                         @click.native="retrieveFile([item.document_id], false)"
-                                        :disabled="mark_btn.file_retrieve"
-                                        v-premissions="{
-                                            mark: mark.file.retrieve,
-                                            type: 'retrieve'
-                                        }"
+                                        :disabled="auth.retrieve"
+                                        v-auth:retrieve_document
                                     >还原</el-dropdown-item>
                                     <el-dropdown-item
                                         @click.native="down(item.path, item.name)"
-                                        :disabled="mark_btn.file_down"
-                                        v-premissions="{
-                                            mark: mark.file.down,
-                                            type: 'down'
-                                        }"
+                                        :disabled="auth.down"
+                                        v-auth:down_document
                                     >下载</el-dropdown-item>
                                     <el-dropdown-item
                                         @click.native="delFile([item.document_id])"
-                                        :disabled="mark_btn.file_del"
-                                        v-premissions="{
-                                            mark: mark.file.del,
-                                            type: 'del'
-                                        }"
+                                        :disabled="auth.del"
+                                        v-auth:del_document
                                     >删除</el-dropdown-item>
                                     <el-dropdown-item @click.native="getFile(item)">属性</el-dropdown-item>
                                 </el-dropdown-menu>
@@ -354,20 +318,18 @@ export default {
             prev: {},
             pid: '0',
             src: this.$store.state.chubby.api.base + '/API/v1/Document/GetDocument/',
-            marks: setting.SYS_ADMIN.mark,
             user: this.$store.getters['chubby/user/user'],
             Visible: false,
             form: {},
             is_sys: false,
-            mark: setting.mark,
-            mark_btn: {
-                file_add: false,
-                file_down: false,
-                file_del: false,
-                file_retrieve: false,
-                folder_add: false,
-                folder_set: false,
-                folder_list: false
+            auth: {
+                add: false,
+                down: false,
+                del: false,
+                retrieve: false,
+                addf: false,
+                setf: false,
+                listf: false
             }
         }
     },

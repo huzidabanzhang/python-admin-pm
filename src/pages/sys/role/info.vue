@@ -31,10 +31,10 @@
                 ></el-input>
             </el-form-item>
             <el-form-item
-                prop="is_disabled"
+                prop="disable"
                 label="可见性"
             >
-                <el-radio-group v-model="form.is_disabled">
+                <el-radio-group v-model="form.disable">
                     <el-radio-button label="false">显示</el-radio-button>
                     <el-radio-button label="true">隐藏</el-radio-button>
                 </el-radio-group>
@@ -193,7 +193,7 @@ export default {
                         menu: menu,
                         name: this.form.name,
                         mark: this.form.mark,
-                        is_disabled: this.form.is_disabled
+                        disable: this.form.disable
                     }
 
                     if (this.params.role_id) {

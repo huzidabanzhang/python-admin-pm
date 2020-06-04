@@ -79,20 +79,20 @@
                 </el-select>
             </el-form-item>
             <el-form-item
-                prop="is_disabled"
+                prop="disable"
                 label="可见性"
             >
-                <el-radio-group v-model="form.is_disabled">
+                <el-radio-group v-model="form.disable">
                     <el-radio-button label="false">显示</el-radio-button>
                     <el-radio-button label="true">隐藏</el-radio-button>
                 </el-radio-group>
             </el-form-item>
             <el-form-item
                 label="是否可隐藏"
-                prop="forbidden"
+                prop="forbid"
                 v-if="form.interface_id == undefined"
             >
-                <el-switch v-model="form.forbidden"></el-switch>
+                <el-switch v-model="form.forbid"></el-switch>
             </el-form-item>
         </el-form>
         <span

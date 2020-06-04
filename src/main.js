@@ -26,24 +26,6 @@ Vue.use(Chubby)
 Vue.use(D2Crud)
 Vue.use(VCharts)
 
-// 按钮权限判断指令
-Vue.directive('premissions', function (el, binding, node) {
-  let params = binding.value, data = store.getters['chubby/user/interfaces']
-  if (data) {
-    let item = data.filter((i) => {
-      return i.mark == params.mark
-    })
-    if (item.length == 0) {
-      // if (!params.not_hidden) el.style.display = 'none'
-      // else node.context.mark_btn[params.type] = true
-      node.context.mark_btn[params.type] = true
-    } else {
-      if (params.not_disabled == undefined || !params.not_disabled)
-        node.context.mark_btn[params.type] = Boolean(item[0].is_disabled)
-    }
-  } else node.context.mark_btn[params.type] = true
-})
-
 new Vue({
   router,
   store,

@@ -17,19 +17,19 @@
         >
             <el-form-item
                 label="头像"
-                prop="avatarUrl"
+                prop="avatar"
             >
                 <el-upload
                     class="avatar-uploader"
                     :http-request="CreateUpload"
                     :show-file-list="false"
-                    ref="avatarUrl"
+                    ref="avatar"
                     action="1"
                     accept="image/jpeg, image/png, image/jpg"
                 >
                     <img
-                        v-if="avatarUrl != '' && avatarUrl"
-                        :src="avatarUrl"
+                        v-if="avatar != '' && avatar"
+                        :src="avatar"
                         class="avatar"
                     >
                     <img
@@ -98,10 +98,10 @@
                 </el-radio-group>
             </el-form-item>
             <el-form-item
-                prop="is_disabled"
+                prop="disable"
                 label="可见性"
             >
-                <el-radio-group v-model="form.is_disabled">
+                <el-radio-group v-model="form.disable">
                     <el-radio-button label="false">显示</el-radio-button>
                     <el-radio-button label="true">隐藏</el-radio-button>
                 </el-radio-group>
@@ -144,9 +144,9 @@ export default {
             Visible: this.centerDialogVisible,
             form: {
                 sex: 1,
-                is_disabled: false
+                disable: false
             },
-            avatarUrl: '',
+            avatar: '',
             rules: {
                 username: [
                     { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -180,9 +180,9 @@ export default {
                     return i
                 })
                 this.form = cloneDeep(this.params)
-                if (this.form.avatarUrl && this.form.avatarUrl != '') {
-                    this.avatarUrl = this.API + this.form.avatarUrl
-                } else this.avatarUrl = ''
+                if (this.form.avatar && this.form.avatar != '') {
+                    this.avatar = this.API + this.form.avatar
+                } else this.avatar = ''
             }
         },
         submit (newVal) {
@@ -230,23 +230,24 @@ export default {
             this.$emit('handleClose', false)
         },
         CreateUpload (params) {
-            const isLt2M = params.file.size / 1024 / 1024 < 2
-            if (!isLt2M) {
+            const max = params.file.size / 1024 / 1024 < 2
+            if (!max) {
                 this.$message.error('上传头像图片大小不能超过 2MB!')
-                this.$refs.avatarUrl.uploadFiles = []
+                this.$refs.avatar.uploadFiles = []
                 return false
             }
-            let self = this, formData = new FormData()
-            formData.append('document', [params.file])
+            let formData = new FormData()
+            formData.append('uid[]', [1])
+            formData.append('document', params.file)
             formData.append('admin_id', util.cookies.get('uuid'))
-            formData.append('type', 1)
+            formData.append('status', 1)
 
             this.img_load = true
             CreateDocument(formData)
-                .then(async res => {
-                    this.avatarUrl = this.API + res[0].src
-                    this.form.avatarUrl = res[0].src
-                    this.$refs.avatarUrl.uploadFiles = []
+                .then(res => {
+                    this.avatar = this.API + res[0].src
+                    this.form.avatar = res[0].src
+                    this.$refs.avatar.uploadFiles = []
                     this.$message.success('上传头像成功')
                     this.img_load = false
                 })

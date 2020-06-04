@@ -89,7 +89,7 @@ router.beforeEach(async (to, from, next) => {
     const user_info = store.getters['chubby/user/info']
     if (token && token != 'undefined' && Object.keys(user_info).length > 0) {
       if (to.path == '/index') RouteFresh = true
-      if (to.matched.some(r => r.meta.is_disabled == true)) {
+      if (to.matched.some(r => r.meta.disable == true)) {
         next({ name: 'page403' })
       } else ResetRoute(to, next)
     } else {

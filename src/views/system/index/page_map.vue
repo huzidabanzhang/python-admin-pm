@@ -9,8 +9,8 @@
                     >
                         <span>
                             <img
-                                v-if="info.avatarUrl && info.avatarUrl != ''"
-                                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument/' + info.avatarUrl"
+                                v-if="info.avatar && info.avatar != ''"
+                                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument/' + info.avatar"
                                 class="avatar"
                             >
                             <img
@@ -256,7 +256,6 @@ export default {
             info: {},
             circleUrl: defaultImg,
             myChart: null,
-            mark: setting.SYS_ADMIN.mark,
             socket: null
         }
     },
@@ -322,8 +321,7 @@ export default {
             this.myChart.setOption(this.userIp, true)
         },
         isAdmin () {
-            if (this.user && Object.keys(this.user).length > 0)
-                return this.user.mark != this.mark
+            if (this.user) return this.user.is_admin
             return false
         }
     }
@@ -393,8 +391,8 @@ export default {
                     >
                         <span>
                             <img
-                                v-if="info.avatarUrl && info.avatarUrl != ''"
-                                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument/' + info.avatarUrl"
+                                v-if="info.avatar && info.avatar != ''"
+                                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument/' + info.avatar"
                                 class="avatar"
                             >
                             <img
@@ -640,7 +638,6 @@ export default {
             info: {},
             circleUrl: defaultImg,
             myChart: null,
-            mark: setting.SYS_ADMIN.mark,
             socket: null
         }
     },
@@ -706,8 +703,7 @@ export default {
             this.myChart.setOption(this.userIp, true)
         },
         isAdmin () {
-            if (this.user && Object.keys(this.user).length > 0)
-                return this.user.mark != this.mark
+            if (this.user) return this.user.is_admin
             return false
         }
     }

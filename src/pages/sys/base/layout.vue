@@ -14,12 +14,9 @@
             <el-form-item>
                 <el-button
                     type="primary"
-                    :disabled="mark_btn.export"
+                    :disabled="auth.export"
                     @click="exportBase"
-                    v-premissions="{
-                        mark: mark.base.export,
-                        type: 'export'
-                    }"
+                    v-auth:export_sql
                 >备份数据库</el-button>
             </el-form-item>
             <el-form-item>
@@ -66,9 +63,7 @@ export default {
     components: { Info },
     data () {
         return {
-            admin: setting.SYS_ADMIN.mark,
-            mark: setting.mark,
-            mark_btn: {
+            auth: {
                 export: false
             },
             Show: false,
@@ -114,8 +109,7 @@ export default {
             this.centerDialogVisible = false
         },
         isMark () {
-            if (this.user && Object.keys(this.user).length > 0)
-                return this.user.mark == this.admin
+            if (this.user) return this.user.is_admin
             return false
         },
         exportBase () {

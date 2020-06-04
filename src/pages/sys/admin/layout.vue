@@ -5,12 +5,9 @@
                 type="primary"
                 icon="el-icon-plus"
                 circle
-                @click="addAdmin(mark_btn.add)"
+                @click="addAdmin(auth.add)"
                 title="新增"
-                v-premissions="{
-                    mark: mark.admin.add,
-                    type: 'add'
-                }"
+                v-auth:add_admin
             >
             </el-button>
             <el-button
@@ -19,12 +16,7 @@
                 circle
                 @click="lockAdmin(admin_id, false)"
                 title="显示"
-                :disabled="mark_btn.all_lock"
-                v-premissions="{
-                    mark: mark.admin.all_lock,
-                    type: 'all_lock',
-                    not_disabled: true
-                }"
+                :disabled="auth_all.lock"
             >
             </el-button>
             <el-button
@@ -33,12 +25,7 @@
                 circle
                 @click="lockAdmin(admin_id, true)"
                 title="隐藏"
-                :disabled="mark_btn.all_lock"
-                v-premissions="{
-                    mark: mark.admin.all_lock,
-                    type: 'all_lock',
-                    not_disabled: true
-                }"
+                :disabled="auth_all.lock"
             ></el-button>
             <el-button
                 type="danger"
@@ -46,12 +33,7 @@
                 circle
                 @click="delAdmin(admins)"
                 title="删除"
-                :disabled="mark_btn.all_del"
-                v-premissions="{
-                    mark: mark.admin.all_del,
-                    type: 'all_del',
-                    not_disabled: true
-                }"
+                :disabled="auth_all.del"
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
@@ -140,19 +122,15 @@
                 </template>
             </el-table-column>
             <el-table-column
-                prop="is_disabled"
+                prop="disable"
                 label="可见性"
                 align="left"
             >
                 <template slot-scope="scope">
                     <el-radio-group
-                        v-model="scope.row.is_disabled"
+                        v-model="scope.row.disable"
                         v-if="isSelect(scope.row)"
-                        :disabled="mark_btn.lock"
-                        v-premissions="{
-                            mark: mark.admin.lock,
-                            type: 'lock'
-                        }"
+                        :disabled="auth.lock"
                         @change="(label) => {lockAdmin([scope.row.admin_id], label, scope.row)}"
                     >
                         <el-radio-button :label="false">显示</el-radio-button>
@@ -188,13 +166,8 @@
                     <el-button
                         icon="el-icon-edit"
                         circle
-                        @click.native="editAdmin(scope.row, mark_btn.set)"
+                        @click.native="editAdmin(scope.row, auth.set)"
                         title="编辑"
-                        v-premissions="{
-                            mark: mark.admin.set,
-                            type: 'set',
-                            not_hidden: true
-                        }"
                     ></el-button>
                     <el-button
                         type="danger"
@@ -202,11 +175,7 @@
                         circle
                         @click.native="delAdmin([scope.row], false)"
                         title="删除"
-                        :disabled="mark_btn.del"
-                        v-premissions="{
-                            mark: mark.admin.del,
-                            type: 'del'
-                        }"
+                        :disabled="auth.del"
                     >
                     </el-button>
                 </template>
@@ -252,7 +221,7 @@ export default {
             total: 0,
             size: 20,
             lock: '',
-            is_disabled: '',
+            disable: '',
             role: '',
             isRole: '',
             roleOption: [],
@@ -268,14 +237,15 @@ export default {
             admin_id: [],
             admins: [],
             btn_submit: false,
-            mark: setting.mark,
-            mark_btn: {
+            auth: {
                 add: false,
-                set: false,
-                del: false,
-                lock: false,
-                all_del: true,
-                all_lock: true
+                del: this.$isDisabled('del_admin'),
+                lock: this.$isDisabled('lock_admin'),
+                set: this.$isDisabled('set_admin')
+            },
+            auth_all: {
+                del: this.$isDisabled('del_admin'),
+                lock: this.$isDisabled('lock_admin')
             }
         }
     },
@@ -291,7 +261,7 @@ export default {
                 page: this.page,
                 page_size: this.size
             }
-            if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
+            if (this.disable != '') params['disable'] = this.disable
             if (this.isRole != '') params['role_id'] = this.isRole
 
             this.loading = true
@@ -307,7 +277,7 @@ export default {
         },
         getRoleList () {
             QueryRoleByParam({
-                is_disabled: false
+                disable: false
             })
                 .then(async res => {
                     this.roleParams = res
@@ -333,7 +303,7 @@ export default {
             this.init()
         },
         changeAdmin () {
-            this.is_disabled = this.lock
+            this.disable = this.lock
             this.isRole = this.role
             this.init()
         },
@@ -361,17 +331,9 @@ export default {
                     admin_id: i.admin_id
                 })
             })
-            let data = this.$store.getters['chubby/user/interfaces']
-            if (data) {
-                let del = data.filter((i) => {
-                    return i.mark == this.mark.admin.all_del
-                }), lock = data.filter((i) => {
-                    return i.mark == this.mark.admin.all_lock
-                })
-                if (del.length > 0 && !del[0].is_disabled)
-                    this.mark_btn.all_del = this.admin_id.length == 0
-                if (lock.length > 0 && !lock[0].is_disabled)
-                    this.mark_btn.all_lock = this.admin_id.length == 0
+
+            for (let i in this.auth_all) {
+                if (!this.auth_all[i]) this.auth[i] = this.admin_id.length > 0
             }
         },
         addAdmin (disabled) {
@@ -379,7 +341,7 @@ export default {
             this.title = '新建管理员'
             this.params = {
                 sex: 1,
-                is_disabled: false
+                disable: false
             }
             this.centerDialogVisible = true
         },
@@ -389,26 +351,26 @@ export default {
             this.params = params
             this.centerDialogVisible = true
         },
-        lockAdmin (keys, is_disabled, row) {
+        lockAdmin (keys, disable, row) {
             if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
-            this.$confirm(is_disabled ? '确定要隐藏该管理员吗' : '确定要显示该管理员吗',
-                is_disabled ? '隐藏管理员' : '显示管理员',
+            this.$confirm(disable ? '确定要隐藏该管理员吗' : '确定要显示该管理员吗',
+                disable ? '隐藏管理员' : '显示管理员',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    this.Lock(keys, is_disabled)
+                    this.Lock(keys, disable)
                 }).catch(() => {
-                    if (row) row.is_disabled = !is_disabled
+                    if (row) row.disable = !disable
                 })
         },
-        Lock (keys, is_disabled) {
+        Lock (keys, disable) {
             LockAdmin({
                 admin_id: keys,
-                is_disabled: is_disabled
+                disable: disable
             }).then(async res => {
                 this.init()
             })

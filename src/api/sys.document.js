@@ -11,8 +11,10 @@ export function CreateDocument (data, progressEvent) {
     data,
     headers: { 'content-type': 'multipart/form-data', isCheck: true },
     onUploadProgress: res => {
-      const percentCompleted = Math.floor((res.loaded * 100) / res.total)
-      progressEvent({ percent: percentCompleted })
+      if (progressEvent) {
+        const percentCompleted = Math.floor((res.loaded * 100) / res.total)
+        progressEvent({ percent: percentCompleted })
+      }
     }
   })
 }

@@ -69,51 +69,5 @@ export default {
   SYS_ADMIN: {
     name: 'Admin',
     mark: 'SYS_ADMIN'
-  },
-  mark: {
-    menu: {
-      add: 'add_menu',
-      del: 'del_menu',
-      set: 'set_menu',
-      inter: 'get_menu_to_interface'
-    },
-    interface: {
-      add: 'add_interface',
-      set: 'set_interface',
-      lock: 'lock_interface',
-      del: 'del_interface',
-      all_del: 'del_interface',
-      all_lock: 'lock_interface'
-    },
-    file: {
-      add: 'add_document',
-      down: 'down_document',
-      del: 'del_document',
-      retrieve: 'retrieve_document'
-    },
-    folder: {
-      add: 'create_folder',
-      del: 'del_folder',
-      set: 'modify_folder'
-    },
-    admin: {
-      add: 'add_admin',
-      set: 'set_admin',
-      lock: 'lock_admin',
-      del: 'del_admin',
-      init: 'init_admin',
-      all_del: 'del_admin',
-      all_lock: 'lock_admin'
-    },
-    role: {
-      add: 'add_role',
-      set: 'set_role',
-      lock: 'lock_role',
-      del: 'del_role'
-    },
-    base: {
-      export: 'export_sql',
-      import: 'import_sql'
-    }
   }
 }

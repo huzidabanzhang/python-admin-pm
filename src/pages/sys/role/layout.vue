@@ -5,12 +5,9 @@
                 type="primary"
                 icon="el-icon-plus"
                 circle
-                @click="addRole(mark_btn.add)"
+                @click="addRole(auth.add)"
                 title="新增"
-                v-premissions="{
-                    mark: mark.role.add,
-                    type: 'add'
-                }"
+                v-auth:add_role
             >
             </el-button>
             <el-button
@@ -19,12 +16,7 @@
                 circle
                 @click="delRole"
                 title="删除"
-                :disabled="mark_btn.del"
-                v-premissions="{
-                    mark: mark.role.del,
-                    type: 'del',
-                    not_disabled: true
-                }"
+                :disabled="auth.del"
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
@@ -79,8 +71,8 @@
                 <i class="fa fa-group role-icon"></i>
                 <i
                     class="icon role-top"
-                    :class="item.is_disabled ? 'el-icon-close disabled' : 'el-icon-check'"
-                    @click="lockRole([item.role_id], !item.is_disabled)"
+                    :class="item.disable ? 'el-icon-close disabled' : 'el-icon-check'"
+                    @click="lockRole([item.role_id], !item.disable)"
                 ></i>
                 <span>{{item.name}}</span>
             </li>
@@ -92,7 +84,7 @@
             :params="params"
             :centerDialogVisible="centerDialogVisible"
             :submit="btn_submit"
-            :del="mark_btn.del"
+            :del="auth.del"
             @handleClose="handleClose"
             @callback="init"
         ></Info>
@@ -110,7 +102,7 @@ export default {
         return {
             roleData: [],
             value: '',
-            is_disabled: '',
+            disable: '',
             statusOption: [
                 { label: '显示', value: 'true' },
                 { label: '隐藏', value: 'false' }
@@ -124,11 +116,14 @@ export default {
             centerDialogVisible: false,
             btn_submit: false,
             mark: setting.mark,
-            mark_btn: {
+            auth: {
                 add: false,
-                set: false,
-                del: true,
-                lock: false
+                del: true
+            },
+            auth_all: {
+                set: this.$isDisabled('set_role'),
+                del: this.$isDisabled('del_role'),
+                lock: this.$isDisabled('lock_role')
             }
         }
     },
@@ -139,7 +134,7 @@ export default {
         init (isTrue) {
             if (isTrue == true) this.centerDialogVisible = false
             let params = {}
-            if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
+            if (this.disable != '') params['disable'] = this.disable
 
             this.loading = true
             QueryRoleByParam(params)
@@ -152,7 +147,7 @@ export default {
                 })
         },
         changeStatus () {
-            this.is_disabled = this.value
+            this.disable = this.value
             this.init()
         },
         clearStatus () {
@@ -165,67 +160,40 @@ export default {
             this.btn_submit = disabled
             this.title = '新建角色'
             this.params = {
-                is_disabled: false
+                disable: false
             }
             this.centerDialogVisible = true
         },
         getRole (item) {
             this.select = item
-
-            if (item.mark == setting.SYS_ADMIN.mark) {
-                this.mark_btn.del = true
-                return true
-            }
-
-            let data = this.$store.getters['chubby/user/interfaces']
-            if (data) {
-                let del = data.filter((i) => {
-                    return i.mark == this.mark.role.del
-                })
-                if (del.length > 0 && !del[0].is_disabled) {
-                    this.mark_btn.del = false
-                } else return true
-            } else return true
+            if (this.auth_all.del == false) this.auth.del = false
         },
         editRole (params) {
-            let data = this.$store.getters['chubby/user/interfaces']
-
-            if (params.mark == setting.SYS_ADMIN.mark) this.btn_submit = true
-            else {
-                if (data == undefined || data.length == 0) this.mark_btn.set = true
-                else {
-                    if (!this.mark_btn.set) {
-                        let set = data.filter((i) => {
-                            return i.mark == this.mark.role.set
-                        })
-                        if (set.length > 0) this.mark_btn.set = set[0].is_disabled
-                        else this.mark_btn.set = true
-                    }
-                }
-                this.btn_submit = this.mark_btn.set
-            }
+            this.btn_submit = this.auth_all.set
             this.title = '编辑角色'
             this.params = params
             this.centerDialogVisible = true
         },
-        lockRole (keys, is_disabled) {
+        lockRole (keys, disable) {
+            if (this.auth_all.lock) return true
+
             if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
-            this.$confirm(is_disabled ? '确定要隐藏该角色吗' : '确定要显示该角色吗',
-                is_disabled ? '隐藏角色' : '显示角色',
+            this.$confirm(disable ? '确定要隐藏该角色吗' : '确定要显示该角色吗',
+                disable ? '隐藏角色' : '显示角色',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    this.Lock(keys, is_disabled)
+                    this.Lock(keys, disable)
                 })
         },
-        Lock (keys, is_disabled) {
+        Lock (keys, disable) {
             LockRole({
                 role_id: keys,
-                is_disabled: is_disabled
+                disable: disable
             }).then(async res => {
                 this.select = { role_id: null }
                 this.init()

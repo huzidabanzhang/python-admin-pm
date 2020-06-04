@@ -62,7 +62,7 @@ service.interceptors.request.use(
     if (config.headers.isCheck) {
       let interfaces = cloneDeep(store.getters['chubby/user/interfaces'])
       isCheck = interfaces.some((item) => {
-        return item.path == config.url && !item.is_disabled
+        return item.path == config.url && !item.disable
       })
 
       if (!isCheck) return Promise.reject({ message: '无权限~' })

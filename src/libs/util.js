@@ -181,7 +181,7 @@ let getRouteInfo = (params) => {
       title: params.title,
       cache: params.cache,
       auth: true,
-      is_disabled: params.is_disabled
+      disable: params.disable
     },
     componentPath: params.componentPath
   }
@@ -193,7 +193,7 @@ let getMenuInfo = (params) => {
     icon: params.icon,
     id: params.menu_id,
     path: params.path,
-    is_disabled: params.is_disabled
+    disable: params.disable
   }
 }
 
@@ -255,7 +255,12 @@ util.isInitialized = function () {
 }
 
 function sys_to_init () {
-  let loadingInstance = Loading(Vue.loadOption('系统初始化中，请耐心等待.....'))
+  let loadingInstance = Loading.service({
+    lock: true,
+    text: '系统初始化中，请耐心等待.....',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
 
   CreateDrop({})
     .then(async res => {
@@ -273,12 +278,9 @@ function sys_to_init () {
     })
     .catch(() => {
       loadingInstance.close()
-      MessageBox.alert('初始化失败，点击重新初始化', '错误提示', {
+      MessageBox.alert('初始化失败，请检查数据库是否开启', '错误提示', {
         confirmButtonText: '确定',
-        showClose: false,
-        callback: action => {
-          this.init()
-        }
+        showClose: false
       })
     })
 }

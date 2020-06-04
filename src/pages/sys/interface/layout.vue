@@ -5,12 +5,9 @@
                 type="primary"
                 icon="el-icon-plus"
                 circle
-                @click="addInterface(mark_btn.add)"
+                @click="addInterface(auth.add)"
                 title="新增"
-                v-premissions="{
-                    mark: mark.interface.add,
-                    type: 'add'
-                }"
+                v-auth:add_interface
             ></el-button>
             <el-button
                 type="success"
@@ -18,12 +15,7 @@
                 circle
                 @click="lockInterface(interface_id, false)"
                 title="显示"
-                :disabled="mark_btn.all_lock"
-                v-premissions="{
-                    mark: mark.interface.all_lock,
-                    type: 'all_lock',
-                    not_disabled: true
-                }"
+                :disabled="auth_all.lock"
             ></el-button>
             <el-button
                 type="info"
@@ -31,12 +23,7 @@
                 circle
                 @click="lockInterface(interface_id, true)"
                 title="隐藏"
-                :disabled="mark_btn.all_lock"
-                v-premissions="{
-                    mark: mark.interface.all_lock,
-                    type: 'all_lock',
-                    not_disabled: true
-                }"
+                :disabled="auth_all.lock"
             ></el-button>
             <el-button
                 type="danger"
@@ -44,12 +31,7 @@
                 circle
                 @click="delInterface(interface_id)"
                 title="删除"
-                :disabled="mark_btn.all_del"
-                v-premissions="{
-                    mark: mark.interface.all_del,
-                    type: 'all_del',
-                    not_disabled: true
-                }"
+                :disabled="auth_all.del"
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
@@ -167,20 +149,16 @@
                 </template>
             </el-table-column>
             <el-table-column
-                prop="is_disabled"
+                prop="disable"
                 label="可见性"
                 align="left"
                 width="150"
             >
                 <template slot-scope="scope">
                     <el-radio-group
-                        v-model="scope.row.is_disabled"
-                        v-if="isSelect(scope.row) && !scope.row.forbidden"
-                        :disabled="mark_btn.lock"
-                        v-premissions="{
-                            mark: mark.interface.lock,
-                            type: 'lock'
-                        }"
+                        v-model="scope.row.disable"
+                        v-if="isSelect(scope.row) && !scope.row.forbid"
+                        :disabled="auth.lock"
                         @change="(label) => {lockInterface([scope.row.interface_id], label, scope.row)}"
                     >
                         <el-radio-button :label="false">显示</el-radio-button>
@@ -188,6 +166,7 @@
                     </el-radio-group>
                     <el-button
                         type="primary"
+                        :disabled="auth.lock"
                         v-else
                     >显示</el-button>
                 </template>
@@ -202,13 +181,8 @@
                     <el-button
                         icon="el-icon-edit"
                         circle
-                        @click.native="editInterface(scope.row, mark_btn.set)"
+                        @click.native="editInterface(scope.row, auth.set)"
                         title="编辑"
-                        v-premissions="{
-                            mark: mark.interface.set,
-                            type: 'set',
-                            not_hidden: true
-                        }"
                     ></el-button>
                     <el-button
                         type="danger"
@@ -217,11 +191,7 @@
                         @click.native="delInterface([scope.row.interface_id], false)"
                         v-if="isSelect(scope.row)"
                         title="删除"
-                        :disabled="mark_btn.del"
-                        v-premissions="{
-                            mark: mark.interface.del,
-                            type: 'del'
-                        }"
+                        :disabled="auth.del"
                     >
                     </el-button>
                 </template>
@@ -266,7 +236,7 @@ export default {
             total: 0,
             size: 20,
             lock: '',
-            is_disabled: '',
+            disable: '',
             lockOption: [
                 { label: '显示', value: 'false' },
                 { label: '隐藏', value: 'true' }
@@ -287,14 +257,15 @@ export default {
             centerDialogVisible: false,
             interface_id: [],
             btn_submit: false,
-            mark: setting.mark,
-            mark_btn: {
+            auth: {
                 add: false,
-                del: false,
-                set: false,
-                lock: false,
-                all_del: true,
-                all_lock: true
+                del: this.$isDisabled('del_interface'),
+                set: this.$isDisabled('set_interface'),
+                lock: this.$isDisabled('lock_interface')
+            },
+            auth_all: {
+                del: this.$isDisabled('del_interface'),
+                lock: this.$isDisabled('lock_interface')
             }
         }
     },
@@ -310,7 +281,7 @@ export default {
                 page: this.page,
                 page_size: this.size
             }
-            if (this.is_disabled != '') params['is_disabled'] = this.is_disabled
+            if (this.disable != '') params['disable'] = this.disable
             if (this.isName != '') params['name'] = this.isName
             if (this.isMethod != '') params['method'] = this.isMethod
 
@@ -326,7 +297,7 @@ export default {
                 })
         },
         changeAll () {
-            this.is_disabled = this.lock
+            this.disable = this.lock
             this.isName = this.name
             this.isMethod = this.method
             this.init()
@@ -356,8 +327,8 @@ export default {
             this.title = '新建接口'
             this.params = {
                 method: 'GET',
-                forbidden: true,
-                is_disabled: false
+                forbid: true,
+                disable: false
             }
             this.centerDialogVisible = true
         },
@@ -371,33 +342,24 @@ export default {
             this.interface_id = selection.map((i) => {
                 return i.interface_id
             })
-            let data = this.$store.getters['chubby/user/interfaces']
-            if (data) {
-                let del = data.filter((i) => {
-                    return i.mark == this.mark.interface.all_del
-                }), lock = data.filter((i) => {
-                    return i.mark == this.mark.interface.all_lock
-                })
-                if (del.length > 0 && !del[0].is_disabled)
-                    this.mark_btn.all_del = this.interface_id.length == 0
-                if (lock.length > 0 && !lock[0].is_disabled)
-                    this.mark_btn.all_lock = this.interface_id.length == 0
+            for (let i in this.auth_all) {
+                if (!this.auth_all[i]) this.auth[i] = this.interface_id.length > 0
             }
         },
-        lockInterface (keys, is_disabled, row) {
+        lockInterface (keys, disable, row) {
             if (keys.length == 0) return this.$message.warning('未选择任何记录')
 
-            this.$confirm(is_disabled ? '确定要隐藏该接口吗' : '确定要显示该接口吗',
-                is_disabled ? '隐藏接口' : '显示接口',
+            this.$confirm(disable ? '确定要隐藏该接口吗' : '确定要显示该接口吗',
+                disable ? '隐藏接口' : '显示接口',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    this.Lock(keys, is_disabled)
+                    this.Lock(keys, disable)
                 }).catch(() => {
-                    if (row) row.is_disabled = !is_disabled
+                    if (row) row.disable = !disable
                 })
         },
         delInterface (interface_id) {
@@ -419,7 +381,7 @@ export default {
                     })
                 })
         },
-        getInterfaceInfo (interface_id, type, is_disabled) {
+        getInterfaceInfo (interface_id, type, disable) {
             let interfaces = cloneDeep(this.$store.getters['chubby/user/interfaces'])
             interface_id.map((i) => {
                 for (let j = 0; j < interfaces.length; j++) {
@@ -430,7 +392,7 @@ export default {
                         }
 
                         if (type == 2) {
-                            interfaces[j].is_disabled = is_disabled == 'true' ? true : false
+                            interfaces[j].disable = disable == 'true' ? true : false
                         }
 
                         break
@@ -440,13 +402,13 @@ export default {
 
             util.initInterface(interfaces)
         },
-        Lock (keys, is_disabled) {
+        Lock (keys, disable) {
             LockInterface({
                 interface_id: keys,
-                is_disabled: is_disabled
+                disable: disable
             }).then(async res => {
-                this.getInterfaceInfo(keys, 2, is_disabled)
-                this.$message.success(is_disabled ? '接口隐藏成功' : '接口显示成功')
+                this.getInterfaceInfo(keys, 2, disable)
+                this.$message.success(disable ? '接口隐藏成功' : '接口显示成功')
                 this.init()
             })
         }
