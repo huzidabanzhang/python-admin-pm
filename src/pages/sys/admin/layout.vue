@@ -16,7 +16,7 @@
                 circle
                 @click="lockAdmin(admin_id, false)"
                 title="显示"
-                :disabled="auth_all.lock"
+                :disabled="auth.lock_all"
             >
             </el-button>
             <el-button
@@ -25,7 +25,7 @@
                 circle
                 @click="lockAdmin(admin_id, true)"
                 title="隐藏"
-                :disabled="auth_all.lock"
+                :disabled="auth.lock_all"
             ></el-button>
             <el-button
                 type="danger"
@@ -33,7 +33,7 @@
                 circle
                 @click="delAdmin(admins)"
                 title="删除"
-                :disabled="auth_all.del"
+                :disabled="auth.del_all"
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
@@ -241,7 +241,9 @@ export default {
                 add: false,
                 del: this.$isDisabled('del_admin'),
                 lock: this.$isDisabled('lock_admin'),
-                set: this.$isDisabled('set_admin')
+                set: this.$isDisabled('set_admin'),
+                del_all: true,
+                lock_all: true
             },
             auth_all: {
                 del: this.$isDisabled('del_admin'),
@@ -333,7 +335,7 @@ export default {
             })
 
             for (let i in this.auth_all) {
-                if (!this.auth_all[i]) this.auth[i] = this.admin_id.length > 0
+                if (!this.auth_all[i]) this.auth[i + '_all'] = this.admin_id.length == 0
             }
         },
         addAdmin (disabled) {

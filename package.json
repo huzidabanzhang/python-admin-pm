@@ -1,6 +1,6 @@
 {
   "name": "chubby",
-  "version": "1.7.2",
+  "version": "1.0.0",
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
@@ -29,7 +29,8 @@
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.11",
     "lowdb": "^1.0.0",
-    "marked": "^0.6.2",
+    "marked": "^0.6.3",
+    "mavon-editor": "^2.9.0",
     "mockjs": "^1.1.0",
     "node-sass": "^4.12.0",
     "nprogress": "^0.2.0",

@@ -85,3 +85,15 @@ export function GetUserLoginIp (data) {
     headers: { isCheck: true }
   })
 }
+
+/**
+ * 获取README.md的内容
+ * @param {*} data 
+ */
+export function GetReadmeContent () {
+  return request({
+    url: '/v1/Base/GetReadmeContent',
+    method: 'post',
+    headers: { isCheck: true }
+  })
+}

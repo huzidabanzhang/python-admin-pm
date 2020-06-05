@@ -10,6 +10,8 @@ import store from '@/store/index'
 // [ 可选组件 ]D2-Crud
 import D2Crud from '@d2-projects/d2-crud'
 import VCharts from 'v-charts'
+import markdown from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
 
 // 菜单和路由设置
 import router from './router'
@@ -25,6 +27,7 @@ Vue.use(Chubby)
 // 可选插件组件
 Vue.use(D2Crud)
 Vue.use(VCharts)
+Vue.use(markdown)
 
 new Vue({
   router,

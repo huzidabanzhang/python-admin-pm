@@ -121,9 +121,9 @@ export default {
                 del: true
             },
             auth_all: {
-                set: this.$isDisabled('set_role'),
-                del: this.$isDisabled('del_role'),
-                lock: this.$isDisabled('lock_role')
+                set: this.$isDisabled('set_role', 'all'),
+                del: this.$isDisabled('del_role', 'all'),
+                lock: this.$isDisabled('lock_role', 'all')
             }
         }
     },

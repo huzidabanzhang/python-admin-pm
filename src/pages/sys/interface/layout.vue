@@ -15,7 +15,7 @@
                 circle
                 @click="lockInterface(interface_id, false)"
                 title="显示"
-                :disabled="auth_all.lock"
+                :disabled="auth.lock_all"
             ></el-button>
             <el-button
                 type="info"
@@ -23,7 +23,7 @@
                 circle
                 @click="lockInterface(interface_id, true)"
                 title="隐藏"
-                :disabled="auth_all.lock"
+                :disabled="auth.lock_all"
             ></el-button>
             <el-button
                 type="danger"
@@ -31,7 +31,7 @@
                 circle
                 @click="delInterface(interface_id)"
                 title="删除"
-                :disabled="auth_all.del"
+                :disabled="auth.del_all"
             ></el-button>
             <el-button
                 icon="el-icon-refresh-right"
@@ -261,7 +261,9 @@ export default {
                 add: false,
                 del: this.$isDisabled('del_interface'),
                 set: this.$isDisabled('set_interface'),
-                lock: this.$isDisabled('lock_interface')
+                lock: this.$isDisabled('lock_interface'),
+                del_all: true,
+                lock_all: true
             },
             auth_all: {
                 del: this.$isDisabled('del_interface'),
@@ -343,7 +345,7 @@ export default {
                 return i.interface_id
             })
             for (let i in this.auth_all) {
-                if (!this.auth_all[i]) this.auth[i] = this.interface_id.length > 0
+                if (!this.auth_all[i]) this.auth[i + '_all'] = this.interface_id.length == 0
             }
         },
         lockInterface (keys, disable, row) {

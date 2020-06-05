@@ -168,6 +168,11 @@
                         v-auth:del_menu
                     >删除</el-button>
                     <el-button
+                        icon="el-icon-document-copy"
+                        @click="copy_this"
+                    >复制
+                    </el-button>
+                    <el-button
                         icon="el-icon-position"
                         @click="getMenuToInterface(form.title, form.menu_id)"
                         :disabled="auth.interface"
@@ -295,7 +300,7 @@ export default {
     },
     methods: {
         init (isTrue) {
-            if (isTrue != true) this.addMenu(false)
+            this.addMenu(false)
 
             let params = {}
             if (this.disable != '') params['disable'] = this.disable
@@ -341,6 +346,11 @@ export default {
                     }
                 }
             })
+        },
+        copy_this () {
+            delete this.form['menu_id']
+            this.$refs['SYSMENU'].clearValidate()
+            this.isAdd = true
         },
         handleInitParent (type) {
             this.$message.success(type == 1 ? '菜单编辑成功' : '菜单创建成功')
