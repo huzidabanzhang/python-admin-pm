@@ -27,7 +27,7 @@
             >
                 <el-input
                     v-model="form.mark"
-                    :disabled="form.role_id != undefined"
+                    :readonly="form.role_id != undefined"
                 ></el-input>
             </el-form-item>
             <el-form-item

@@ -250,7 +250,7 @@
         <el-dialog
             title="附件属性"
             :visible.sync="Visible"
-            width="40%"
+            width="400px"
             append-to-body
             destroy-on-close
             @closed="Visible = false"
@@ -260,25 +260,42 @@
                 ref="adminForm"
                 :model="form"
                 class="show"
-                disabled
             >
+                <el-form-item
+                    label="创建者"
+                    prop="username"
+                >
+                    <el-input
+                        v-model="form.username"
+                        readonly
+                    ></el-input>
+                </el-form-item>
                 <el-form-item
                     label="文件名"
                     prop="name"
                 >
-                    <el-input v-model="form.name"></el-input>
+                    <el-input
+                        v-model="form.name"
+                        readonly
+                    ></el-input>
                 </el-form-item>
                 <el-form-item
                     label="大小"
                     prop="size"
                 >
-                    <el-input v-model="form.size"></el-input>
+                    <el-input
+                        v-model="form.size"
+                        readonly
+                    ></el-input>
                 </el-form-item>
                 <el-form-item
                     label="创建时间"
                     prop="create_time"
                 >
-                    <el-input v-model="form.create_time"></el-input>
+                    <el-input
+                        v-model="form.create_time"
+                        readonly
+                    ></el-input>
                 </el-form-item>
             </el-form>
         </el-dialog>

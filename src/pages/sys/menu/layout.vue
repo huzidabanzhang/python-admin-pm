@@ -77,7 +77,7 @@
                 >
                     <el-input
                         v-model="form.mark"
-                        :disabled="!isAdd"
+                        :readonly="!isAdd"
                     ></el-input>
                 </el-form-item>
                 <el-form-item

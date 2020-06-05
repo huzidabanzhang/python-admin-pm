@@ -64,7 +64,7 @@
             >
                 <el-input
                     v-model="form.username"
-                    :disabled="form.admin_id != undefined"
+                    :readonly="form.admin_id != undefined"
                 ></el-input>
             </el-form-item>
             <el-form-item
@@ -240,7 +240,7 @@ export default {
             formData.append('uid[]', [1])
             formData.append('document', params.file)
             formData.append('admin_id', util.cookies.get('uuid'))
-            formData.append('status', 1)
+            formData.append('status', 3)
 
             this.img_load = true
             CreateDocument(formData)

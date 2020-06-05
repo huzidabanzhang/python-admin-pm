@@ -56,7 +56,7 @@
             >
                 <el-input
                     v-model="form.mark"
-                    :disabled="form.interface_id != undefined"
+                    :readonly="form.interface_id != undefined"
                 ></el-input>
             </el-form-item>
             <el-form-item

@@ -104,8 +104,8 @@ export default {
             value: '',
             disable: '',
             statusOption: [
-                { label: '显示', value: 'true' },
-                { label: '隐藏', value: 'false' }
+                { label: '显示', value: 'false' },
+                { label: '隐藏', value: 'true' }
             ],
             loading: false,
             title: '',
@@ -242,7 +242,8 @@ export default {
     max-width: 100px;
     min-width: 60px;
     display: inline-block;
-    padding: 7px 15px;
+    padding: 10px;
+    margin: 5px;
     text-align: center;
     cursor: pointer;
     border-radius: 4px;
@@ -264,7 +265,7 @@ export default {
     font-size: 24px;
     color: #999;
     display: block;
-    padding-bottom: 5px;
+    padding: 7px;
 }
 
 .role-top {
