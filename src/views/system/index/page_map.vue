@@ -10,7 +10,7 @@
                         <span>
                             <img
                                 v-if="info.avatar && info.avatar != ''"
-                                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument/' + info.avatar"
+                                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument' + info.avatar"
                                 class="avatar"
                             >
                             <img
@@ -392,7 +392,7 @@ export default {
                         <span>
                             <img
                                 v-if="info.avatar && info.avatar != ''"
-                                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument/' + info.avatar"
+                                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument' + info.avatar"
                                 class="avatar"
                             >
                             <img

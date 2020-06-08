@@ -167,7 +167,7 @@ export default {
             loading: false,
             img_load: false,
             roleOption: this.role,
-            API: this.$store.state.chubby.api.base + '/API/v1/Document/GetDocument/',
+            API: this.$store.state.chubby.api.base + '/API/v1/Document/GetDocument',
             btn: this.submit
         }
     },

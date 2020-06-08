@@ -10,7 +10,7 @@ import marked from 'marked'
 import 'github-markdown-css/github-markdown.css'  //导入
 export default {
     name: 'markdown_perview',
-    props: ['content'],
+    props: ['content', 'loadingInstance'],
     data () {
         return {
             html: marked(this.content)
@@ -19,6 +19,11 @@ export default {
     watch: {
         content (value) {
             this.html = marked(value)
+            try {
+                this.loadingInstance.close()
+            } catch (error) {
+
+            }
         }
     }
 }

@@ -334,7 +334,7 @@ export default {
             }],
             prev: {},
             pid: '0',
-            src: this.$store.state.chubby.api.base + '/API/v1/Document/GetDocument/',
+            src: this.$store.state.chubby.api.base + '/API/v1/Document/GetDocument',
             user: this.$store.getters['chubby/user/user'],
             Visible: false,
             form: {},
