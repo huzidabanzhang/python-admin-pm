@@ -62,6 +62,6 @@ Vue.prototype.$isDisabled = (mark) => {
 -   部署到服务器上 （已完成）
 -   优化 vuex 状态管理 （已完成）
 -   优化权限.角色和菜单的 UI (已完成)
--   表单设计器 （马上开始啦）
+-   表单设计器 （马上开始）
 
 <a href="https://github.com/d2-projects/d2-admin" target="_blank"><img src="https://raw.githubusercontent.com/FairyEver/d2-admin/master/docs/image/d2-admin@2x.png" width="200"></a>
