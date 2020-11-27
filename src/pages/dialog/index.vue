@@ -8,7 +8,7 @@
         destroy-on-close
         @closed="handleClosed"
     >
-        <span>{{ content }}</span>
+        <div style="min-height: 300px;">{{ content }}</div>
     </el-dialog>
 </template>
 

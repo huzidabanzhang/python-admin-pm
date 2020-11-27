@@ -37,7 +37,7 @@ Vue.directive("auth", function(el, binding, node) {
 })
 
 // 注册权限判断事件
-Vue.prototype.$isDisabled = (mark) => {
+Vue.prototype.$auth = (mark) => {
     let user = store.getters["chubby/user/user"],
         role = store.getters["chubby/user/interfaces"]
 

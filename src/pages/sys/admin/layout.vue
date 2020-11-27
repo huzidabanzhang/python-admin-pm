@@ -239,15 +239,15 @@ export default {
             btn_submit: false,
             auth: {
                 add: false,
-                del: this.$isDisabled('del_admin'),
-                lock: this.$isDisabled('lock_admin'),
-                set: this.$isDisabled('set_admin'),
+                del: this.$auth('del_admin'),
+                lock: this.$auth('lock_admin'),
+                set: this.$auth('set_admin'),
                 del_all: true,
                 lock_all: true
             },
             auth_all: {
-                del: this.$isDisabled('del_admin'),
-                lock: this.$isDisabled('lock_admin')
+                del: this.$auth('del_admin'),
+                lock: this.$auth('lock_admin')
             }
         }
     },

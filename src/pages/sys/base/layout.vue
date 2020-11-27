@@ -2,7 +2,7 @@
     <el-dialog
         title="数据库管理"
         :visible.sync="Show"
-        width="40%"
+        width="336px"
         append-to-body
         destroy-on-close
         @closed="close"
@@ -168,5 +168,6 @@ export default {
 <style scoped>
 .el-form-item:last-child {
     margin-bottom: 0;
+    margin-right: 0;
 }
 </style>

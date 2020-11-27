@@ -71,6 +71,38 @@
                 </el-form-item>
                 <el-form-item>
                     <el-select
+                        v-model="menu_id"
+                        placeholder="所属菜单"
+                        clearable
+                        :clear="clear(menu_id)"
+                    >
+                        <el-option
+                            v-for="item in menuOption"
+                            :key="item.id"
+                            :label="item.title"
+                            :value="item.id"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-select
+                        v-model="role_id"
+                        placeholder="所属角色"
+                        clearable
+                        :clear="clear(role_id)"
+                    >
+                        <el-option
+                            v-for="item in roleData"
+                            :key="item.role_id"
+                            :label="item.name"
+                            :value="item.role_id"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-select
                         v-model="method"
                         placeholder="请求方式"
                         clearable
@@ -130,6 +162,32 @@
                 align="center"
                 width="100"
             >
+            </el-table-column>
+            <el-table-column
+                prop="menus"
+                label="所属菜单"
+                align="center"
+                width="100"
+            >
+                <template slot-scope="scope">
+                    <el-tag
+                        v-for="(i, k) in scope.row.menus"
+                        :key="i.menu_id"
+                    >{{i.name}}</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column
+                prop="roles"
+                label="所属角色"
+                align="center"
+                width="100"
+            >
+                <template slot-scope="scope">
+                    <el-tag
+                        v-for="(i, k) in scope.row.roles"
+                        :key="i.role_id"
+                    >{{i.name}}</el-tag>
+                </template>
             </el-table-column>
             <el-table-column
                 prop="description"
@@ -212,6 +270,9 @@
             :title="title"
             :params="params"
             :submit="btn_submit"
+            :roles="roleData"
+            :def="role_default"
+            :menus="menuOption"
             :centerDialogVisible="centerDialogVisible"
             @handleClose="handleClose"
             @callback="init"
@@ -221,6 +282,7 @@
 
 <script>
 import { QueryInterfaceByParam, LockInterface, DelInterface } from '@api/sys.interface'
+import { QueryRoleByParam } from '@api/sys.role'
 import { cloneDeep } from 'lodash'
 import Pagination from '@/pages/pagination/index.vue'
 import Info from './info.vue'
@@ -232,11 +294,16 @@ export default {
     data () {
         return {
             interfaceData: [],
+            menuOption: [],
+            roleData: [],
+            role_default: null,
             page: 1,
             total: 0,
             size: 20,
             lock: '',
             disable: '',
+            menu_id: '',
+            role_id: '',
             lockOption: [
                 { label: '显示', value: 'false' },
                 { label: '隐藏', value: 'true' }
@@ -259,22 +326,33 @@ export default {
             btn_submit: false,
             auth: {
                 add: false,
-                del: this.$isDisabled('del_interface'),
-                set: this.$isDisabled('set_interface'),
-                lock: this.$isDisabled('lock_interface'),
+                del: this.$auth('del_interface'),
+                set: this.$auth('set_interface'),
+                lock: this.$auth('lock_interface'),
                 del_all: true,
                 lock_all: true
             },
             auth_all: {
-                del: this.$isDisabled('del_interface'),
-                lock: this.$isDisabled('lock_interface')
+                del: this.$auth('del_interface'),
+                lock: this.$auth('lock_interface')
             }
         }
     },
-    created () {
+    mounted () {
+        let menus = util.getMenuTree(true)
+        this.menuOption = []
+        this.pushMenu(menus)
+
         this.init()
     },
     methods: {
+        pushMenu (ary) {
+            ary.map((i) => {
+                if (i.children && i.children.length > 0) {
+                    this.pushMenu(i.children)
+                } else this.menuOption.push(i)
+            })
+        },
         init (isTrue) {
             this.changeSelect([])
 
@@ -286,6 +364,8 @@ export default {
             if (this.disable != '') params['disable'] = this.disable
             if (this.isName != '') params['name'] = this.isName
             if (this.isMethod != '') params['method'] = this.isMethod
+            if (this.menu_id != '') params['menu_id'] = this.menu_id
+            if (this.role_id != '') params['role_id'] = this.role_id
 
             this.loading = true
             QueryInterfaceByParam(params)
@@ -297,6 +377,15 @@ export default {
                 .catch(() => {
                     this.loading = false
                 })
+
+            QueryRoleByParam({
+                is_default: true
+            })
+                .then(async res => {
+                    this.roleData = res['data']
+                    this.role_default = res['default']
+                })
+                .catch(() => { })
         },
         changeAll () {
             this.disable = this.lock
@@ -330,14 +419,20 @@ export default {
             this.params = {
                 method: 'GET',
                 forbid: true,
-                disable: false
+                disable: false,
+                roles: [this.role_default]
             }
             this.centerDialogVisible = true
         },
         editInterface (params, disabled) {
+            let roles = params.roles.map(i => {
+                return i.role_id
+            })
+
             this.btn_submit = disabled
             this.title = '编辑接口'
-            this.params = params
+            this.params = cloneDeep(params)
+            this.params.roles = roles
             this.centerDialogVisible = true
         },
         changeSelect (selection) {

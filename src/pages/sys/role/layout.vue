@@ -73,6 +73,7 @@
                     class="icon role-top"
                     :class="item.disable ? 'el-icon-close disabled' : 'el-icon-check'"
                     @click="lockRole([item.role_id], !item.disable)"
+                    v-if="item.mark !== mark"
                 ></i>
                 <span>{{item.name}}</span>
             </li>
@@ -115,15 +116,15 @@ export default {
             params: {},
             centerDialogVisible: false,
             btn_submit: false,
-            mark: setting.mark,
+            mark: setting.SYS_ADMIN.mark,
             auth: {
                 add: false,
                 del: true
             },
             auth_all: {
-                set: this.$isDisabled('set_role', 'all'),
-                del: this.$isDisabled('del_role', 'all'),
-                lock: this.$isDisabled('lock_role', 'all')
+                set: this.$auth('set_role', 'all'),
+                del: this.$auth('del_role', 'all'),
+                lock: this.$auth('lock_role', 'all')
             }
         }
     },
@@ -166,7 +167,7 @@ export default {
         },
         getRole (item) {
             this.select = item
-            if (this.auth_all.del == false) this.auth.del = false
+            if (this.auth_all.del == false && item.mark !== this.mark) this.auth.del = false
         },
         editRole (params) {
             this.btn_submit = this.auth_all.set
@@ -200,7 +201,7 @@ export default {
             })
         },
         delRole () {
-            if (this.select.role_id != null && this.select.mark != 'SYS_ADMIN') {
+            if (this.select.role_id != null && this.select.mark != this.mark) {
                 this.$confirm('确定要删除该角色吗', '删除角色',
                     {
                         confirmButtonText: '确定',

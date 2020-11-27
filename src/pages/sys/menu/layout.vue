@@ -81,6 +81,27 @@
                     ></el-input>
                 </el-form-item>
                 <el-form-item
+                    label="角色"
+                    prop="roles"
+                >
+                    <el-select
+                        v-model="form.roles"
+                        multiple
+                        placeholder="请选择"
+                        style="width: 100%"
+                        v-default="[form.roles, roleData, 'role_id', role_default]"
+                    >
+                        <el-option
+                            v-for="item in roleData"
+                            :key="item.role_id"
+                            :label="item.name"
+                            :value="item.role_id"
+                            :disabled="item.role_id == role_default"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item
                     label="上级菜单"
                     prop="pid"
                 >
@@ -248,6 +269,7 @@
 
 <script>
 import { QueryMenuByParam, CreateMenu, ModifyMenu, LockMenu, DelMenu, GetMenuToInterface } from '@api/sys.menu'
+import { QueryRoleByParam } from '@api/sys.role'
 import { cloneDeep } from 'lodash'
 import util from '@/libs/util.js'
 import setting from '@/setting.js'
@@ -257,8 +279,15 @@ export default {
         return {
             menuData: [],
             treeData: [],
+            roleData: [],
             loading: false,
-            form: {},
+            form: {
+                cache: true,
+                disable: false,
+                sort: 1,
+                roles: []
+            },
+            role_default: null,
             lock: '',
             disable: '',
             tree_prop: {
@@ -279,7 +308,8 @@ export default {
                 icon: [{ required: true, message: '请选择图标', trigger: 'blur' }],
                 component: [{ required: true, message: '请输入路由组件', trigger: 'blur' }],
                 componentPath: [{ required: true, message: '请输入组件路径', trigger: 'blur' }],
-                cache: [{ required: true, message: '请输入选择路由缓存', trigger: 'blur' }]
+                cache: [{ required: true, message: '请选择路由缓存', trigger: 'blur' }],
+                roles: [{ required: true, message: '请选择角色', trigger: 'blur' }]
             },
             formLoad: false,
             isSubmit: false,
@@ -295,13 +325,11 @@ export default {
             }
         }
     },
-    created () {
+    mounted () {
         this.init()
     },
     methods: {
         init (isTrue) {
-            this.addMenu(false)
-
             let params = {}
             if (this.disable != '') params['disable'] = this.disable
             this.loading = true
@@ -315,6 +343,19 @@ export default {
                 })
                 .catch(() => {
                     this.loading = false
+                })
+
+            QueryRoleByParam({
+                is_default: true
+            })
+                .then(async res => {
+                    this.roleData = res['data']
+                    this.role_default = res['default']
+
+                    this.addMenu(false)
+                })
+                .catch(() => {
+                    this.addMenu(false)
                 })
         },
         isHidden (mark) {
@@ -361,7 +402,8 @@ export default {
             this.form = {
                 cache: true,
                 disable: false,
-                sort: 1
+                sort: 1,
+                roles: this.role_default == null ? [] : [this.role_default]
             }
             this.treeData = cloneDeep(this.menuData)
             if (isClear) this.$refs['SYSMENU'].clearValidate()

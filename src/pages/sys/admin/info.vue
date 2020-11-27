@@ -100,6 +100,7 @@
             <el-form-item
                 prop="disable"
                 label="可见性"
+                v-if="!isTab"
             >
                 <el-radio-group v-model="form.disable">
                     <el-radio-button label="false">显示</el-radio-button>

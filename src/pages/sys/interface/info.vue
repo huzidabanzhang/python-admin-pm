@@ -4,7 +4,6 @@
         :visible.sync="Visible"
         width="500px"
         append-to-body
-        destroy-on-close
         :close-on-click-modal="false"
         @closed="handleClosed"
     >
@@ -79,6 +78,27 @@
                 </el-select>
             </el-form-item>
             <el-form-item
+                label="所属角色"
+                prop="roles"
+            >
+                <el-select
+                    v-model="form.roles"
+                    multiple
+                    placeholder="请选择所属角色"
+                    class="inherit"
+                    v-default="[form.roles, roleOption, 'role_id', def]"
+                >
+                    <el-option
+                        v-for="item in roleOption"
+                        :key="item.role_id"
+                        :label="item.name"
+                        :value="item.role_id"
+                        :disabled="item.role_id == def"
+                    >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item
                 prop="disable"
                 label="可见性"
             >
@@ -121,12 +141,17 @@ export default {
         params: Object,
         role: Array,
         centerDialogVisible: Boolean,
-        submit: Boolean
+        submit: Boolean,
+        menus: Array,
+        def: String,
+        roles: Array
     },
     data () {
         return {
             Visible: this.centerDialogVisible,
-            form: {},
+            form: {
+                roles: []
+            },
             rules: {
                 name: [
                     { required: true, message: '请输入名称', trigger: 'blur' }
@@ -145,6 +170,9 @@ export default {
                 ],
                 menus: [
                     { required: true, message: '请选择所属菜单', trigger: 'change' }
+                ],
+                roles: [
+                    { required: true, message: '请选择所属角色', trigger: 'change' }
                 ]
             },
             isSubmit: false,
@@ -156,33 +184,29 @@ export default {
                 { label: 'DELETE', value: 'DELETE' }
             ],
             menuOption: [],
+            roleOption: [],
             btn: this.submit
         }
     },
     watch: {
-        centerDialogVisible (newVal) {
-            this.Visible = newVal
-            if (newVal) {
-                // 菜单遍历
-                let menus = util.getMenuTree(true)
-                this.menuOption = []
-                this.pushMenu(menus)
-
-                this.form = cloneDeep(this.params)
-            }
+        centerDialogVisible (value) {
+            this.Visible = value
+            this.$nextTick(() => {
+                this.$refs.interfaceForm.clearValidate()
+            })
         },
         submit (newVal) {
             this.btn = newVal
+        },
+        params (value) {
+            this.menuOption = this.menus
+            this.roleOption = this.roles
+            this.$nextTick(() => {
+                this.form = cloneDeep(value)
+            })
         }
     },
     methods: {
-        pushMenu (ary) {
-            ary.map((i) => {
-                if (i.children && i.children.length > 0) {
-                    this.pushMenu(i.children)
-                } else this.menuOption.push(i)
-            });
-        },
         handelInfo (formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
