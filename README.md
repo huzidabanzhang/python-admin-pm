@@ -17,6 +17,7 @@ Python 仓库地址 [章胖胖](https://github.com/huzidabanzhang/python-admin "
 -   文档管理
 -   数据库管理
 -   日志查看
+-   基金查询（最近爱上基金 准备弄个基金查询的）
 
 ## 注意
 
