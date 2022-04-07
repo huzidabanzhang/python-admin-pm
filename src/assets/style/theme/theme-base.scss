@@ -4,14 +4,14 @@
         height: 36px;
         line-height: 36px;
     }
-    .el-submenu__title {
+    .el-sub-menu__title {
         height: 36px;
         line-height: 36px;
     }
 }
 
 // 整体框架结构
-.chubby-layout-header-aside-group {
+.admin-layout-header-aside-group {
     height: 100%;
     width: 100%;
     min-width: 900px;
@@ -20,29 +20,29 @@
     overflow: hidden;
     position: relative;
     // 背景上面的半透明遮罩
-    .chubby-layout-header-aside-mask {
+    .admin-layout-header-aside-mask {
         @extend %full;
     }
     // 内容层
-    .chubby-layout-header-aside-content {
+    .admin-layout-header-aside-content {
         @extend %full;
-        .chubby-theme-header {
+        .admin-theme-header {
             height: 60px;
-            .chubby-theme-header-menu {
+            .admin-theme-header-menu {
                 overflow: hidden;
                 &.is-scrollable {
                     position: relative;
                     padding: 0 20px;
-                    .chubby-theme-header-menu__prev,
-                    .chubby-theme-header-menu__next {
+                    .admin-theme-header-menu__prev,
+                    .admin-theme-header-menu__next {
                         display: -webkit-box;
                         display: -ms-flexbox;
                         display: flex;
                     }
                 }
-                .chubby-theme-header-menu__content {
+                .admin-theme-header-menu__content {
                     overflow: hidden;
-                    .chubby-theme-header-menu__scroll {
+                    .admin-theme-header-menu__scroll {
                         white-space: nowrap;
                         position: relative;
                         -webkit-transition: -webkit-transform 0.3s;
@@ -53,8 +53,8 @@
                         float: left;
                     }
                 }
-                .chubby-theme-header-menu__prev,
-                .chubby-theme-header-menu__next {
+                .admin-theme-header-menu__prev,
+                .admin-theme-header-menu__next {
                     height: 60px;
                     position: absolute;
                     top: 0;
@@ -62,39 +62,39 @@
                     cursor: pointer;
                     display: none;
                 }
-                .chubby-theme-header-menu__prev {
+                .admin-theme-header-menu__prev {
                     left: 0;
                     border-top-left-radius: 2px;
                     border-bottom-left-radius: 2px;
                 }
-                .chubby-theme-header-menu__next {
+                .admin-theme-header-menu__next {
                     right: 0;
                     border-top-right-radius: 2px;
                     border-bottom-right-radius: 2px;
                 }
             }
         }
-        .chubby-theme-container {
-            .chubby-theme-container-aside {
+        .admin-theme-container {
+            .admin-theme-container-aside {
                 transition: width 0.3s;
                 position: relative;
-                .chubby-layout-header-aside-menu-side {
+                .admin-layout-header-aside-menu-side {
                     @extend %full;
                     overflow: hidden;
                 }
             }
-            .chubby-theme-container-main {
+            .admin-theme-container-main {
                 padding: 0px;
                 position: relative;
                 overflow: hidden;
-                .chubby-theme-container-main-layer {
+                .admin-theme-container-main-layer {
                     position: absolute;
                     top: 0px;
                     bottom: 0px;
                     left: 0px;
                     right: 0px;
                 }
-                .chubby-theme-container-main-body {
+                .admin-theme-container-main-body {
                     position: relative;
                 }
             }
@@ -103,7 +103,7 @@
 }
 
 // 主题公用
-.chubby-layout-header-aside-group {
+.admin-layout-header-aside-group {
     &.grayMode {
         -webkit-filter: grayscale(100%);
         -moz-filter: grayscale(100%);
@@ -113,9 +113,9 @@
         filter: gray;
     }
     // 主体
-    .chubby-layout-header-aside-content {
+    .admin-layout-header-aside-content {
         // [布局] 顶栏
-        .chubby-theme-header {
+        .admin-theme-header {
             // logo区域
             .logo-group {
                 transition: width 0.3s;
@@ -157,15 +157,15 @@
                     @extend %header-menu-item;
                     border-bottom: none;
                 }
-                .el-submenu {
+                .el-sub-menu {
                     @extend %header-menu-item;
-                    .el-submenu__title {
+                    .el-sub-menu__title {
                         border-bottom: none;
                     }
                 }
             }
             // 顶栏右侧的按钮
-            .chubby-header-right {
+            .admin-header-right {
                 float: right;
                 height: 60px;
                 display: flex;
@@ -174,7 +174,7 @@
                     padding: 14px 12px;
                     border-radius: 4px;
                     margin: 0px !important;
-                    &.el-color-picker.el-color-picker--mini {
+                    &.el-color-picker.el-color-picker {
                         padding: 9px 6px;
                     }
                 }
@@ -184,10 +184,10 @@
             }
         }
         // [布局] 顶栏下面
-        .chubby-theme-container {
+        .admin-theme-container {
             // 侧边栏
-            .chubby-theme-container-aside {
-                %chubby-theme-container-aside-menu-icon {
+            .admin-theme-container-aside {
+                %admin-theme-container-aside-menu-icon {
                     width: 20px;
                     text-align: center;
                     font-size: 16px;
@@ -199,23 +199,23 @@
                     border-right: none;
                     .el-menu-item {
                         i {
-                            @extend %chubby-theme-container-aside-menu-icon;
+                            @extend %admin-theme-container-aside-menu-icon;
                         }
                     }
                 }
-                .el-submenu {
+                .el-sub-menu {
                     @extend %unable-select;
-                    .el-submenu__title {
+                    .el-sub-menu__title {
                         i {
-                            @extend %chubby-theme-container-aside-menu-icon;
+                            @extend %admin-theme-container-aside-menu-icon;
                         }
-                        .el-submenu__icon-arrow {
+                        .el-sub-menu__icon-arrow {
                             margin-top: -10px;
                         }
                     }
                 }
                 // 菜单为空的时候显示的信息
-                .chubby-layout-header-aside-menu-empty {
+                .admin-layout-header-aside-menu-empty {
                     height: 160px;
                     margin: 10px;
                     margin-top: 0px;
@@ -232,24 +232,24 @@
                 // [菜单] 折叠状态
                 .el-menu--collapse {
                     background-color: transparent;
-                    .el-submenu__title {
+                    .el-sub-menu__title {
                         text-align: center;
                     }
                 }
             }
             // 右下 主体
-            .chubby-theme-container-main {
+            .admin-theme-container-main {
                 // 主体部分分为多页面控制器 和主体
-                .chubby-theme-container-main-header {
+                .admin-theme-container-main-header {
                     height: 41px;
                     // 多页面控制器
-                    .chubby-multiple-page-control-group {
+                    .admin-multiple-page-control-group {
                         padding-right: 20px;
-                        .chubby-multiple-page-control-content {
+                        .admin-multiple-page-control-content {
                             overflow: auto;
                             position: relative;
-                            .chubby-multiple-page-control-content-inner {
-                                .chubby-multiple-page-control {
+                            .admin-multiple-page-control-content-inner {
+                                .admin-multiple-page-control {
                                     .el-tabs__header.is-top {
                                         margin: 0px;
                                     }
@@ -259,11 +259,14 @@
                                 }
                             }
                         }
-                        .chubby-multiple-page-control-btn {
+                        .admin-multiple-page-control-btn {
                             position: relative;
                             bottom: -1px;
                             .el-dropdown {
                                 .el-button-group {
+                                    .el-button {
+                                        height: 40px;
+                                    }
                                     .el-button:first-child {
                                         border-bottom-left-radius: 0px;
                                     }
@@ -276,13 +279,13 @@
                     }
                 }
                 // 主体
-                .chubby-theme-container-main-body {
+                .admin-theme-container-main-body {
                     // 布局组件
                     .container-component {
                         @extend %full;
                         overflow: hidden;
                         // 填充式布局组件
-                        .chubby-container-full {
+                        .admin-container-full {
                             position: absolute;
                             top: 0px;
                             right: 20px;
@@ -291,22 +294,22 @@
                             display: flex;
                             flex-direction: column;
                             overflow: hidden;
-                            .chubby-container-full__header {
+                            .admin-container-full__header {
                                 padding: 20px;
                             }
-                            .chubby-container-full__body {
+                            .admin-container-full__body {
                                 flex-grow: 1;
                                 height: 100%;
                                 padding: 20px 20px;
                                 overflow: auto;
                                 position: relative;
                             }
-                            .chubby-container-full__footer {
+                            .admin-container-full__footer {
                                 padding: 20px;
                             }
                         }
                         // 填充式布局组件 - 滚动优化
-                        .chubby-container-full-bs {
+                        .admin-container-full-bs {
                             position: absolute;
                             top: 0px;
                             right: 20px;
@@ -315,24 +318,24 @@
                             display: flex;
                             flex-direction: column;
                             overflow: hidden;
-                            .chubby-container-full-bs__header {
+                            .admin-container-full-bs__header {
                                 padding: 20px;
                             }
-                            .chubby-container-full-bs__body {
+                            .admin-container-full-bs__body {
                                 flex-grow: 1;
                                 overflow: hidden;
                                 position: relative;
-                                .chubby-container-full-bs__body-wrapper-inner {
+                                .admin-container-full-bs__body-wrapper-inner {
                                     padding: 20px;
                                     position: relative;
                                 }
                             }
-                            .chubby-container-full-bs__footer {
+                            .admin-container-full-bs__footer {
                                 padding: 20px;
                             }
                         }
                         // 隐形布局组件
-                        .chubby-container-ghost {
+                        .admin-container-ghost {
                             position: absolute;
                             top: 0px;
                             right: 20px;
@@ -341,24 +344,24 @@
                             display: flex;
                             flex-direction: column;
                             overflow: hidden;
-                            .chubby-container-ghost__header {
+                            .admin-container-ghost__header {
                                 padding: 20px;
                                 border-bottom-left-radius: 4px;
                                 border-bottom-right-radius: 4px;
                             }
-                            .chubby-container-ghost__body {
+                            .admin-container-ghost__body {
                                 flex-grow: 1;
                                 overflow: auto;
                                 position: relative;
                             }
-                            .chubby-container-ghost__footer {
+                            .admin-container-ghost__footer {
                                 padding: 20px;
                                 border-top-left-radius: 4px;
                                 border-top-right-radius: 4px;
                             }
                         }
                         // 隐形布局组件 - 滚动优化
-                        .chubby-container-ghost-bs {
+                        .admin-container-ghost-bs {
                             position: absolute;
                             top: 0px;
                             right: 20px;
@@ -367,24 +370,24 @@
                             display: flex;
                             flex-direction: column;
                             overflow: hidden;
-                            .chubby-container-ghost-bs__header {
+                            .admin-container-ghost-bs__header {
                                 padding: 20px;
                                 border-bottom-left-radius: 4px;
                                 border-bottom-right-radius: 4px;
                             }
-                            .chubby-container-ghost-bs__body {
+                            .admin-container-ghost-bs__body {
                                 flex-grow: 1;
                                 overflow: hidden;
                                 position: relative;
                             }
-                            .chubby-container-ghost-bs__footer {
+                            .admin-container-ghost-bs__footer {
                                 padding: 20px;
                                 border-top-left-radius: 4px;
                                 border-top-right-radius: 4px;
                             }
                         }
                         // 卡片式布局组件
-                        .chubby-container-card {
+                        .admin-container-card {
                             position: absolute;
                             top: 0px;
                             right: 20px;
@@ -393,13 +396,13 @@
                             display: flex;
                             flex-direction: column;
                             overflow: hidden;
-                            .chubby-container-card__header {
+                            .admin-container-card__header {
                                 padding: 20px;
                             }
-                            .chubby-container-card__body {
+                            .admin-container-card__body {
                                 flex-grow: 1;
                                 overflow: auto;
-                                .chubby-container-card__body-card {
+                                .admin-container-card__body-card {
                                     position: relative;
                                     margin-bottom: 20px;
                                     padding: 20px;
@@ -407,14 +410,14 @@
                                     border-bottom-right-radius: 4px;
                                 }
                             }
-                            .chubby-container-card__footer {
+                            .admin-container-card__footer {
                                 padding: 20px;
                                 border-top-left-radius: 4px;
                                 border-top-right-radius: 4px;
                             }
                         }
                         // 卡片式布局组件 - 滚动优化
-                        .chubby-container-card-bs {
+                        .admin-container-card-bs {
                             position: absolute;
                             top: 0px;
                             right: 20px;
@@ -423,24 +426,24 @@
                             display: flex;
                             flex-direction: column;
                             overflow: hidden;
-                            .chubby-container-card-bs__header {
+                            .admin-container-card-bs__header {
                                 padding: 20px;
                             }
-                            .chubby-container-card-bs__body {
+                            .admin-container-card-bs__body {
                                 position: relative;
                                 flex-grow: 1;
                                 overflow: hidden;
-                                .chubby-container-card-bs__body-wrapper-inner {
+                                .admin-container-card-bs__body-wrapper-inner {
                                     padding-bottom: 20px;
                                 }
-                                .chubby-container-card-bs__body-card {
+                                .admin-container-card-bs__body-card {
                                     position: relative;
                                     padding: 20px;
                                     border-bottom-left-radius: 4px;
                                     border-bottom-right-radius: 4px;
                                 }
                             }
-                            .chubby-container-card-bs__footer {
+                            .admin-container-card-bs__footer {
                                 padding: 20px;
                                 border-top-left-radius: 4px;
                                 border-top-right-radius: 4px;

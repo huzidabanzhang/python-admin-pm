@@ -1,5 +1,5 @@
 <template>
-    <chubby-container class="page">
+    <admin-container class="page">
         <el-row :gutter="20">
             <el-col :span="8">
                 <el-card class="box-card">
@@ -10,7 +10,7 @@
                         <span>
                             <img
                                 v-if="info.avatar && info.avatar != ''"
-                                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument' + info.avatar"
+                                :src="$store.state.admin.api.base + '/API/v1/Document/GetDocument' + info.avatar"
                                 class="avatar"
                             >
                             <img
@@ -90,7 +90,7 @@
                 style="height: 600px;"
             ></div>
         </el-card>
-    </chubby-container>
+    </admin-container>
 </template>
 
 <script>
@@ -252,7 +252,7 @@ export default {
                 ]
             },
             ip_list: {},
-            user: this.$store.getters['chubby/user/user'],
+            user: this.$store.getters['admin/user/user'],
             info: {},
             circleUrl: defaultImg,
             myChart: null,
@@ -381,7 +381,7 @@ export default {
 }
 </style>
 <template>
-    <chubby-container class="page">
+    <admin-container class="page">
         <el-row :gutter="20">
             <el-col :span="8">
                 <el-card class="box-card">
@@ -392,7 +392,7 @@ export default {
                         <span>
                             <img
                                 v-if="info.avatar && info.avatar != ''"
-                                :src="$store.state.chubby.api.base + '/API/v1/Document/GetDocument' + info.avatar"
+                                :src="$store.state.admin.api.base + '/API/v1/Document/GetDocument' + info.avatar"
                                 class="avatar"
                             >
                             <img
@@ -472,7 +472,7 @@ export default {
                 style="height: 600px;"
             ></div>
         </el-card>
-    </chubby-container>
+    </admin-container>
 </template>
 
 <script>
@@ -634,7 +634,7 @@ export default {
                 ]
             },
             ip_list: {},
-            user: this.$store.getters['chubby/user/user'],
+            user: this.$store.getters['admin/user/user'],
             info: {},
             circleUrl: defaultImg,
             myChart: null,

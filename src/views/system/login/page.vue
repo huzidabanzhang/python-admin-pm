@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="page-login"
-        @keyup.enter="submit"
-    >
+    <div class="page-login">
         <div class="page-login--layer page-login--layer-area">
             <ul class="circles">
                 <li
@@ -25,7 +22,7 @@
                     <img
                         class="page-login--logo"
                         src="./image/logo.png"
-                    >
+                    />
                     <!-- form -->
                     <div class="page-login--form">
                         <el-card shadow="never">
@@ -34,55 +31,53 @@
                                 label-position="top"
                                 :rules="rules"
                                 :model="formLogin"
-                                size="default"
                             >
                                 <el-form-item prop="username">
                                     <el-input
                                         type="text"
-                                        v-model="formLogin.username"
                                         placeholder="用户名"
+                                        v-model="formLogin.username"
                                     >
-                                        <i
-                                            slot="prepend"
-                                            class="fa fa-user-circle-o"
-                                        ></i>
+                                        <template v-slot:prepend>
+                                            <i class="fa fa-user-circle-o"></i>
+                                        </template>
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item prop="password">
                                     <el-input
                                         type="password"
-                                        v-model="formLogin.password"
                                         placeholder="密码"
+                                        show-password
+                                        v-model="formLogin.password"
                                     >
-                                        <i
-                                            slot="prepend"
-                                            class="fa fa-keyboard-o"
-                                        ></i>
+                                        <template v-slot:prepend>
+                                            <i class="fa fa-keyboard-o"></i>
+                                        </template>
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item prop="code">
                                     <el-input
                                         type="text"
-                                        v-model="formLogin.code"
                                         placeholder="验证码"
+                                        v-model="formLogin.code"
+                                        @keyup.enter="handleSubmit"
                                     >
-                                        <template slot="append">
+                                        <template v-slot:append>
                                             <img
                                                 class="login-code"
                                                 :src="captcha"
-                                                @click="refresh"
-                                            >
+                                                @click="refreshCaptcha"
+                                            />
                                         </template>
                                     </el-input>
                                 </el-form-item>
                                 <el-button
-                                    size="default"
-                                    @click="submit"
                                     type="primary"
-                                    :disabled="!isDis"
                                     class="button-login"
+                                    :disabled="!isDis"
+                                    @click="handleSubmit"
                                 >
-                                    登录
+                                    登 录
                                 </el-button>
                             </el-form>
                         </el-card>
@@ -94,15 +89,14 @@
                             构建于 {{ $buildTime }}
                         </a>
                         <el-divider direction="vertical" />
-                        <chubby-header-url style="display: inline-block;" />
+                        <environment style="display: inline-block;" />
                     </p>
                     <p class="page-login--content-footer-copyright">
-                        Copyright
-                        <chubby-icon name="copyright" />
-                        2019 章胖胖
-                        <a href="https://github.com/huzidabanzhang/python-admin-pm/tree/master/admin">
-                            @huzidabanzhang
-                        </a>
+                        Copyright@2019
+                        <a
+                            href="https://beian.miit.gov.cn/"
+                            target="_blank"
+                        >浙ICP备2021024276号</a>
                     </p>
                     <p class="page-login--content-footer-options">
                         <a href="#">帮助</a>
@@ -115,127 +109,127 @@
     </div>
 </template>
 
-<script>
-import { mapActions } from 'vuex'
-import chubbyHeaderUrl from '@/pages/base-url'
+<script setup>
+import useCurrentInstance from '@/proxy'
+import environment from '@/layout/pages/environment/index.vue'
 import util from '@/libs/util'
-export default {
-    name: 'sys-login',
-    components: { chubbyHeaderUrl },
-    data () {
-        return {
-            // 表单
-            formLogin: {
-                username: '',
-                password: '',
-                code: ''
-            },
-            captcha_url: this.$store.state.chubby.api.base + '/API/v1/Admin/Captcha',
-            // 验证码url
-            captcha: '',
-            // 表单校验
-            rules: {
-                username: [
-                    {
-                        required: true,
-                        message: '请输入用户名',
-                        trigger: 'blur'
-                    },
-                    { min: 4, max: 20, message: '长度在 4 到 20 个字之间', trigger: 'blur' }
-                ],
-                password: [
-                    {
-                        required: true,
-                        message: '请输入密码',
-                        trigger: 'blur'
-                    },
-                    { min: 6, max: 20, message: '长度在 6 到 20 个字之间', trigger: 'blur' }
-                ],
-                code: [
-                    {
-                        required: true,
-                        message: '请输入验证码',
-                        trigger: 'blur'
-                    }
-                ]
-            },
-            menus: [],
-            isDis: false
-        }
-    },
-    watch: {
-        base: {
-            handler (value) {
-                this.captcha_url = value + '/API/v1/Admin/Captcha'
-                this.refresh()
-            },
-            immediate: true
+import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+
+const { proxy } = useCurrentInstance()
+const store = useStore()
+
+const rules = {
+    username: [
+        {
+            required: true,
+            message: '请输入用户名',
+            trigger: 'blur'
         },
-        isInit: {
-            handler (value) {
-                this.isDis = value
-                if (value == false) util.isInitialized()
-            },
-            immediate: true
+        {
+            min: 4,
+            max: 20,
+            message: '长度在 4 到 20 个字之间',
+            trigger: 'blur'
         }
-    },
-    computed: {
-        base () {
-            return this.$store.state.chubby.api.base
+    ],
+    password: [
+        {
+            required: true,
+            message: '请输入密码',
+            trigger: 'blur'
         },
-        isInit () {
-            return this.$store.state.chubby.user.isInit
+        {
+            min: 6,
+            max: 20,
+            message: '长度在 6 到 20 个字之间',
+            trigger: 'blur'
         }
+    ],
+    code: [
+        {
+            required: true,
+            message: '请输入验证码',
+            trigger: 'blur'
+        }
+    ]
+}
+const formLogin = ref({
+    username: '',
+    password: '',
+    code: '',
+})
+const captcha = ref('')
+const captchaUrl = ref('')
+const base = computed(() => store.getters['api/base'])
+const isInit = computed(() => store.getters['user/isInit'])
+const isDis = ref(false)
+
+watch(
+    () => base,
+    (value) => {
+        captchaUrl.value = value.value + '/v1/Admin/Captcha'
+        refreshCaptcha()
+
     },
-    methods: {
-        ...mapActions('chubby/account', [
-            'login'
-        ]),
-        refresh () {
-            this.captcha = this.captcha_url + '?rand=' + Math.random()
-        },
-        /**
-         * @description 提交表单
-         */
-        // 提交登录信息
-        submit () {
-            if (!this.isDis) return true
-            this.$refs.loginForm.validate((valid) => {
-                if (valid) {
-                    let loadingInstance = this.$loading(this.loadOption('正在登陆中.....'))
-                    this.login({
-                        username: this.formLogin.username,
-                        password: this.formLogin.password,
-                        code: this.formLogin.code
-                    })
-                        .then(() => {
-                            loadingInstance.close()
-                            // 重定向对象不存在则返回顶层路径
-                            this.$router.replace(this.$route.query.redirect || '/')
-                        })
-                        .catch(() => {
-                            loadingInstance.close()
-                            this.refresh()
-                        })
-                } else {
-                    // 登录表单校验失败
-                    this.$message.error('用户名、密码或者验证码不能为空')
-                }
-            })
-        }
+    {
+        immediate: true,
+        deep: true
     }
+)
+
+watch(
+    () => isInit,
+    (value) => {
+        isDis.value = value.value
+        util.isInitialized()
+    },
+    {
+        immediate: true,
+        deep: true
+    }
+)
+
+function refreshCaptcha () {
+    captcha.value = captchaUrl.value + '?rand=' + Math.random()
+}
+
+function handleSubmit () {
+    proxy.$refs.loginForm.validate((valid) => {
+        if (valid) {
+            let loadingInstance = proxy.$loading(
+                proxy.loadOption('正在登陆中.....')
+            )
+
+            store.dispatch('account/login', {
+                username: formLogin.value.username,
+                password: formLogin.value.password,
+                code: formLogin.value.code
+            })
+                .then(() => {
+                    loadingInstance.close()
+                    // 重定向对象不存在则返回顶层路径
+                    proxy.$router.replace(proxy.$route.query.redirect || '/')
+                })
+                .catch(() => {
+                    loadingInstance.close()
+                    refreshCaptcha()
+                })
+        } else {
+            // 登录表单校验失败
+            proxy.$message.error('用户名、密码或者验证码不能为空')
+        }
+    })
 }
 </script>
 
 <style lang="scss">
 .page-login {
     @extend %unable-select;
-    $backgroundColor: #f0f2f5;
-    // ---
+    $backgroundColor: #f0f2f5; /*// ---*/
     background-color: $backgroundColor;
     height: 100%;
-    position: relative;
-    // 层
+    position: relative; /*// 层*/
     .page-login--layer {
         @extend %full;
         overflow: auto;
@@ -268,7 +262,7 @@ export default {
     }
     // main
     .page-login--logo {
-        width: 80px;
+        width: 64px;
         margin-bottom: 1em;
         margin-top: -1em;
     }

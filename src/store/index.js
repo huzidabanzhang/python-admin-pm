@@ -1,12 +1,12 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 
-import chubby from './modules/chubby'
+const files = import.meta.globEager('./modules/*.js')
+const modules = {}
 
-Vue.use(Vuex)
+for (let key in files) {
+    modules[key.replace(/(\.\/|\.js)/g, '').replace('modules/', '')] = files[key].default
+}
 
-export default new Vuex.Store({
-  modules: {
-    chubby
-  }
+export default createStore({
+    modules: modules
 })

@@ -1,11 +1,29 @@
 // 每个主题特有的设置
 .theme-#{$theme-name} {
+    .page-error {
+        background: white;
+        background-blend-mode: multiply, multiply;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        .description {
+            display: contents;
+        }
+
+        img {
+            width: 260px;
+        }
+    }
+
     .none {
         display: none;
     }
 
     .el-card {
-        &.chubby-card {
+        &.admin-card {
             border: $theme-container-border-outer;
             .el-card__header {
                 border-bottom: $theme-container-border-outer;
@@ -14,9 +32,9 @@
     }
 
     // 背景图片和遮罩
-    .chubby-layout-header-aside-group {
+    .admin-layout-header-aside-group {
         background-color: $theme-bg-color;
-        .chubby-layout-header-aside-mask {
+        .admin-layout-header-aside-mask {
             background: $theme-bg-mask;
         }
     }
@@ -43,7 +61,7 @@
             margin-right: 5px;
         }
     }
-    .el-submenu__title {
+    .el-sub-menu__title {
         @extend %unable-select;
         @extend %el-menu-icon;
     }
@@ -51,7 +69,7 @@
         @extend %unable-select;
         @extend %el-menu-icon;
     }
-    .el-submenu__title:hover {
+    .el-sub-menu__title:hover {
         @include theme-menu-hover-style;
     }
     .el-menu-item:hover {
@@ -60,16 +78,16 @@
     .el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
         @include theme-menu-hover-style;
     }
-    .el-menu--horizontal .el-menu .el-submenu__title:hover {
+    .el-menu--horizontal .el-menu .el-sub-menu__title:hover {
         @include theme-menu-hover-style;
     }
 
     // 顶栏
-    .chubby-theme-header {
+    .admin-theme-header {
         // 顶栏菜单空间不足时显示的滚动控件
-        .chubby-theme-header-menu {
-            .chubby-theme-header-menu__prev,
-            .chubby-theme-header-menu__next {
+        .admin-theme-header-menu {
+            .admin-theme-header-menu__prev,
+            .admin-theme-header-menu__next {
                 color: $theme-header-item-color;
                 background: $theme-header-item-background-color;
                 &:hover {
@@ -119,9 +137,9 @@
                     }
                 }
             }
-            .el-submenu {
+            .el-sub-menu {
                 &.is-active {
-                    .el-submenu__title {
+                    .el-sub-menu__title {
                         color: $theme-header-item-color-active;
                         background: $theme-header-item-background-color-active;
                         i.fa {
@@ -129,14 +147,14 @@
                         }
                     }
                 }
-                .el-submenu__title {
+                .el-sub-menu__title {
                     transition: border-top-color 0s;
                     color: $theme-header-item-color;
                     background: $theme-header-item-background-color;
                     i.fa {
                         color: inherit;
                     }
-                    .el-submenu__icon-arrow {
+                    .el-sub-menu__icon-arrow {
                         color: $theme-header-item-color;
                     }
                     &:hover {
@@ -145,7 +163,7 @@
                         i.fa {
                             color: inherit;
                         }
-                        .el-submenu__icon-arrow {
+                        .el-sub-menu__icon-arrow {
                             color: $theme-header-item-color-hover;
                         }
                     }
@@ -155,7 +173,7 @@
                         i.fa {
                             color: inherit;
                         }
-                        .el-submenu__icon-arrow {
+                        .el-sub-menu__icon-arrow {
                             color: $theme-header-item-color-focus;
                         }
                     }
@@ -163,7 +181,7 @@
             }
         }
         // 顶栏右侧
-        .chubby-header-right {
+        .admin-header-right {
             .btn-text {
                 color: $theme-header-item-color;
                 &.can-hover {
@@ -176,11 +194,11 @@
         }
     }
     // [布局] 顶栏下面
-    .chubby-theme-container {
+    .admin-theme-container {
         // 侧边栏
-        .chubby-theme-container-aside {
+        .admin-theme-container-aside {
             // 菜单为空的时候显示的信息
-            .chubby-layout-header-aside-menu-empty {
+            .admin-layout-header-aside-menu-empty {
                 background: $theme-aside-menu-empty-background-color;
                 i {
                     color: $theme-aside-menu-empty-icon-color;
@@ -232,14 +250,14 @@
                     }
                 }
             }
-            .el-submenu {
-                .el-submenu__title {
+            .el-sub-menu {
+                .el-sub-menu__title {
                     color: $theme-aside-item-color;
                     background: $theme-aside-item-background-color;
                     i {
                         color: $theme-aside-item-color;
                     }
-                    .el-submenu__icon-arrow {
+                    .el-sub-menu__icon-arrow {
                         color: $theme-aside-item-color;
                     }
                     &:hover {
@@ -248,18 +266,18 @@
                         i {
                             color: $theme-aside-item-color-hover;
                         }
-                        .el-submenu__icon-arrow {
+                        .el-sub-menu__icon-arrow {
                             color: $theme-aside-item-color-hover;
                         }
                     }
                 }
             }
         }
-        .chubby-theme-container-main {
+        .admin-theme-container-main {
             // 主体部分分为多页面控制器 和主体
-            .chubby-theme-container-main-header {
+            .admin-theme-container-main-header {
                 // 多页面控制器
-                .chubby-multiple-page-control {
+                .admin-multiple-page-control {
                     .el-tabs__header.is-top {
                         border-bottom-color: $theme-multiple-page-control-border-color;
                     }
@@ -299,7 +317,7 @@
                     }
                 }
                 // 多页控制器的关闭控制
-                .chubby-multiple-page-control-btn {
+                .admin-multiple-page-control-btn {
                     .el-dropdown {
                         .el-button-group {
                             .el-button {
@@ -310,55 +328,55 @@
                 }
             }
             // 主体
-            .chubby-theme-container-main-body {
+            .admin-theme-container-main-body {
                 // 布局组件
                 .container-component {
                     // [组件]
-                    // chubby-container-full 填充型
-                    .chubby-container-full {
+                    // admin-container-full 填充型
+                    .admin-container-full {
                         border: $theme-container-border-outer;
                         border-top: none;
                         border-bottom: none;
-                        .chubby-container-full__header {
+                        .admin-container-full__header {
                             border-bottom: $theme-container-border-inner;
                             background: $theme-container-header-footer-background-color;
                         }
-                        .chubby-container-full__body {
+                        .admin-container-full__body {
                             background: $theme-container-background-color;
                         }
-                        .chubby-container-full__footer {
+                        .admin-container-full__footer {
                             border-top: $theme-container-border-inner;
                             background: $theme-container-header-footer-background-color;
                         }
                     }
                     // [组件]
-                    // chubby-container-full-bs 填充型 滚动优化
-                    .chubby-container-full-bs {
+                    // admin-container-full-bs 填充型 滚动优化
+                    .admin-container-full-bs {
                         border: $theme-container-border-outer;
                         border-top: none;
                         border-bottom: none;
-                        .chubby-container-full-bs__header {
+                        .admin-container-full-bs__header {
                             border-bottom: $theme-container-border-inner;
                             background: $theme-container-header-footer-background-color;
                         }
-                        .chubby-container-full-bs__body {
+                        .admin-container-full-bs__body {
                             background: $theme-container-background-color;
                         }
-                        .chubby-container-full-bs__footer {
+                        .admin-container-full-bs__footer {
                             border-top: $theme-container-border-inner;
                             background: $theme-container-header-footer-background-color;
                         }
                     }
                     // [组件]
-                    // chubby-container-ghost 隐形布局组件
-                    .chubby-container-ghost {
-                        .chubby-container-ghost__header {
+                    // admin-container-ghost 隐形布局组件
+                    .admin-container-ghost {
+                        .admin-container-ghost__header {
                             border-bottom: $theme-container-border-outer;
                             border-left: $theme-container-border-outer;
                             border-right: $theme-container-border-outer;
                             background: $theme-container-header-footer-background-color;
                         }
-                        .chubby-container-ghost__footer {
+                        .admin-container-ghost__footer {
                             border-top: $theme-container-border-outer;
                             border-left: $theme-container-border-outer;
                             border-right: $theme-container-border-outer;
@@ -366,15 +384,15 @@
                         }
                     }
                     // [组件]
-                    // chubby-container-ghost-bs 隐形布局组件 滚动优化
-                    .chubby-container-ghost-bs {
-                        .chubby-container-ghost-bs__header {
+                    // admin-container-ghost-bs 隐形布局组件 滚动优化
+                    .admin-container-ghost-bs {
+                        .admin-container-ghost-bs__header {
                             border-bottom: $theme-container-border-outer;
                             border-left: $theme-container-border-outer;
                             border-right: $theme-container-border-outer;
                             background: $theme-container-header-footer-background-color;
                         }
-                        .chubby-container-ghost-bs__footer {
+                        .admin-container-ghost-bs__footer {
                             border-top: $theme-container-border-outer;
                             border-left: $theme-container-border-outer;
                             border-right: $theme-container-border-outer;
@@ -382,23 +400,23 @@
                         }
                     }
                     // [组件]
-                    // chubby-container-card 卡片型
-                    .chubby-container-card {
-                        .chubby-container-card__header {
+                    // admin-container-card 卡片型
+                    .admin-container-card {
+                        .admin-container-card__header {
                             border-bottom: $theme-container-border-inner;
                             border-left: $theme-container-border-outer;
                             border-right: $theme-container-border-outer;
                             background: $theme-container-header-footer-background-color;
                         }
-                        .chubby-container-card__body {
-                            .chubby-container-card__body-card {
+                        .admin-container-card__body {
+                            .admin-container-card__body-card {
                                 background: $theme-container-background-color;
                                 border-left: $theme-container-border-outer;
                                 border-right: $theme-container-border-outer;
                                 border-bottom: $theme-container-border-outer;
                             }
                         }
-                        .chubby-container-card__footer {
+                        .admin-container-card__footer {
                             border-top: $theme-container-border-outer;
                             border-left: $theme-container-border-outer;
                             border-right: $theme-container-border-outer;
@@ -406,23 +424,23 @@
                         }
                     }
                     // [组件]
-                    // chubby-container-card-bs 卡片型 滚动优化
-                    .chubby-container-card-bs {
-                        .chubby-container-card-bs__header {
+                    // admin-container-card-bs 卡片型 滚动优化
+                    .admin-container-card-bs {
+                        .admin-container-card-bs__header {
                             border-bottom: $theme-container-border-inner;
                             border-left: $theme-container-border-outer;
                             border-right: $theme-container-border-outer;
                             background: $theme-container-header-footer-background-color;
                         }
-                        .chubby-container-card-bs__body {
-                            .chubby-container-card-bs__body-card {
+                        .admin-container-card-bs__body {
+                            .admin-container-card-bs__body-card {
                                 background: $theme-container-background-color;
                                 border-left: $theme-container-border-outer;
                                 border-right: $theme-container-border-outer;
                                 border-bottom: $theme-container-border-outer;
                             }
                         }
-                        .chubby-container-card-bs__footer {
+                        .admin-container-card-bs__footer {
                             border-top: $theme-container-border-outer;
                             border-left: $theme-container-border-outer;
                             border-right: $theme-container-border-outer;

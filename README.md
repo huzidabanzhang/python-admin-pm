@@ -1,5 +1,7 @@
 ### <center>如果对您有帮助，请帮忙点右上角 "Star" 支持一下 谢谢！
 
+## 升级 vue3 + vite + elementPlus 中
+
 ## 预览
 
 [Preview](https://test.ig132n.cn/ "Preview")
@@ -97,8 +99,6 @@ params = {
 ```
 
 ## 计划
-
-结完婚后接入 vue3 和 element Plus
 
 ![首页](https://github.com/huzidabanzhang/python-admin/blob/master/static/image/markdown/desktop.png "首页")
 

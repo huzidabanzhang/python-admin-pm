@@ -1,107 +1,102 @@
 <template>
     <el-dropdown
-        size="small"
-        class="chubby-mr"
+        class="admin-mr"
+        @command="handleCommand"
     >
-        <span class="btn-text">{{user | getUsername}}</span>
-        <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="getInfo">
-                <i class="fa fa-user-circle"></i>
-                个人中心
-            </el-dropdown-item>
+        <span class="btn-text">{{getUsernameFlter()}}</span>
+        <template #dropdown>
+            <el-dropdown-menu>
+                <el-dropdown-item command="admin">
+                    <i class="fa fa-user-circle"></i>
+                    个人中心
+                </el-dropdown-item>
 
-            <el-dropdown-item
-                @click.native="initBase"
-                v-show="isMark()"
-            >
-                <i class="fa fa-refresh"></i>
-                重置数据库
-            </el-dropdown-item>
+                <el-dropdown-item
+                    v-if="isMark()"
+                    command="database"
+                >
+                    <i class="fa fa-refresh"></i>
+                    重置数据库
+                </el-dropdown-item>
 
-            <el-dropdown-item @click.native="logOff">
-                <chubby-icon
-                    name="power-off"
-                    class="chubby-mr-5"
-                />
-                注销
-            </el-dropdown-item>
-        </el-dropdown-menu>
+                <el-dropdown-item command="logout">
+                    <admin-icon
+                        name="power-off"
+                        class="admin-mr-5"
+                    />
+                    注销
+                </el-dropdown-item>
+            </el-dropdown-menu>
+        </template>
 
-        <Info
+        <Admin
             ref="adminData"
-            :title="title"
             :params="params"
-            :role="roleParams"
-            :isTab="true"
             :centerDialogVisible="centerDialogVisible"
             @handleClose="handleClose"
             @callback="handleClose"
-        ></Info>
+        ></Admin>
     </el-dropdown>
 </template>
 
-<script>
-import { mapActions } from 'vuex'
-import { AgainCreateDrop } from '@api/sys.base'
-import Info from '@/pages/sys/admin/info.vue'
-import setting from '@/setting.js'
-export default {
-    components: { Info },
-    data () {
-        return {
-            user: this.$store.getters['chubby/user/user'],
-            title: '',
-            params: {},
-            roleParams: [],
-            centerDialogVisible: false
-        }
-    },
-    filters: {
-        getUsername (info) {
-            if (info && Object.keys(info).length > 0) {
-                let name = info.nickname ? info.nickname : info.username
-                return name ? `你好 ${name}` : '未登录'
-            }
-            return '未登录'
-        }
-    },
-    methods: {
-        ...mapActions('chubby/account', [
-            'logout'
-        ]),
-        /**
-         * @description 登出
-         */
-        logOff () {
-            this.logout({
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from "vuex"
+import { cloneDeep } from 'lodash'
+import Admin from '@/layout/pages/sys/admin/info.vue'
+import useCurrentInstance from '@/proxy'
+
+const { proxy } = useCurrentInstance()
+const store = useStore()
+const user = computed(() => store.getters['user/user'])
+const params = ref({})
+const centerDialogVisible = ref(false)
+
+function getUsernameFlter () {
+    if (user.value && Object.keys(user.value).length > 0) {
+        let name = user.value.nickname ? user.value.nickname : user.value.username
+        return name ? `你好 ${name}` : '未登录'
+    }
+    return '未登录'
+}
+
+function getInfo () {
+    params.value = cloneDeep(user.value)
+    centerDialogVisible.value = true
+}
+
+function handleClose (data) {
+    if (data.admin_id) user.value = cloneDeep(data)
+    centerDialogVisible.value = false
+}
+
+function isMark () {
+    return user.value ? user.value.is_admin : false
+}
+
+function handleCommand (command) {
+    switch (command) {
+        case 'admin':
+            getInfo()
+            break
+        case 'logout':
+            store.dispatch('account/logout', {
                 confirm: true
             })
-        },
-        isMark () {
-            if (this.user) return this.user.is_admin
-            return false
-        },
-        getInfo () {
-            this.params = this.user
-            this.centerDialogVisible = true
-        },
-        handleClose (data) {
-            if (data.admin_id) this.user = data
-            this.centerDialogVisible = false
-        },
-        initBase () {
-            this.$confirm('重置数据库将清空所有数据，确定要重置吗？', '提示',
+            break
+        case 'database':
+            proxy.$confirm('重置数据库将清空所有数据，确定要重置吗？', '提示',
                 {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    let loadingInstance = this.$loading(this.loadOption('正在重置数据库中.....'))
+                    let loadingInstance = proxy.$loading(proxy.loadOption('正在重置数据库中.....'))
                     AgainCreateDrop()
-                        .then(async res => {
+                        .then(res => {
                             loadingInstance.close()
-                            this.$confirm('请重新登录', '提示',
+                            proxy.$confirm('请重新登录', '提示',
                                 {
                                     confirmButtonText: '确定',
                                     type: 'success',
@@ -111,14 +106,14 @@ export default {
                                     closeOnPressEscape: false,
                                     closeOnHashChange: false
                                 }).then(() => {
-                                    this.logout()
+                                    store.dispatch('account/logout')
                                 })
                         })
                         .catch(async res => {
                             loadingInstance.close()
                         })
                 })
-        }
+            break
     }
 }
 </script>
