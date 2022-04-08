@@ -13,7 +13,7 @@ export default {
     },
     // 整体风格大小
     size: {
-        type: 'large',
+        type: 'default',
     },
     // 在读取持久化数据失败时默认页面
     page: {

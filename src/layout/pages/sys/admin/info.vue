@@ -254,7 +254,7 @@ function handelInfo (formName) {
                     .then(res => {
                         if (res.is_self == true) {
                             util.updateUserInfo(res)
-                            proxy.$message.success('管理员编辑成功')
+                            proxy.$message.success('编辑成功')
                             emits('callback', res.user)
                             isSubmit.value = false
                         } else handleInitParent(1)
@@ -276,7 +276,7 @@ function handelInfo (formName) {
 }
 
 function handleInitParent (type) {
-    proxy.$message.success(type == 1 ? '管理员编辑成功' : '管理员创建成功')
+    proxy.$message.success(type == 1 ? '编辑成功' : '创建成功')
     emits('callback', true)
     isSubmit.value = false
 }
@@ -288,7 +288,7 @@ function handleClosed () {
 function CreateUpload (params) {
     const max = params.file.size / 1024 / 1024 < 2
     if (!max) {
-        proxy.$message.error('上传头像图片大小不能超过 2MB!')
+        proxy.$message.error('头像图片大小不能超过 2MB!')
         proxy.$refs.avatar.uploadFiles = []
         return false
     }
@@ -304,7 +304,7 @@ function CreateUpload (params) {
             avatar.value = API.value + res[0].src
             form.value.avatar = res[0].src
             proxy.$refs.avatar.uploadFiles = []
-            proxy.$message.success('上传头像成功')
+            proxy.$message.success('头像上传成功')
             imgLoad.value = false
         })
         .catch(() => {

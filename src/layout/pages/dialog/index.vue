@@ -1,41 +1,48 @@
 <template>
-  <el-dialog
-    :title="title"
-    v-model="Visible"
-    width="50%"
-    append-to-body
-    center
-    destroy-on-close
-    @closed="handleClosed"
-  >
-    <div style="min-height: 300px">{{ content }}</div>
-  </el-dialog>
+    <el-dialog
+        width="50%"
+        append-to-body
+        center
+        destroy-on-close
+        :title="title"
+        v-model="Visible"
+        @closed="handleClosed"
+    >
+        <div style="min-height: 300px">{{ content }}</div>
+    </el-dialog>
 </template>
 
-<script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
-export default {
-  props: {
-    title: String,
-    content: String,
-    centerDialogVisible: Boolean,
-  },
-  data() {
-    return {
-      Visible: this.centerDialogVisible,
+<script setup>
+import { ref, watch } from 'vue'
+
+const props = defineProps({
+    title: {
+        type: String,
+        required: true
+    },
+    content: {
+        type: String,
+        required: true
+    },
+    centerDialogVisible: {
+        type: Boolean,
+        required: true
     }
-  },
-  watch: {
-    centerDialogVisible(newVal) {
-      this.Visible = newVal
+})
+const emits = defineEmits(['handleClose'])
+const Visible = ref(false)
+
+watch(
+    () => props.centerDialogVisible,
+    (val) => {
+        Visible.value = val
     },
-  },
-  methods: {
-    handleClosed() {
-      $emit(this, 'handleClose', false)
-    },
-  },
-  emits: ['handleClose'],
+    {
+        immediate: true
+    }
+)
+
+function handleClosed () {
+    emits('handleClose', false)
 }
 </script>

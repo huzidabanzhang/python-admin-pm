@@ -29,6 +29,7 @@
                             <el-form
                                 ref="loginForm"
                                 label-position="top"
+                                size="large"
                                 :rules="rules"
                                 :model="formLogin"
                             >

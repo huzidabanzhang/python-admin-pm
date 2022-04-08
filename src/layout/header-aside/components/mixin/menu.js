@@ -10,9 +10,7 @@ export default {
             } else if (index == '/system/base') {
                 this.$parent.handleVisible(true)
             } else {
-                this.$router.push({
-                    path: index,
-                })
+                this.$router.push(index)
             }
         },
     },

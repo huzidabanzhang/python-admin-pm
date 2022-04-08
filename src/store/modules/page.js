@@ -17,7 +17,7 @@ export default {
         // 当前页面
         current: '',
         // 需要缓存的页面 name
-        keepAlive: [],
+        keepAlive: []
     },
     actions: {
         /**

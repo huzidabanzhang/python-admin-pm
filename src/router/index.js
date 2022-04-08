@@ -112,9 +112,7 @@ function ResetRoute (to, next) {
         }).catch(err => {
             console.log(err)
         })
-    }
-
-    next()
+    } else next()
 }
 
 /**
@@ -137,7 +135,7 @@ router.beforeEach(async (to, from, next) => {
 
             if (to.matched.some((r) => r.meta.disable == true)) {
                 next({ name: 'page403' })
-            } else ResetRoute(to, next)
+            } else await ResetRoute(to, next)
         } else {
             // 没有登录的时候跳转到登录界面
             // 携带上登陆成功之后需要跳转的页面完整路径
@@ -149,8 +147,9 @@ router.beforeEach(async (to, from, next) => {
             })
         }
     } else {
+        if (to.matched.length == 0) await ResetRoute(to, next)
         // 不需要身份校验 直接通过
-        next()
+        else next()
     }
 })
 

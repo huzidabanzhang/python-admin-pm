@@ -123,7 +123,7 @@
                     @click="handelInfo('interfaceForm')"
                     :loading="isSubmit"
                     :disabled="btn"
-                >确 定</el-button>
+                >提 交</el-button>
             </span>
         </template>
     </el-dialog>

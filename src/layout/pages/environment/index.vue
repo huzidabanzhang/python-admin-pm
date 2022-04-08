@@ -34,8 +34,9 @@
                         class="item"
                     >
                         <el-button
-                            :type="isItemActive(option.value) ? 'primary' : 'default'"
                             style="width: 100%;"
+                            size="large"
+                            :type="isItemActive(option.value) ? 'primary' : 'default'"
                             @click="onSelect(option.value)"
                         >
                             <div flex="main:justify cross:center">

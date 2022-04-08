@@ -24,11 +24,11 @@
                 >
                     <img
                         v-if="asideCollapse"
-                        :src="`${baseUrl}image/theme/${themeActiveSetting.name}/logo/icon-only.png`"
+                        :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/icon-only.png`"
                     />
                     <img
                         v-else
-                        :src="`${baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`"
+                        :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`"
                     />
                 </div>
                 <div
@@ -72,7 +72,6 @@
                     flex
                 >
                     <!-- 内容 -->
-                    <!-- <transition name="fade-scale"> -->
                     <div
                         class="admin-theme-container-main-layer"
                         flex="dir:top"
@@ -90,7 +89,10 @@
                             flex-box="1"
                         >
                             <router-view v-slot="{ Component }">
-                                <transition :name="transitionActive ? 'fade-transverse' : ''">
+                                <transition
+                                    :name="transitionActive ? 'fade-transverse' : ''"
+                                    mode="out-in"
+                                >
                                     <keep-alive :include="keepAlive">
                                         <component :is="Component" />
                                     </keep-alive>
@@ -98,7 +100,6 @@
                             </router-view>
                         </div>
                     </div>
-                    <!-- </transition> -->
                 </div>
             </div>
         </div>
@@ -110,11 +111,10 @@ import adminMenuSide from './components/menu-side'
 import adminHeaderUser from './components/header-user/index.vue'
 import adminTabs from './components/tabs/index.vue'
 import useCurrentInstance from '@/proxy'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from "vuex"
 
 const { proxy } = useCurrentInstance()
-const baseUrl = proxy.$baseUrl
 const store = useStore()
 const asideWidth = ref('200px')
 const asideWidthCollapse = ref('65px')
@@ -122,7 +122,6 @@ const keepAlive = computed(() => store.state.page.keepAlive)
 const transitionActive = computed(() => store.state.transition.active)
 const asideCollapse = computed(() => store.state.menu.asideCollapse)
 const themeActiveSetting = computed(() => store.getters['theme/activeSetting'])
-
 const styleLayoutMainGroup = computed(() => {
     return {
         ...(themeActiveSetting.backgroundImage

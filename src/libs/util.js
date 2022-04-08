@@ -58,11 +58,11 @@ util.open = function (url) {
 
 function componentToImport (ary) {
     ary.forEach((i) => {
-        // if (i.componentPath != 'layout/header-aside') {
-        //     i.component = () => import('@/layout/pages/' + i.componentPath)
-        // } else {
-        //     i.component = layoutHeaderAside
-        // }
+        if (i.componentPath != 'layout/header-aside') {
+            i.component = () => import(/* @vite-ignore */ `../layout/pages/${i.componentPath}`)
+        } else {
+            i.component = layoutHeaderAside
+        }
 
         if (i.children) componentToImport(i.children)
     })
@@ -80,7 +80,7 @@ util.initRoute = function (r) {
                 component: layoutHeaderAside,
             },
             {
-                path: "/:catchAll(.*)",
+                path: "/:pathMatch(.*)*",
                 redirect: '/404',
                 hidden: true
             }

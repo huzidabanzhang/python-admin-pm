@@ -74,7 +74,7 @@
                     @click="handelInfo('roleForm')"
                     :loading="isSubmit"
                     :disabled="btn_add"
-                >确 定</el-button>
+                >提 交</el-button>
             </span>
         </template>
     </el-dialog>

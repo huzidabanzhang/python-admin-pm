@@ -1,168 +1,159 @@
 <template>
     <el-dialog
         title="数据库管理"
-        v-model="Show"
         width="336px"
         append-to-body
         destroy-on-close
-        @closed="close"
+        v-model="visible"
+        @closed="handleClose"
     >
-        <el-form
-            :inline="true"
-            class="form-right"
-        >
-            <el-form-item>
-                <el-button
-                    type="primary"
-                    :disabled="auth.export"
-                    @click="exportBase"
-                    v-auth:export_sql
-                >备份数据库</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    @click="importBase"
-                    v-if="isMark()"
-                >导入数据库</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    type="danger"
-                    @click="initBase"
-                    v-if="isMark()"
-                >重置数据库</el-button>
-            </el-form-item>
-        </el-form>
+        <el-button-group>
+            <el-button
+                type="primary"
+                v-auth:export_sql
+                :disabled="auth.export"
+                @click="handleDataBase('export')"
+            />
+            <el-button
+                type="warning"
+                v-if="handleVisible"
+                @click="handleDataBase('import')"
+            />
+            <el-button
+                type="danger"
+                v-if="handleVisible"
+                @click="handleDataBase('init')"
+            />
+        </el-button-group>
 
         <input
             type="file"
             style="display: none"
             ref="SQL_FILE"
-            @change="importSql"
+            @change="handleImport"
         />
 
-        <Info
+        <DataBase
             :params="form"
             :centerDialogVisible="centerDialogVisible"
-            @handleClose="handleClose"
-        ></Info>
+            @handleClose="handleDataBaseClose"
+        ></DataBase>
     </el-dialog>
 </template>
 
-<script>
-
-import * as Vue from 'vue'
-import { mapActions } from 'vuex'
-import Info from './select.vue'
+<script setup>
+import { ref, watch, computed } from 'vue'
+import { useStore } from 'vuex'
 import { AgainCreateDrop, ImportSql } from '@/api/sys.base'
-import util from '@/libs/util.js'
-import setting from '@/setting.js'
-export default {
-    name: 'BasePage',
-    props: {
-        Visible: Boolean,
+import DataBase from './select.vue'
+import useCurrentInstance from '@/proxy'
+
+const { proxy } = useCurrentInstance()
+const store = useStore()
+const props = defineProps({
+    Visible: Boolean
+})
+const emits = defineEmits(['handleClose'])
+
+const visible = ref(false)
+const centerDialogVisible = ref(false)
+const form = ref({ type: 1 })
+const user = computed(() => store.getters['user/user'])
+
+watch(
+    () => props.Visible,
+    (val) => {
+        visible.value = val
     },
-    components: { Info },
-    data () {
-        return {
-            auth: {
-                export: false,
-            },
-            Show: false,
-            centerDialogVisible: false,
-            form: {
-                type: 1,
-            },
-            user: this.$store.getters['user/user'],
-        }
-    },
-    watch: {
-        Visible (newVal) {
-            this.Show = newVal
-        },
-    },
-    methods: {
-        ...mapActions('account', ['logout']),
-        initBase () {
-            this.$confirm('重置数据库将清空所有数据，确定要重置吗？', '提示', {
+    { immediate: true }
+)
+
+function handleClose () {
+    emits('handleClose', false)
+}
+
+function handleDataBaseClose () {
+    centerDialogVisible.value = false
+}
+
+function handleVisible () {
+    return user.value ? user.value.is_admin : false
+}
+
+function handleLogout () {
+    proxy.$confirm('请重新登录', '提示', {
+        confirmButtonText: '确定',
+        type: 'success',
+        showClose: false,
+        showCancelButton: false,
+        closeOnClickModal: false,
+        closeOnPressEscape: false,
+        closeOnHashChange: false,
+    }).then(() => {
+        store.dispatch('account/logout')
+    })
+}
+
+function handleDataBase (command) {
+    switch (command) {
+        case 'export':
+            form.value.type = 1
+            centerDialogVisible.value = true
+            break
+        case 'import':
+            proxy.$confirm('导入数据库将覆盖所有数据，确定要导入吗？', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning',
             }).then(() => {
-                let loadingInstance = this.$loading(
-                    this.loadOption('正在重置数据库中.....')
+                proxy.$refs.SQL_FILE.click()
+            })
+            break
+        case 'init':
+            proxy.$confirm('重置数据库将清空所有数据，确定要重置吗？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }).then(() => {
+                let loadingInstance = proxy.$loading(
+                    proxy.loadOption('正在重置数据库中.....')
                 )
                 AgainCreateDrop()
                     .then(async (res) => {
                         loadingInstance.close()
-                        this.sqlognout()
+                        handleLogout()
                     })
                     .catch(async (res) => {
                         loadingInstance.close()
                     })
             })
-        },
-        close () {
-            $emit(this, 'handleClose', false)
-        },
-        handleClose () {
-            this.centerDialogVisible = false
-        },
-        isMark () {
-            if (this.user) return this.user.is_admin
-            return false
-        },
-        exportBase () {
-            this.form.type = 1
-            this.centerDialogVisible = true
-        },
-        importBase () {
-            this.$confirm('导入数据库将覆盖所有数据，确定要导入吗？', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-            }).then(() => {
-                this.$refs.SQL_FILE.click()
-            })
-        },
-        sqlognout () {
-            this.$confirm('请重新登录', '提示', {
-                confirmButtonText: '确定',
-                type: 'success',
-                showClose: false,
-                showCancelButton: false,
-                closeOnClickModal: false,
-                closeOnPressEscape: false,
-                closeOnHashChange: false,
-            }).then(() => {
-                this.logout()
-            })
-        },
-        importSql (event) {
-            let formData = new FormData(),
-                file = event.target.files
+            break
+    }
+}
 
-            if (file.length == 0) return this.$message.warning('请选择上传文件')
+function handleImport () {
+    let formData = new FormData(),
+        file = event.target.files
 
-            formData.append('document', file[0])
+    if (file.length == 0)
+        return proxy.$message.warning('请选择上传文件')
 
-            let loadingInstance = this.$loading(
-                this.loadOption('正在导入数据库中.....')
-            )
+    formData.append('document', file[0])
 
-            ImportSql(formData)
-                .then((response) => {
-                    loadingInstance.close()
-                    this.sqlognout()
-                    this.$refs.SQL_FILE.value = ''
-                })
-                .catch(async (res) => {
-                    loadingInstance.close()
-                    this.$refs.SQL_FILE.value = ''
-                })
-        },
-    },
-    emits: ['handleClose'],
+    let loadingInstance = proxy.$loading(
+        proxy.loadOption('正在导入数据库中.....')
+    )
+
+    ImportSql(formData)
+        .then((response) => {
+            loadingInstance.close()
+            handleLogout()
+            proxy.$refs.SQL_FILE.value = ''
+        })
+        .catch(async (res) => {
+            loadingInstance.close()
+            proxy.$refs.SQL_FILE.value = ''
+        })
 }
 </script>
 
