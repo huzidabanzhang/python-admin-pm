@@ -1,18 +1,18 @@
 <template>
     <el-dialog
-        :title="title"
         v-model="Visible"
-        width="500px"
+        width="600px"
         append-to-body
+        :title="title"
         :close-on-click-modal="false"
         @closed="handleClosed"
     >
         <el-form
             label-width="100px"
             ref="interfaceForm"
+            v-loading="loading"
             :model="form"
             :rules="rules"
-            v-loading="loading"
         >
             <el-form-item
                 label="名称"
@@ -55,7 +55,7 @@
             >
                 <el-input
                     v-model="form.mark"
-                    :readonly="form.interface_id != undefined"
+                    :readonly="!form.interface_id"
                 ></el-input>
             </el-form-item>
             <el-form-item
@@ -63,10 +63,10 @@
                 prop="menus"
             >
                 <el-select
-                    v-model="form.menus"
                     multiple
                     placeholder="请选择所属菜单"
                     class="inherit"
+                    v-model="form.menus"
                 >
                     <el-option
                         v-for="item in menuOption"
@@ -82,10 +82,10 @@
                 prop="roles"
             >
                 <el-select
-                    v-model="form.roles"
                     multiple
                     placeholder="请选择所属角色"
                     class="inherit"
+                    v-model="form.roles"
                     v-default="[form.roles, roleOption, 'role_id', def]"
                 >
                     <el-option
@@ -93,7 +93,7 @@
                         :key="item.role_id"
                         :label="item.name"
                         :value="item.role_id"
-                        :disabled="item.role_id == def"
+                        :disabled="item.role_id === def"
                     >
                     </el-option>
                 </el-select>
@@ -102,15 +102,16 @@
                 prop="disable"
                 label="可见性"
             >
-                <el-radio-group v-model="form.disable">
-                    <el-radio-button label="false">显示</el-radio-button>
-                    <el-radio-button label="true">隐藏</el-radio-button>
-                </el-radio-group>
+                <el-switch
+                    v-model="form.disable"
+                    :active-value="false"
+                    :inactive-value="true"
+                />
             </el-form-item>
             <el-form-item
+                v-if="form.interface_id"
                 label="是否可隐藏"
                 prop="forbid"
-                v-if="form.interface_id == undefined"
             >
                 <el-switch v-model="form.forbid"></el-switch>
             </el-form-item>
@@ -120,144 +121,144 @@
                 <el-button @click="handleClosed">取 消</el-button>
                 <el-button
                     type="primary"
-                    @click="handelInfo('interfaceForm')"
                     :loading="isSubmit"
                     :disabled="btn"
+                    @click="handelInfo('interfaceForm')"
                 >提 交</el-button>
             </span>
         </template>
     </el-dialog>
 </template>
 
-<script>
-
-import * as Vue from 'vue'
+<script setup>
 import { CreateInterface, ModifyInterface } from '@/api/sys.interface'
 import { cloneDeep } from 'lodash'
-// 获取缓存菜单需要
+import { ref, watch } from 'vue'
+import useCurrentInstance from '@/proxy'
 import util from '@/libs/util.js'
-export default {
-    props: {
-        title: String,
-        params: Object,
-        role: Array,
-        centerDialogVisible: Boolean,
-        submit: Boolean,
-        menus: Array,
-        def: String,
-        roles: Array,
-    },
-    data () {
-        return {
-            Visible: this.centerDialogVisible,
-            form: {
-                roles: [],
-            },
-            rules: {
-                name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
-                path: [{ required: true, message: '请输入路由', trigger: 'blur' }],
-                method: [
-                    {
-                        required: true,
-                        message: '请选择请求方式',
-                        trigger: 'change',
-                    },
-                ],
-                description: [
-                    { required: true, message: '请输入描述', trigger: 'blur' },
-                ],
-                mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
-                menus: [
-                    {
-                        required: true,
-                        message: '请选择所属菜单',
-                        trigger: 'change',
-                    },
-                ],
-                roles: [
-                    {
-                        required: true,
-                        message: '请选择所属角色',
-                        trigger: 'change',
-                    },
-                ],
-            },
-            isSubmit: false,
-            loading: false,
-            methodOption: [
-                { label: 'GET', value: 'GET' },
-                { label: 'POST', value: 'POST' },
-                { label: 'PUT', value: 'PUT' },
-                { label: 'DELETE', value: 'DELETE' },
-            ],
-            menuOption: [],
-            roleOption: [],
-            btn: this.submit,
+
+const { proxy } = useCurrentInstance()
+const props = defineProps({
+    title: String,
+    params: Object,
+    role: Array,
+    centerDialogVisible: Boolean,
+    submit: Boolean,
+    menus: Array,
+    def: String,
+    roles: Array
+})
+const emits = defineEmits(['callback', 'handleClose'])
+const rules = {
+    name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+    path: [{ required: true, message: '请输入路由', trigger: 'blur' }],
+    method: [
+        {
+            required: true,
+            message: '请选择请求方式',
+            trigger: 'change'
+        }
+    ],
+    description: [
+        { required: true, message: '请输入描述', trigger: 'blur' }
+    ],
+    mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
+    menus: [
+        {
+            required: true,
+            message: '请选择所属菜单',
+            trigger: 'change'
+        }
+    ],
+    roles: [
+        {
+            required: true,
+            message: '请选择所属角色',
+            trigger: 'change'
+        }
+    ]
+}
+const methodOption = [
+    { label: 'GET', value: 'GET' },
+    { label: 'POST', value: 'POST' },
+    { label: 'PUT', value: 'PUT' },
+    { label: 'DELETE', value: 'DELETE' }
+]
+const Visible = ref(false)
+const isSubmit = ref(false)
+const loading = ref(false)
+const btn = ref(false)
+const menuOption = ref([])
+const roleOption = ref([])
+const form = ref({
+    roles: []
+})
+
+watch(
+    () => props.centerDialogVisible,
+    (val) => {
+        Visible.value = val
+        if (val) {
+            menuOption.value = props.menus
+            roleOption.value = props.roles
+            form.value = cloneDeep(props.params)
+            setTimeout(() => {
+                proxy.$refs.interfaceForm.clearValidate()
+            })
         }
     },
-    watch: {
-        centerDialogVisible (value) {
-            this.Visible = value
-            this.$nextTick(() => {
-                this.$refs.interfaceForm.clearValidate()
-            })
-        },
-        submit (newVal) {
-            this.btn = newVal
-        },
-        params (value) {
-            this.menuOption = this.menus
-            this.roleOption = this.roles
-            this.$nextTick(() => {
-                this.form = cloneDeep(value)
-            })
-        },
-    },
-    methods: {
-        handelInfo (formName) {
-            this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    this.isSubmit = true
-                    let params = this.form,
-                        interfaces = cloneDeep(this.$store.getters['user/interfaces'])
+    { immediate: true }
+)
 
-                    if (this.form.interface_id) {
-                        ModifyInterface(params)
-                            .then(async (res) => {
-                                interfaces.map((i, index) => {
-                                    if (i.interface_id == params.interface_id)
-                                        return (interfaces[index] = params)
-                                })
-                                util.initInterface(interfaces)
-                                this.handleInitParent(1)
-                            })
-                            .catch(() => {
-                                this.isSubmit = false
-                            })
-                    } else {
-                        CreateInterface(params)
-                            .then(async (res) => {
-                                interfaces.push(res)
-                                util.initInterface(interfaces)
-                                this.handleInitParent(2)
-                            })
-                            .catch(() => {
-                                this.isSubmit = false
-                            })
-                    }
-                }
-            })
-        },
-        handleInitParent (type) {
-            this.$message.success(type == 1 ? '接口编辑成功' : '接口创建成功')
-            $emit(this, 'callback', true)
-            this.isSubmit = false
-        },
-        handleClosed () {
-            $emit(this, 'handleClose', false)
-        },
+watch(
+    () => props.submit,
+    (val) => {
+        btn.value = val
     },
-    emits: ['callback', 'handleClose'],
+    { immediate: true }
+)
+
+function handelInfo (formName) {
+    proxy.$refs[formName].validate((valid) => {
+        if (valid) {
+            isSubmit.value = true
+            let interfaces = cloneDeep(store.getters['user/interfaces'])
+
+            if (form.value.interface_id) {
+                ModifyInterface(form.value)
+                    .then(async (res) => {
+                        interfaces.map((i, index) => {
+                            if (i.interface_id === form.value.interface_id) return interfaces[index] = form.value
+                        })
+                        util.initInterface(interfaces)
+                        handleInitParent('接口编辑成功')
+                    })
+                    .catch(() => {
+                        isSubmit.value = false
+                    })
+            } else {
+                CreateInterface(form.value)
+                    .then(async (res) => {
+                        interfaces.push(res)
+                        util.initInterface(interfaces)
+                        handleInitParent('接口创建成功')
+                    })
+                    .catch(() => {
+                        isSubmit.value = false
+                    })
+            }
+        }
+    })
+}
+
+function handleInitParent (title) {
+    proxy.$message.success(title)
+    emits('callback', true)
+    isSubmit.value = false
+}
+
+function handleClosed () {
+    emits('handleClose', false)
 }
 </script>
 

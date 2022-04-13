@@ -4,55 +4,54 @@
             <div>
                 <el-button
                     type="primary"
-                    :icon="ElIconPlus"
-                    circle
-                    @click="addAdmin(auth.add)"
                     title="新增"
+                    circle
                     v-auth:add_admin
+                    :icon="Plus"
+                    @click="editAdmin(auth.add)"
                 >
                 </el-button>
                 <el-button
                     type="success"
-                    :icon="ElIconCheck"
-                    circle
-                    @click="lockAdmin(admin_id, false)"
                     title="显示"
+                    circle
+                    :icon="Check"
                     :disabled="auth.lock_all"
+                    @click="lockAdmin(admin_id, false)"
                 >
                 </el-button>
                 <el-button
                     type="info"
-                    :icon="ElIconFa faBan"
-                    circle
-                    @click="lockAdmin(admin_id, true)"
                     title="隐藏"
+                    circle
+                    :icon="Close"
                     :disabled="auth.lock_all"
+                    @click="lockAdmin(admin_id, true)"
                 ></el-button>
                 <el-button
                     type="danger"
-                    :icon="ElIconDelete"
-                    circle
-                    @click="delAdmin(admins)"
                     title="删除"
+                    circle
+                    :icon="Delete"
                     :disabled="auth.del_all"
+                    @click="delAdmin(admins)"
                 ></el-button>
                 <el-button
-                    :icon="ElIconRefreshRight"
-                    @click="init"
-                    circle
                     title="刷新"
+                    circle
+                    :icon="RefreshRight"
+                    @click="init"
                 ></el-button>
 
                 <el-form
-                    :inline="true"
+                    inline
                     class="form-right"
                 >
                     <el-form-item>
                         <el-select
-                            v-model="lock"
+                            v-model="search.lock"
                             placeholder="管理员状态"
                             clearable
-                            :clear="clearLock"
                         >
                             <el-option
                                 v-for="item in lockOption"
@@ -65,10 +64,9 @@
                     </el-form-item>
                     <el-form-item>
                         <el-select
-                            v-model="role"
+                            v-model="search.role"
                             placeholder="角色"
                             clearable
-                            :clear="clearRole"
                         >
                             <el-option
                                 v-for="item in roleOption"
@@ -81,10 +79,10 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button
-                            :icon="ElIconSearch"
-                            :loading="loading"
                             type="primary"
-                            @click="changeAdmin"
+                            :icon="Search"
+                            :loading="loading"
+                            @click="init()"
                         >搜索</el-button>
                     </el-form-item>
                 </el-form>
@@ -92,17 +90,17 @@
         </template>
 
         <el-table
-            :data="adminData"
             style="width: 100%"
             type="ghost"
             v-loading="loading"
+            :data="adminData"
             @select="changeSelect"
             @select-all="changeSelect"
         >
             <el-table-column
                 type="selection"
                 width="55"
-                :selectable="isSelect"
+                :selectable="isAdmin"
             >
             </el-table-column>
             <el-table-column
@@ -116,9 +114,9 @@
                 label="角色名"
                 align="center"
             >
-                <template v-slot="scope">
+                <template #default="scope">
                     <el-tag
-                        type="primary"
+                        effect="dark"
                         v-html="getRoleName(scope.row.role_id)"
                     ></el-tag>
                 </template>
@@ -128,24 +126,12 @@
                 label="可见性"
                 align="left"
             >
-                <template v-slot="scope">
-                    <el-radio-group
-                        v-model="scope.row.disable"
-                        v-if="isSelect(scope.row)"
-                        :disabled="auth.lock"
-                        @change="
-              (label) => {
-                lockAdmin([scope.row.admin_id], label, scope.row)
-              }
-            "
-                    >
-                        <el-radio-button :label="false">显示</el-radio-button>
-                        <el-radio-button :label="true">隐藏</el-radio-button>
-                    </el-radio-group>
+                <template #default="scope">
                     <el-button
-                        type="primary"
-                        v-else
-                    >显示</el-button>
+                        :type="scope.row.disable ? 'info' : 'success'"
+                        :disabled="auth.lock"
+                        @click="handleRowLock(scope.row)"
+                    >{{scope.row.disable ? '隐藏' : '显示'}}</el-button>
                 </template>
             </el-table-column>
             <el-table-column
@@ -165,23 +151,22 @@
                 label="操作"
                 align="center"
             >
-                <template
-                    v-if="isSelect(scope.row)"
-                    v-slot="scope"
-                >
+                <template #default="scope">
                     <el-button
-                        :icon="ElIconEdit"
+                        v-if="isAdmin(scope.row)"
                         circle
-                        @click="editAdmin(scope.row, auth.set)"
                         title="编辑"
+                        :icon="Edit"
+                        @click="editAdmin(auth.set, scope.row)"
                     ></el-button>
                     <el-button
-                        type="danger"
-                        :icon="ElIconDelete"
+                        v-if="isAdmin(scope.row)"
                         circle
-                        @click="delAdmin([scope.row], false)"
                         title="删除"
+                        type="danger"
+                        :icon="Delete"
                         :disabled="auth.del"
+                        @click="delAdmin([scope.row], false)"
                     >
                     </el-button>
                 </template>
@@ -198,215 +183,213 @@
             ></Pagination>
         </template>
 
-        <Info
-            ref="adminData"
+        <Admin
+            ref="admin"
             :title="title"
             :params="params"
             :role="roleParams"
-            :isTab="false"
-            :submit="btn_submit"
+            :isAdmin="false"
+            :submit="btnSubmit"
             :centerDialogVisible="centerDialogVisible"
             @handleClose="handleClose"
             @callback="init"
-        ></Info>
+        ></Admin>
     </admin-container>
 </template>
 
-<script>
-import * as Vue from 'vue'
+<script setup>
+import {
+    RefreshRight,
+    Plus,
+    Check,
+    Close,
+    Delete,
+    Edit,
+    Search
+} from '@element-plus/icons-vue'
 import { QueryAdminByParam, LockAdmin, DelAdmin } from '@/api/sys.user'
 import { QueryRoleByParam } from '@/api/sys.role'
-import Info from './info.vue'
+import { ref, reactive, onMounted } from 'vue'
+import { cloneDeep } from 'lodash'
+import Admin from './info.vue'
 import Pagination from '@/layout/pages/pagination/index.vue'
 import setting from '@/setting.js'
-export default {
-    name: 'AdminPage',
-    components: { Info, Pagination },
-    data () {
-        return {
-            adminData: [],
-            page: 1,
-            total: 0,
-            size: 20,
-            lock: '',
-            disable: '',
-            role: '',
-            isRole: '',
-            roleOption: [],
-            roleParams: [],
-            lockOption: [
-                { label: '显示', value: 'false' },
-                { label: '隐藏', value: 'true' },
-            ],
-            loading: false,
-            title: '',
-            params: {},
-            centerDialogVisible: false,
-            admin_id: [],
-            admins: [],
-            btn_submit: false,
-            auth: {
-                add: false,
-                del: this.$auth('del_admin'),
-                lock: this.$auth('lock_admin'),
-                set: this.$auth('set_admin'),
-                del_all: true,
-                lock_all: true,
-            },
-            auth_all: {
-                del: this.$auth('del_admin'),
-                lock: this.$auth('lock_admin'),
-            },
-        }
-    },
-    created () {
-        this.getRoleList()
-    },
-    methods: {
-        init (isTrue) {
-            this.changeSelect([])
+import useCurrentInstance from '@/proxy'
 
-            if (isTrue) this.centerDialogVisible = false
-            let params = {
-                page: this.page,
-                page_size: this.size,
-            }
-            if (this.disable != '') params['disable'] = this.disable
-            if (this.isRole != '') params['role_id'] = this.isRole
+const { proxy } = useCurrentInstance()
 
-            this.loading = true
-            QueryAdminByParam(params)
-                .then(async (res) => {
-                    this.total = res.total
-                    this.adminData = res.data
-                    this.loading = false
-                })
-                .catch(() => {
-                    this.loading = false
-                })
-        },
-        getRoleList () {
-            QueryRoleByParam({
-                disable: false,
-            }).then(async (res) => {
-                this.roleParams = res
-                this.roleOption = res.map((i) => {
-                    return { label: i.name, value: i.role_id }
-                })
-                this.init()
-            })
-        },
-        getRoleName (role_id) {
-            let item = this.roleOption.find((i) => {
-                return i.value == role_id
-            })
-            return item ? item.label : '未选择角色'
-        },
-        handleSize (size) {
-            this.size = size
-            this.page = 1
-            this.init()
-        },
-        handleCurrent (page) {
-            this.page = page
-            this.init()
-        },
-        changeAdmin () {
-            this.disable = this.lock
-            this.isRole = this.role
-            this.init()
-        },
-        clearLock () {
-            this.lock = ''
-        },
-        clearRole () {
-            this.role = ''
-        },
-        isSelect (row) {
-            return row.username != setting.SYS_ADMIN.name
-        },
-        handleClose () {
-            this.centerDialogVisible = false
-        },
-        changeSelect (selection) {
-            this.admin_id = selection.map((i) => {
-                return i.admin_id
-            })
-
-            this.admins = []
-            selection.forEach((i) => {
-                this.admins.push({
-                    role_id: i.role_id,
-                    admin_id: i.admin_id,
-                })
-            })
-
-            for (let i in this.auth_all) {
-                if (!this.auth_all[i]) this.auth[i + '_all'] = this.admin_id.length == 0
-            }
-        },
-        addAdmin (disabled) {
-            this.btn_submit = disabled
-            this.title = '新建管理员'
-            this.params = {
-                sex: 1,
-                disable: false,
-            }
-            this.centerDialogVisible = true
-        },
-        editAdmin (params, disabled) {
-            this.btn_submit = disabled
-            this.title = '编辑管理员'
-            this.params = params
-            this.centerDialogVisible = true
-        },
-        lockAdmin (keys, disable, row) {
-            if (keys.length == 0) return this.$message.warning('未选择任何记录')
-
-            this.$confirm(
-                disable ? '确定要隐藏该管理员吗' : '确定要显示该管理员吗',
-                disable ? '隐藏管理员' : '显示管理员',
-                {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning',
-                }
-            )
-                .then(() => {
-                    this.Lock(keys, disable)
-                })
-                .catch(() => {
-                    if (row) row.disable = !disable
-                })
-        },
-        Lock (keys, disable) {
-            LockAdmin({
-                admin_id: keys,
-                disable: disable,
-            }).then(async (res) => {
-                this.init()
-            })
-        },
-        delAdmin (admins) {
-            if (admins.length == 0) return this.$message.warning('未选择任何记录')
-
-            this.$confirm('确定要删除该管理员吗', '删除管理员', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-            }).then(() => {
-                DelAdmin({
-                    admin_id: admins.map((i) => {
-                        return i.admin_id
-                    }),
-                }).then(async (res) => {
-                    this.$message.success('删除管理员成功')
-                    this.init()
-                })
-            })
-        },
-    },
+const lockOption = [
+    { label: '显示', value: 'false' },
+    { label: '隐藏', value: 'true' }
+]
+const auth = reactive({
+    add: false,
+    del: proxy.$auth('del_admin'),
+    lock: proxy.$auth('lock_admin'),
+    set: proxy.$auth('set_admin'),
+    del_all: true,
+    lock_all: true
+})
+const auth_all = {
+    del: proxy.$auth('del_admin'),
+    lock: proxy.$auth('lock_admin')
 }
+
+const adminData = ref([])
+const roleOption = ref([])
+const roleParams = ref([])
+const admin_id = ref([])
+const admins = ref([])
+const params = ref({})
+const page = ref(1)
+const total = ref(0)
+const size = ref(20)
+const search = reactive({
+    lock: '',
+    role: ''
+})
+const title = ref('')
+const loading = ref(false)
+const centerDialogVisible = ref(false)
+const btnSubmit = ref(false)
+
+function init (visible) {
+    changeSelect([])
+
+    if (visible) centerDialogVisible.value = false
+
+    let params = {
+        page: page.value,
+        page_size: size.value,
+    }
+    if (search.lock !== '') params['disable'] = search.lock
+    if (search.role !== '') params['role_id'] = search.role
+
+    loading.value = true
+    QueryAdminByParam(params)
+        .then(async (res) => {
+            total.value = res.total
+            adminData.value = res.data
+            loading.value = false
+        })
+        .catch(() => {
+            loading.value = false
+        })
+}
+
+function getRoleList () {
+    QueryRoleByParam({
+        disable: false,
+    }).then(async (res) => {
+        roleParams.value = res
+        roleOption.value = res.map((i) => {
+            return { label: i.name, value: i.role_id }
+        })
+        init()
+    })
+}
+
+function getRoleName (role_id) {
+    const item = roleOption.value.find((i) => { return i.value == role_id })
+    return item ? item.label : '未选择角色'
+}
+
+function handleSize (size) {
+    size.value = size
+    page.value = 1
+    init()
+}
+
+function handleCurrent (page) {
+    page.value = page
+    init()
+}
+
+function isAdmin (row) {
+    return row.username !== setting.SYS_ADMIN.name
+}
+
+function handleClose () {
+    centerDialogVisible.value = false
+}
+
+function changeSelect (selection) {
+    admin_id.value = selection.map((i) => { return i.admin_id })
+    admins.value = selection.map((i) => {
+        return {
+            role_id: i.role_id,
+            admin_id: i.admin_id
+        }
+    })
+
+    for (let i in auth_all) {
+        if (!auth_all[i]) auth[i + '_all'] = admin_id.value.length === 0
+    }
+}
+
+function editAdmin (disabled, row) {
+    btnSubmit.value = disabled
+    title.value = params ? '编辑管理员' : '新建管理员'
+    params.value = row ? cloneDeep(row) : {
+        sex: 1,
+        disable: false
+    }
+    centerDialogVisible.value = true
+}
+
+function handleRowLock (row) {
+    if (!isAdmin(row)) return true
+
+    lockAdmin([row.admin_id], row.disable ? false : true)
+}
+
+function lockAdmin (keys, disable) {
+    if (keys.length == 0) return proxy.$message.warning('未选择任何记录')
+
+    proxy.$confirm(
+        disable ? '确定要隐藏该管理员吗' : '确定要显示该管理员吗',
+        disable ? '隐藏管理员' : '显示管理员',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }
+    )
+        .then(() => {
+            Lock(keys, disable)
+        })
+        .catch()
+}
+
+function Lock (keys, disable) {
+    LockAdmin({
+        admin_id: keys,
+        disable: disable
+    }).then(async (res) => {
+        init()
+    })
+}
+
+function delAdmin (admins) {
+    if (admins.length == 0) return proxy.$message.warning('未选择任何记录')
+
+    proxy.$confirm('确定要删除该管理员吗', '删除管理员', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+    }).then(() => {
+        DelAdmin({
+            admin_id: admins.map((i) => { return i.admin_id })
+        }).then(async (res) => {
+            proxy.$message.success('删除管理员成功')
+            init()
+        })
+    })
+}
+
+onMounted(() => {
+    getRoleList()
+})
 </script>
 
 <style scoped>
@@ -415,6 +398,7 @@ export default {
 }
 .el-form-item.el-form-item {
     margin-bottom: 0;
+    margin-right: 16px;
 }
 .el-form--inline .el-form-item:last-child {
     margin-right: 0;

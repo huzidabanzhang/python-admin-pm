@@ -218,7 +218,7 @@ watch(
         Visible.value = val
         if (val) {
             roleOption.value = props.role.map((i) => {
-                if (i.mark == setting.SYS_ADMIN.mark) i.disabled = true
+                if (i.mark === setting.SYS_ADMIN.mark) i.disabled = true
                 return i
             })
 

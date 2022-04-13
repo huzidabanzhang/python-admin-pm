@@ -10,40 +10,42 @@ import pluginOpen from '@/plugin/open'
 import premission from '@/plugin/premission'
 
 export default {
-    async install (Vue, options) {
+    async install (app) {
         // 注册全局组件
-        installComponent(Vue)
+        installComponent(app)
 
-        Vue.config.productionTip = false
+        app.config.productionTip = false
         // 当前环境
-        Vue.config.globalProperties.$env = import.meta.env.MODE
+        app.config.globalProperties.$env = import.meta.env.MODE
         // 当前的 baseUrl
-        Vue.config.globalProperties.$baseUrl = import.meta.env.BASE_URL
+        app.config.globalProperties.$baseUrl = import.meta.env.BASE_URL
         // 当前版本
-        Vue.config.globalProperties.$version = import.meta.env.VITE_APP_VERSION
+        app.config.globalProperties.$version = import.meta.env.VITE_APP_VERSION
         // 构建时间
-        Vue.config.globalProperties.$buildTime = import.meta.env.VITE_APP_BUILD_TIME
+        app.config.globalProperties.$buildTime = import.meta.env.VITE_APP_BUILD_TIME
         // 加载框
-        Vue.config.globalProperties.loadOption = (
+        app.config.globalProperties.loadOption = (
             title,
             dom = document.body,
-            spinner = true,
             background = true
         ) => {
             return {
                 lock: true,
                 text: title,
                 target: dom,
-                spinner: spinner ? 'el-icon-loading' : '',
-                background: background ? 'rgba(0, 0, 0, 0.7)' : '',
+                background: background ? 'rgba(0, 0, 0, 0.7)' : ''
             }
         }
+        // 全局错误捕捉
+        app.config.errorHandler = (err, vm, info) => {
+            console.log('[全局异常]', err, vm, info)
+        }
         // Element
-        Vue.use(ElementPlus)
+        app.use(ElementPlus)
         // 插件
-        Vue.use(pluginError)
-        Vue.use(pluginLog)
-        Vue.use(pluginOpen)
-        Vue.use(premission)
+        app.use(pluginError)
+        app.use(pluginLog)
+        app.use(pluginOpen)
+        app.use(premission)
     },
 }

@@ -1,15 +1,85 @@
 <template>
     <admin-container class="page">
+        <el-calendar
+            ref="calendar"
+            v-model="time"
+        >
+            <template #dateCell="{ data }">
+                <div>{{ data.day.split('-').slice(1).join('-') }}</div>
+                <span
+                    v-for="(item, index) in info[data.day]"
+                    :key="index"
+                    class="calendar_span"
+                >
+                    {{item.name}}登录了{{item.count}}次
+                </span>
+            </template>
+        </el-calendar>
     </admin-container>
 </template>
 
-<script>
-export default {
-    data () {
-        return {
-        }
-    }
+<script setup>
+import { GetLoginInfo } from '@api/sys.base'
+import { computed, ref, onMounted, nextTick } from 'vue'
+import { useStore } from 'vuex'
+import useCurrentInstance from '@/proxy'
+
+const { proxy } = useCurrentInstance()
+const store = useStore()
+const user = computed(() => store.getters['user/user'])
+const info = ref({})
+const time = ref(new Date())
+
+function init (time) {
+    let loadingInstance = proxy.$loading({
+        lock: true,
+        target: proxy.$refs.calendar.$el
+    })
+
+    GetLoginInfo({
+        time: time,
+        admin_id: user.value.admin_id
+    })
+        .then(res => {
+            info.value = res
+            loadingInstance.close()
+        })
+        .catch(() => {
+            loadingInstance.close()
+        })
 }
+
+function getDate (time) {
+    return time.getFullYear() + '-' + (time.getMonth() + 1)
+}
+
+onMounted(() => {
+    init(getDate(time.value))
+
+    nextTick(() => {
+        // 点击前一个月
+        let prevBtn = document.querySelector(
+            '.el-calendar__button-group .el-button-group>button:nth-child(1)')
+
+        let nextBtn = document.querySelector(
+            '.el-calendar__button-group .el-button-group>button:last-child')
+
+        let nowBtn = document.querySelector(
+            '.el-calendar__button-group .el-button-group>button:nth-child(2)')
+
+        prevBtn.addEventListener('click', () => {
+            init(getDate(time.value))
+        })
+
+        nextBtn.addEventListener('click', () => {
+            init(getDate(time.value))
+        })
+
+        nowBtn.addEventListener('click', () => {
+            init(getDate(time.value))
+        })
+    })
+})
 </script>
 
 <style lang="scss" scoped>

@@ -3,37 +3,37 @@
         <template v-slot:header>
             <div>
                 <el-button
-                    type="primary"
-                    :icon="ElIconPlus"
                     circle
-                    @click="addMenu(true)"
+                    type="primary"
                     title="新增"
+                    :icon="Plus"
                     :disabled="auth.add"
                     v-auth:add_menu
+                    @click="getMenuItem()"
                 >
                 </el-button>
                 <el-button
-                    :icon="ElIconRefreshRight"
-                    @click="init"
                     circle
                     title="刷新"
+                    :icon="RefreshRight"
+                    @click="init()"
                 ></el-button>
             </div>
         </template>
 
         <el-tree
-            :data="menuData"
-            :props="tree_prop"
+            v-loading="loading"
             node-key="menu_id"
             default-expand-all
+            :data="menuData"
+            :props="tree_prop"
             :expand-on-click-node="false"
             @node-click="getMenuItem"
-            v-loading="loading"
         >
-            <template v-slot="{ node, data }">
+            <template #default="{ node, data }">
                 <span
-                    :class="!data.disable ? '' : 'disabled'"
                     class="custom-tree-node"
+                    :class="{disable: data.disable}"
                 >
                     <span class="label"><i :class="'fa fa-' + data.icon"></i>{{ node.label }}</span>
                 </span>
@@ -46,14 +46,14 @@
         >
             <template v-slot:header>
                 <div class="clearfix">
-                    <span>{{ isAdd == true ? '新建菜单' : '编辑菜单' }}</span>
+                    <span>{{ !form.menu_id ? '新建菜单' : '编辑菜单' }}</span>
                 </div>
             </template>
             <el-form
+                ref="SYSMENU"
                 label-width="80px"
                 :model="form"
                 :rules="rules"
-                ref="SYSMENU"
             >
                 <el-form-item
                     label="图标"
@@ -79,7 +79,7 @@
                 >
                     <el-input
                         v-model="form.mark"
-                        :readonly="!isAdd"
+                        :readonly="!form.menu_id"
                     ></el-input>
                 </el-form-item>
                 <el-form-item
@@ -87,18 +87,17 @@
                     prop="roles"
                 >
                     <el-select
-                        v-model="form.roles"
                         multiple
                         placeholder="请选择"
-                        style="width: 100%"
-                        v-default="[form.roles, roleData, 'role_id', role_default]"
+                        v-model="form.roles"
+                        v-default="[form.roles, roleData, 'role_id', roleDefault]"
                     >
                         <el-option
                             v-for="item in roleData"
                             :key="item.role_id"
                             :label="item.name"
                             :value="item.role_id"
-                            :disabled="item.role_id == role_default"
+                            :disabled="item.role_id === roleDefault"
                         >
                         </el-option>
                     </el-select>
@@ -137,22 +136,22 @@
                     prop="cache"
                     label="路由缓存"
                 >
-                    <el-radio-group v-model="form.cache">
-                        <el-radio-button label="true">是</el-radio-button>
-                        <el-radio-button label="false">否</el-radio-button>
-                    </el-radio-group>
+                    <el-switch
+                        v-model="form.cache"
+                        :active-value="true"
+                        :inactive-value="false"
+                    />
                 </el-form-item>
                 <el-form-item
                     prop="disable"
                     label="可见性"
                 >
-                    <el-radio-group
+                    <el-switch
                         v-model="form.disable"
                         :disabled="!isHidden(form.mark)"
-                    >
-                        <el-radio-button label="false">显示</el-radio-button>
-                        <el-radio-button label="true">隐藏</el-radio-button>
-                    </el-radio-group>
+                        :active-value="false"
+                        :inactive-value="true"
+                    />
                 </el-form-item>
                 <el-form-item
                     label="排序"
@@ -163,53 +162,52 @@
                         :min="1"
                     ></el-input-number>
                 </el-form-item>
-                <el-form-item v-if="isAdd">
+                <el-form-item v-if="!form.menu_id">
                     <el-button
                         type="primary"
-                        :icon="ElIconCheck"
-                        @click="submit('SYSMENU')"
+                        :icon="Check"
                         :disabled="auth.add"
                         v-auth:add_menu
-                    >保存
-                    </el-button>
+                        @click="submit('SYSMENU')"
+                    >保 存</el-button>
                 </el-form-item>
+
                 <el-form-item v-else>
                     <el-button
                         type="primary"
-                        :icon="ElIconCheck"
-                        @click="submit('SYSMENU')"
+                        :icon="Check"
                         :disabled="auth.set"
                         v-auth:set_menu
-                    >保存
-                    </el-button>
+                        @click="submit('SYSMENU')"
+                    >保 存</el-button>
                     <el-button
                         v-if="isHidden(form.mark)"
                         type="danger"
-                        :icon="ElIconDelete"
-                        @click="delMenu(form.menu_id)"
+                        :icon="Delete"
                         :disabled="auth.del"
                         v-auth:del_menu
-                    >删除</el-button>
+                        @click="delMenu(form.menu_id)"
+                    >删 除</el-button>
                     <el-button
-                        :icon="ElIconDocumentCopy"
+                        :icon="DocumentCopy"
                         @click="copy_this"
-                    >复制
+                    >复 制
                     </el-button>
                     <el-button
-                        :icon="ElIconPosition"
-                        @click="getMenuToInterface(form.title, form.menu_id)"
+                        :icon="Position"
                         :disabled="auth.interface"
                         v-auth:interface_menu
+                        @click="getMenuToInterface(form.title, form.menu_id)"
                     >关联接口</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
 
         <el-dialog
+            ref="menuToInter"
+            width="1000px"
             :title="dialogTitle"
             v-model="dialogTableVisible"
-            ref="menuToInter"
-            width="800px"
         >
             <el-table
                 :data="interfaceData"
@@ -243,8 +241,9 @@
                     prop="mark"
                     label="标识"
                     align="left"
+                    width="150"
                 >
-                    <template v-slot="scope">
+                    <template #default="scope">
                         <el-tag>{{ scope.row.mark }}</el-tag>
                     </template>
                 </el-table-column>
@@ -252,15 +251,16 @@
                     prop="disable"
                     label="可见性"
                     align="center"
+                    width="100"
                 >
-                    <template v-slot="scope">
+                    <template #default="scope">
                         <el-tag
-                            type="success"
                             v-if="!scope.row.disable"
+                            type="success"
                         >显示</el-tag>
                         <el-tag
-                            type="info"
                             v-else
+                            type="info"
                         >隐藏</el-tag>
                     </template>
                 </el-table-column>
@@ -269,226 +269,207 @@
     </admin-container>
 </template>
 
-<script>
+<script setup>
 import {
-    Plus as ElIconPlus,
-    RefreshRight as ElIconRefreshRight,
-    Check as ElIconCheck,
-    Delete as ElIconDelete,
-    DocumentCopy as ElIconDocumentCopy,
-    Position as ElIconPosition,
-} from '@element-plus/icons'
-import * as Vue from 'vue'
+    Plus,
+    RefreshRight,
+    Check,
+    Delete,
+    DocumentCopy,
+    Position
+} from '@element-plus/icons-vue'
 import {
     QueryMenuByParam,
     CreateMenu,
     ModifyMenu,
     LockMenu,
     DelMenu,
-    GetMenuToInterface,
+    GetMenuToInterface
 } from '@/api/sys.menu'
 import { QueryRoleByParam } from '@/api/sys.role'
 import { cloneDeep } from 'lodash'
+import { ref, reactive, onMounted } from 'vue'
 import util from '@/libs/util.js'
 import setting from '@/setting.js'
-export default {
-    data () {
-        return {
-            menuData: [],
-            treeData: [],
-            roleData: [],
-            loading: false,
-            form: {
-                cache: true,
-                disable: false,
-                sort: 1,
-                roles: [],
-            },
-            role_default: null,
-            lock: '',
-            disable: '',
-            tree_prop: {
-                label: 'title',
-                children: 'children',
-            },
-            isAdd: true,
-            menu_prop: {
-                value: 'menu_id',
-                label: 'title',
-                emitPath: false,
-                checkStrictly: true,
-            },
-            rules: {
-                title: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
-                name: [{ required: true, message: '请输入路由名称', trigger: 'blur' }],
-                mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
-                path: [{ required: true, message: '请输入路径', trigger: 'blur' }],
-                sort: [
-                    { required: true, message: '请输入排序', trigger: 'blur' },
-                    { type: 'number', message: '排序必须为数字值' },
-                ],
-                icon: [{ required: true, message: '请选择图标', trigger: 'blur' }],
-                component: [
-                    { required: true, message: '请输入路由组件', trigger: 'blur' },
-                ],
-                componentPath: [
-                    { required: true, message: '请输入组件路径', trigger: 'blur' },
-                ],
-                cache: [{ required: true, message: '请选择路由缓存', trigger: 'blur' }],
-                roles: [{ required: true, message: '请选择角色', trigger: 'blur' }],
-            },
-            formLoad: false,
-            isSubmit: false,
-            dialogTableVisible: false,
-            interfaceData: [],
-            dialogTitle: '',
-            dialogLoading: false,
-            auth: {
-                add: false,
-                set: false,
-                interface: false,
-                del: false,
-            },
-            ElIconPlus,
-            ElIconRefreshRight,
-            ElIconCheck,
-            ElIconDelete,
-            ElIconDocumentCopy,
-            ElIconPosition,
-        }
-    },
-    name: 'MenuPage',
-    mounted () {
-        this.init()
-    },
-    methods: {
-        init (isTrue) {
-            let params = {}
-            if (this.disable != '') params['disable'] = this.disable
-            this.loading = true
-            QueryMenuByParam(params)
-                .then(async (res) => {
-                    this.menuData = util.getMenuTree(false, cloneDeep(res))
-                    this.treeData = cloneDeep(this.menuData)
-                    this.loading = false
-                    // 更新当前路由
-                    if (isTrue == true) util.initMenu(res, true)
-                })
-                .catch(() => {
-                    this.loading = false
-                })
+import useCurrentInstance from '@/proxy'
 
-            QueryRoleByParam({
-                is_default: true,
-            })
-                .then(async (res) => {
-                    this.roleData = res['data']
-                    this.role_default = res['default']
+const { proxy } = useCurrentInstance()
 
-                    this.addMenu(false)
-                })
-                .catch(() => {
-                    this.addMenu(false)
-                })
-        },
-        isHidden (mark) {
-            return !setting.hidden_menu.some((i) => {
-                return i == mark
-            })
-        },
-        submit (formName) {
-            this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    this.formLoad = true
-                    if (this.form.pid == null) this.form.pid = '0'
-                    if (this.form.menu_id) {
-                        ModifyMenu(this.form)
-                            .then(async (res) => {
-                                this.handleInitParent(1)
-                            })
-                            .catch(() => {
-                                this.formLoad = false
-                            })
-                    } else {
-                        CreateMenu(this.form)
-                            .then(async (res) => {
-                                this.handleInitParent(2)
-                            })
-                            .catch(() => {
-                                this.formLoad = false
-                            })
-                    }
-                }
-            })
-        },
-        copy_this () {
-            delete this.form['menu_id']
-            this.$refs['SYSMENU'].clearValidate()
-            this.isAdd = true
-        },
-        handleInitParent (type) {
-            this.$message.success(type == 1 ? '菜单编辑成功' : '菜单创建成功')
-            this.formLoad = false
-            this.init(true)
-        },
-        addMenu (isClear) {
-            this.form = {
-                cache: true,
-                disable: false,
-                sort: 1,
-                roles: this.role_default == null ? [] : [this.role_default],
-            }
-            this.treeData = cloneDeep(this.menuData)
-            if (isClear) this.$refs['SYSMENU'].clearValidate()
-            this.isAdd = true
-        },
-        getMenuItem (data) {
-            this.form = cloneDeep(data)
-            this.treeData = cloneDeep(this.menuData)
-            this.disabledMenu(this.form, this.treeData)
-            this.$refs['SYSMENU'].clearValidate()
-            this.isAdd = false
-        },
-        disabledMenu (item, data) {
-            data.map((i) => {
-                if (i.menu_id == item.menu_id) i.disabled = true
-                if (i.children) this.disabledMenu(item, i.children)
-            })
-        },
-        delMenu (menu_id) {
-            this.$confirm(
-                '删除后子菜单将自动到根菜单下，确定删除该菜单吗',
-                '删除菜单',
-                {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning',
-                }
-            ).then(() => {
-                DelMenu({
-                    menu_id: menu_id,
-                }).then(async (res) => {
-                    this.init(true)
-                })
-            })
-        },
-        getMenuToInterface (title, menu_id) {
-            this.dialogTitle = title + '关联接口'
-            this.dialogTableVisible = true
-            this.dialogLoading = true
-            GetMenuToInterface({
-                menu_id: menu_id,
-            })
-                .then(async (res) => {
-                    this.interfaceData = res
-                    this.dialogLoading = false
-                })
-                .catch(() => {
-                    this.dialogLoading = false
-                })
-        },
-    },
+const tree_prop = {
+    label: 'title',
+    children: 'children'
 }
+const menu_prop = {
+    value: 'menu_id',
+    label: 'title',
+    emitPath: false,
+    checkStrictly: true
+}
+const rules = {
+    title: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
+    name: [{ required: true, message: '请输入路由名称', trigger: 'blur' }],
+    mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
+    path: [{ required: true, message: '请输入路径', trigger: 'blur' }],
+    sort: [
+        { required: true, message: '请输入排序', trigger: 'blur' },
+        { type: 'number', message: '排序必须为数字值' },
+    ],
+    icon: [{ required: true, message: '请选择图标', trigger: 'blur' }],
+    component: [
+        { required: true, message: '请输入路由组件', trigger: 'blur' },
+    ],
+    componentPath: [
+        { required: true, message: '请输入组件路径', trigger: 'blur' },
+    ],
+    cache: [{ required: true, message: '请选择路由缓存', trigger: 'blur' }],
+    roles: [{ required: true, message: '请选择角色', trigger: 'blur' }]
+}
+const auth = reactive({
+    add: false,
+    set: false,
+    interface: false,
+    del: false
+})
+const menuData = ref([])
+const treeData = ref([])
+const roleData = ref([])
+const interfaceData = ref([])
+const loading = ref(false)
+const formLoad = ref(false)
+const dialogTableVisible = ref(false)
+const dialogLoading = ref(false)
+const form = ref({
+    cache: true,
+    disable: false,
+    sort: 1,
+    roles: []
+})
+const roleDefault = ref(null)
+const dialogTitle = ref('')
+
+function init (visible) {
+    loading.value = true
+
+    util.axiosAll(
+        [
+            QueryMenuByParam({}),
+            QueryRoleByParam({
+                is_default: true
+            })
+        ],
+        (res) => {
+            menuData.value = util.getMenuTree(false, cloneDeep(res[0]))
+            treeData.value = cloneDeep(menuData.value)
+            if (visible) util.initMenu(res[0], true)
+
+            roleData.value = res[1].data
+            roleDefault.value = res[1].default
+
+            loading.value = false
+        },
+        (err) => {
+            loading.value = false
+        }
+    )
+}
+
+function isHidden (mark) {
+    return !setting.hidden_menu.some((i) => { return i === mark })
+}
+
+function submit (formName) {
+    proxy.$refs[formName].validate((valid) => {
+        if (valid) {
+            formLoad.value = true
+            if (form.value.pid === null) form.value.pid = '0'
+            if (form.value.menu_id) {
+                ModifyMenu(form.value)
+                    .then(async (res) => {
+                        handleInitParent('菜单编辑成功')
+                    })
+                    .catch(() => {
+                        formLoad.value = false
+                    })
+            } else {
+                CreateMenu(form.value)
+                    .then(async (res) => {
+                        handleInitParent('菜单创建成功')
+                    })
+                    .catch(() => {
+                        formLoad.value = false
+                    })
+            }
+        }
+    })
+}
+
+function copy_this () {
+    delete form.value['menu_id']
+    proxy.$refs['SYSMENU'].clearValidate()
+}
+
+function handleInitParent (title) {
+    proxy.$message.success(title)
+    formLoad.value = false
+    init(true)
+}
+
+function getMenuItem (data) {
+    form.value = data ? cloneDeep(data) : {
+        cache: true,
+        disable: false,
+        sort: 1,
+        roles: roleDefault.value === null ? [] : [roleDefault.value]
+    }
+    treeData.value = cloneDeep(menuData.value)
+    disabledMenu(form.value, treeData.value)
+    proxy.$refs['SYSMENU'].clearValidate()
+}
+
+function disabledMenu (item, data) {
+    data.map((i) => {
+        if (i.menu_id === item.menu_id) i.disabled = true
+        if (i.children) disabledMenu(item, i.children)
+    })
+}
+
+function delMenu (menu_id) {
+    proxy.$confirm(
+        '删除后子菜单将自动到根菜单下，确定删除该菜单吗',
+        '删除菜单',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }
+    ).then(() => {
+        DelMenu({
+            menu_id: menu_id
+        }).then(async (res) => {
+            init(true)
+        })
+    })
+}
+
+function getMenuToInterface (title, menu_id) {
+    dialogTitle.value = title + '关联接口'
+    dialogTableVisible.value = true
+    dialogLoading.value = true
+    GetMenuToInterface({
+        menu_id: menu_id
+    })
+        .then(async (res) => {
+            interfaceData.value = res
+            dialogLoading.value = false
+        })
+        .catch(() => {
+            dialogLoading.value = false
+        })
+}
+
+onMounted(() => {
+    init()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -509,6 +490,11 @@ export default {
     width: 60%;
     margin-left: 7%;
     position: absolute;
+
+    ::v-deep(.el-card__body) {
+        max-height: 580px;
+        overflow-y: auto;
+    }
 }
 .title-group {
     margin-top: 20px;

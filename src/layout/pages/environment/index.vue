@@ -55,9 +55,9 @@
                                 />
                                 <admin-icon
                                     v-else-if="option.type === 'custom'"
-                                    @click.stop="onRemove(option.value)"
                                     class="item-icon"
                                     name="close"
+                                    @click.stop="onRemove(option.value)"
                                 />
                             </div>
                         </el-button>

@@ -31,7 +31,7 @@ const frameIn = [
                     title: '莫有页面~',
                     auth: false,
                 },
-                component: () => import('@/views/system/error/404')
+                component: () => import('@/views/system/error/404/index.vue')
             },
             {
                 path: '403',
@@ -40,7 +40,7 @@ const frameIn = [
                     title: '无权限~',
                     auth: false,
                 },
-                component: () => import('@/views/system/error/403')
+                component: () => import('@/views/system/error/403/index.vue')
             },
             // 刷新页面 必须保留
             {
@@ -87,9 +87,9 @@ const router = createRouter({
 let RouteFresh = true
 
 // 处理动态理由 刷新后失效的问题 通过判断RouteFresh来确定是否加载
-function ResetRoute (to, next) {
+async function ResetRoute (to, next) {
     if (RouteFresh) {
-        store.dispatch('db/get', {
+        await store.dispatch('db/get', {
             dbName: 'sys',
             path: 'user.info',
             defaultValue: {},

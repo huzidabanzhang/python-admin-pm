@@ -59,7 +59,9 @@ util.open = function (url) {
 function componentToImport (ary) {
     ary.forEach((i) => {
         if (i.componentPath != 'layout/header-aside') {
-            i.component = () => import(/* @vite-ignore */ `../layout/pages/${i.componentPath}`)
+            const path = i.componentPath.split('/')
+            const component = path[path.length - 1] === 'index' ? i.componentPath : `${i.componentPath}.vue`
+            i.component = () => import(/* @vite-ignore */ `../layout/pages/${component}`)
         } else {
             i.component = layoutHeaderAside
         }

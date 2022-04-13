@@ -1,10 +1,11 @@
 <template>
     <span>
         <el-popover
-            ref="pop"
-            v-model="pop"
+            ref="popover"
+            :virtual-ref="popButton"
             :placement="placement"
-            width="300"
+            width="300px"
+            virtual-triggering
             trigger="click"
         >
             <el-row
@@ -17,6 +18,7 @@
                     type="danger"
                     :icon="Delete"
                     class="admin-fr"
+                    size="small"
                     @click="selectIcon()"
                 >
                     清空
@@ -87,141 +89,123 @@
             @blur="blur"
             @clear="clear"
         >
-            <template
+            <i
                 v-if="value"
-                v-slot:prepend
-            >
-                <i :class="'fa fa-' + value"></i>
-            </template>
-            <template v-slot:append>
-                <el-button v-popover:pop>
+                :class="'fa fa-' + value"
+            ></i>
+            <template #append>
+                <el-button ref="popButton">
                     <i class="fa fa-list"></i>
                 </el-button>
             </template>
         </el-input>
         <!-- 不允许用户输入 -->
         <el-button
-            v-popover:pop
             v-if="!userInput"
+            ref="popButton"
         >
-            <template v-if="value">
-                <i :class="'fa fa-' + value"></i>
-            </template>
-            {{ value ? value : placeholder }}
+            <i
+                v-if="value"
+                :class="'fa fa-' + value"
+            ></i>
+            &nbsp;{{ value ? value : placeholder }}
         </el-button>
     </span>
 </template>
 
-<script>
+<script setup>
 import {
     Delete,
-    Search,
+    Search
 } from '@element-plus/icons-vue'
+import { ref, computed, watch } from 'vue'
 import icon from './data/index'
+import useCurrentInstance from '@/proxy'
 
-export default {
-    data () {
-        return {
-            // 绑定弹出框
-            pop: false,
-            // 所有图标
-            icon,
-            // 组件内输入框的值
-            currentValue: '',
-            // 搜索的文字
-            searchText: '',
-            // 不是搜索的时候显示的折叠面板绑定的展开数据
-            // collapseActive: [...Array(icon.length)].map((e, i) => i)
-            collapseActive: []
-        }
+const { proxy } = useCurrentInstance()
+const props = defineProps({
+    // 值
+    value: {
+        type: String,
+        required: false,
+        default: ''
     },
-    name: 'admin-icon-select',
-    props: {
-        // 值
-        value: {
-            type: String,
-            required: false,
-            default: '',
-        },
-        // 占位符
-        placeholder: {
-            type: String,
-            required: false,
-            default: '请选择',
-        },
-        // 弹出界面的方向
-        placement: {
-            type: String,
-            required: false,
-            default: 'right',
-        },
-        // 是否可清空
-        clearable: {
-            type: Boolean,
-            required: false,
-            default: true,
-        },
-        // 是否允许用户输入
-        userInput: {
-            type: Boolean,
-            required: false,
-            default: false,
-        },
-        // 是否在选择后自动关闭
-        autoClose: {
-            type: Boolean,
-            required: false,
-            default: true,
-        },
+    // 占位符
+    placeholder: {
+        type: String,
+        required: false,
+        default: '请选择'
     },
-    computed: {
-        // 输入框上绑定的设置
-        bind () {
-            return {
-                placeholder: this.placeholder,
-                clearable: this.clearable,
-                ...this.$attrs,
-            }
-        },
-        // 是否在搜索
-        searchMode () {
-            return !!this.searchText
-        },
-        // 过滤后的图标
-        iconFilted () {
-            return this.icon
-                .map((iconClass) => ({
-                    title: iconClass.title,
-                    icon: iconClass.icon.filter(
-                        (icon) => icon.indexOf(this.searchText) >= 0
-                    ),
-                }))
-                .filter((iconClass) => iconClass.icon.length > 0)
-        },
+    // 弹出界面的方向
+    placement: {
+        type: String,
+        required: false,
+        default: 'right'
     },
-    watch: {
-        value (value) {
-            this.currentValue = value
-        },
+    // 是否可清空
+    clearable: {
+        type: Boolean,
+        required: false,
+        default: true
     },
-    created () {
-        this.currentValue = this.value
+    // 是否允许用户输入
+    userInput: {
+        type: Boolean,
+        required: false,
+        default: false
     },
-    methods: {
-        selectIcon (iconName = '') {
-            $emit(this, 'update:value', iconName)
-            if (iconName && this.autoClose) {
-                this.pop = false
-            }
-        },
-        clear () {
-            $emit(this, 'update:value', '')
-        },
-        blur () {
-            $emit(this, 'update:value', this.currentValue)
-        },
+    // 是否在选择后自动关闭
+    autoClose: {
+        type: Boolean,
+        required: false,
+        default: true
+    }
+})
+const emits = defineEmits(['update:value'])
+
+const popover = ref()
+const popButton = ref()
+const currentValue = ref('')
+const searchText = ref('')
+const collapseActive = ref([])
+const bind = computed(() => {
+    return {
+        placeholder: props.placeholder,
+        clearable: props.clearable,
+        ...proxy.$attrs
+    }
+})
+const searchMode = computed(() => { return !!searchText.value })
+const iconFilted = computed(() => {
+    return icon
+        .map((iconClass) => ({
+            title: iconClass.title,
+            icon: iconClass.icon.filter(
+                (icon) => icon.indexOf(searchText.value) >= 0
+            )
+        }))
+        .filter((iconClass) => iconClass.icon.length > 0)
+})
+
+watch(
+    () => props.value,
+    (value) => {
+        currentValue.value = value
     },
-    emits: ['update:value'],
+    { immediate: true }
+)
+
+function selectIcon (iconName = '') {
+    emits('update:value', iconName)
+    if (iconName && props.autoClose) proxy.$refs.popover.hide()
+}
+
+function clear () {
+    emits('update:value', '')
+}
+
+function blur () {
+    emits('update:value', this.currentValue)
 }
 </script>
 

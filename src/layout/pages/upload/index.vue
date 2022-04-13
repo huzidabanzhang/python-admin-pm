@@ -19,11 +19,11 @@
             :on-exceed="handleExceed"
             :on-remove="handleRemove"
         >
-            <el-icon>
-                <el-icon-upload />
+            <el-icon class="el-icon--upload">
+                <upload-filled />
             </el-icon>
             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            <template v-slot:tip>
+            <template #tip>
                 <div class="el-upload__tip">
                     最多上传{{ maxLimit }}个文件，且单文件不超过{{ maxSize }}MB
                 </div>
@@ -49,6 +49,7 @@
 </template>
 
 <script setup>
+import { UploadFilled } from '@element-plus/icons-vue'
 import { CreateDocument } from '@/api/sys.document'
 import { ref, watch } from 'vue'
 import util from '@/libs/util.js'

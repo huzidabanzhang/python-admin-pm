@@ -1,19 +1,19 @@
 <template>
-    <el-dialog
-        :title="title"
-        v-model="Visible"
-        width="500px"
+    <el-drawer
+        size="600px"
         append-to-body
-        destroy-on-close
+        v-model="Visible"
         :close-on-click-modal="false"
-        @closed="handleClosed"
+        :close-on-press-escape="false"
+        :title="title"
+        :before-close="handleClosed"
     >
         <el-form
+            v-loading="loading"
+            ref="roleForm"
             label-width="80px"
             :model="form"
             :rules="rules"
-            v-loading="loading"
-            ref="roleForm"
         >
             <el-form-item
                 label="角色名"
@@ -27,31 +27,33 @@
             >
                 <el-input
                     v-model="form.mark"
-                    :readonly="form.role_id != undefined"
+                    :readonly="!form.role_id"
                 ></el-input>
             </el-form-item>
             <el-form-item
                 prop="disable"
                 label="可见性"
             >
-                <el-radio-group v-model="form.disable">
-                    <el-radio-button label="false">显示</el-radio-button>
-                    <el-radio-button label="true">隐藏</el-radio-button>
-                </el-radio-group>
+                <el-switch
+                    v-model="form.disable"
+                    :active-value="false"
+                    :inactive-value="true"
+                />
             </el-form-item>
             <el-form-item label="菜单">
                 <el-tree
                     ref="treeMenu"
+                    node-key="menu_id"
+                    show-checkbox
+                    default-expand-all
                     :data="menu"
                     :props="prop"
                     :default-checked-keys="select"
-                    node-key="menu_id"
-                    show-checkbox
                 >
-                    <template v-slot="{ node, data }">
+                    <template #default="{ node, data }">
                         <span class="custom-tree-node">
                             <span>
-                                ({{ data.type == 'MENU' ? `菜单` : `接口` }}) {{ data.title }}
+                                ({{ data.type === 'MENU' ? `菜单` : `接口` }}) {{ data.title }}
                             </span>
                         </span>
                     </template>
@@ -62,186 +64,194 @@
             <span class="dialog-footer">
                 <el-button
                     type="danger"
-                    :icon="ElIconDelete"
-                    @click="delRole"
                     style="float: left"
                     v-if="params.role_id"
-                    :disabled="btn_del"
+                    :disabled="delAuth"
+                    :icon="Delete"
+                    @click="delRole"
                 ></el-button>
                 <el-button @click="handleClosed">取 消</el-button>
                 <el-button
                     type="primary"
-                    @click="handelInfo('roleForm')"
                     :loading="isSubmit"
-                    :disabled="btn_add"
+                    :disabled="addAuth"
+                    @click="handelInfo('roleForm')"
                 >提 交</el-button>
             </span>
         </template>
-    </el-dialog>
+    </el-drawer>
 </template>
 
-<script>
-import { Delete as ElIconDelete } from '@element-plus/icons'
-
-import * as Vue from 'vue'
+<script setup>
+import { Delete } from '@element-plus/icons-vue'
 import { QueryMenuByParam } from '@/api/sys.menu'
 import { CreateRole, ModifyRole, DelRole } from '@/api/sys.role'
 import { cloneDeep } from 'lodash'
-export default {
-    data () {
-        return {
-            Visible: this.centerDialogVisible,
-            form: { name: this.params.name },
-            rules: {
-                name: [{ required: true, message: '请输入角色名', trigger: 'blur' }],
-                mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
-            },
-            isSubmit: false,
-            menu: [],
-            interface: [],
-            loading: false,
-            prop: {
-                label: 'title',
-                children: 'children',
-            },
-            btn_add: this.submit,
-            btn_del: this.del,
-            select: [],
-            ElIconDelete,
+import { ref, watch, nextTick } from 'vue'
+import useCurrentInstance from '@/proxy'
+
+const { proxy } = useCurrentInstance()
+const props = defineProps({
+    title: String,
+    params: Object,
+    centerDialogVisible: Boolean,
+    submit: Boolean,
+    del: Boolean
+})
+const emits = defineEmits(['callback', 'handleClose'])
+
+const prop = {
+    label: 'title',
+    children: 'children'
+}
+const rules = {
+    name: [{ required: true, message: '请输入角色名', trigger: 'blur' }],
+    mark: [{ required: true, message: '请输入标识', trigger: 'blur' }]
+}
+const addAuth = ref(false)
+const delAuth = ref(false)
+const Visible = ref(false)
+const loading = ref(false)
+const isSubmit = ref(false)
+const form = ref({})
+const menu = ref([])
+const select = ref([])
+
+watch(
+    () => props.centerDialogVisible,
+    (val) => {
+        Visible.value = val
+        if (val) {
+            form.value = cloneDeep(props.params)
+            getMenuList()
         }
     },
-    props: {
-        title: String,
-        params: Object,
-        centerDialogVisible: Boolean,
-        submit: Boolean,
-        del: Boolean,
-    },
-    watch: {
-        centerDialogVisible (newVal) {
-            this.Visible = newVal
-            if (newVal) {
-                this.form = cloneDeep(this.params)
-                this.getMenuList()
-            }
-        },
-        submit (newVal) {
-            this.btn_add = newVal
-        },
-        del (newVal) {
-            this.btn_del = newVal
-        },
-    },
-    methods: {
-        getMenuList () {
-            this.menu = []
-            this.interface = []
+    { immediate: true }
+)
 
+watch(
+    () => props.del,
+    (val) => {
+        delAuth.value = val
+    },
+    { immediate: true }
+)
+
+watch(
+    () => props.submit,
+    (val) => {
+        addAuth.value = val
+    },
+    { immediate: true }
+)
+
+function getMenuList () {
+    menu.value = []
+
+    let params = { is_interface: true }
+    if (props.params.role_id) params['role_id'] = props.params.role_id
+
+    loading.value = true
+    QueryMenuByParam(params)
+        .then(async (res) => {
+            dealData(res.data)
+            nextTick(() => {
+                select.value = res.select
+            })
+            loading.value = false
+        })
+        .catch(() => {
+            loading.value = false
+        })
+}
+
+function dealData (data) {
+    while (data.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].pid == '0') {
+                menu.value.push(data[i])
+                data.splice(i, 1)
+                i--
+            } else {
+                let index = menu.value.findIndex(
+                    (item) => item.menu_id == data[i].pid
+                )
+                if (index == -1) continue
+                menu.value[index].children.push(data[i])
+                data.splice(i, 1)
+                i--
+            }
+        }
+    }
+}
+
+function handelInfo (formName) {
+    proxy.$refs[formName].validate((valid) => {
+        if (valid) {
+            let role = [], menu = []
+            proxy.$refs.treeMenu.getCheckedNodes().forEach((i) => {
+                if (i.type !== 'MENU') role.push(i.menu_id.split('.')[1])
+                else menu.push(i.menu_id)
+            })
+            proxy.$refs.treeMenu.getHalfCheckedNodes().forEach((i) => {
+                if (i.type !== 'MENU') role.push(i.menu_id)
+                else menu.push(i.menu_id)
+            })
+
+            isSubmit.value = true
             let params = {
-                is_interface: true,
+                interfaces: role,
+                menu: menu,
+                name: form.value.name,
+                mark: form.value.mark,
+                disable: form.value.disable
             }
-            if (this.params.role_id) params['role_id'] = this.params.role_id
 
-            this.loading = true
-            QueryMenuByParam(params)
-                .then(async (res) => {
-                    this.dealData(res.data)
-                    this.$nextTick(() => {
-                        this.select = res.select
+            if (props.params.role_id) {
+                params['role_id'] = props.params.role_id
+                ModifyRole(params)
+                    .then(async (res) => {
+                        handleInitParent('角色编辑成功')
                     })
-                    this.loading = false
-                })
-                .catch(() => {
-                    this.loading = false
-                })
-        },
-        dealData (data) {
-            while (data.length > 0) {
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i].pid == '0') {
-                        this.menu.push(data[i])
-                        data.splice(i, 1)
-                        i--
-                    } else {
-                        let index = this.menu.findIndex(
-                            (item) => item.menu_id == data[i].pid
-                        )
-                        if (index == -1) continue
-                        this.menu[index].children.push(data[i])
-                        data.splice(i, 1)
-                        i--
-                    }
-                }
+                    .catch(() => {
+                        isSubmit.value = false
+                    })
+            } else {
+                CreateRole(params)
+                    .then(async (res) => {
+                        handleInitParent('角色创建成功')
+                    })
+                    .catch(() => {
+                        isSubmit.value = false
+                    })
             }
-        },
-        handelInfo (formName) {
-            this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    let role = [],
-                        menu = []
-                    this.$refs.treeMenu.getCheckedNodes().forEach((i) => {
-                        if (i.type != 'MENU') role.push(i.menu_id.split('.')[1])
-                        else menu.push(i.menu_id)
-                    })
-                    this.$refs.treeMenu.getHalfCheckedNodes().forEach((i) => {
-                        if (i.type != 'MENU') role.push(i.menu_id)
-                        else menu.push(i.menu_id)
-                    })
+        }
+    })
+}
 
-                    this.isSubmit = true
-                    let params = {
-                        interface: role,
-                        menu: menu,
-                        name: this.form.name,
-                        mark: this.form.mark,
-                        disable: this.form.disable,
-                    }
+function handleInitParent (title) {
+    proxy.$message.success(title)
+    isSubmit.value = false
+    emits('callback', true)
+}
 
-                    if (this.params.role_id) {
-                        params['role_id'] = this.params.role_id
-                        ModifyRole(params)
-                            .then(async (res) => {
-                                this.handleInitParent(1)
-                            })
-                            .catch(() => {
-                                this.isSubmit = false
-                            })
-                    } else {
-                        CreateRole(params)
-                            .then(async (res) => {
-                                this.handleInitParent(2)
-                            })
-                            .catch(() => {
-                                this.isSubmit = false
-                            })
-                    }
-                }
-            })
-        },
-        handleInitParent (type) {
-            this.$message.success(type == 1 ? '角色编辑成功' : '角色创建成功')
-            $emit(this, 'callback', true)
-            this.isSubmit = false
-        },
-        handleClosed () {
-            $emit(this, 'handleClose', false)
-        },
-        delRole () {
-            this.$confirm('确定要删除该角色吗', '删除角色', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-            }).then(() => {
-                DelRole({
-                    role_id: [this.params.role_id],
-                }).then(async (res) => {
-                    this.$message.success('删除角色成功')
-                    $emit(this, 'callback', true)
-                })
-            })
-        },
-    },
-    emits: ['callback', 'handleClose'],
+function handleClosed () {
+    emits('handleClose', false)
+}
+
+function delRole () {
+    proxy.$confirm('确定要删除该角色吗', '删除角色', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+    }).then(() => {
+        DelRole({
+            role_id: [props.params.role_id],
+        }).then(async (res) => {
+            proxy.$message.success('删除角色成功')
+            emits('callback', true)
+        })
+    })
 }
 </script>
 

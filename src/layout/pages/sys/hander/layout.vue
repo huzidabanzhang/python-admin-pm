@@ -194,5 +194,6 @@ onMounted(() => {
 }
 .el-form-item.el-form-item {
     margin-bottom: 0;
+    margin-right: 16px;
 }
 </style>

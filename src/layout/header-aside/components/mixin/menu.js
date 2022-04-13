@@ -1,6 +1,7 @@
 import util from '@/libs/util.js'
 
 export default {
+    inject: ['handleVisible'],
     methods: {
         handleMenuSelect (index, indexPath) {
             if (/^admin-menu-empty-\d+$/.test(index) || index === undefined) {
@@ -8,7 +9,7 @@ export default {
             } else if (/^https:\/\/|http:\/\//.test(index)) {
                 util.open(index)
             } else if (index == '/system/base') {
-                this.$parent.handleVisible(true)
+                this.handleVisible(true)
             } else {
                 this.$router.push(index)
             }

@@ -1,10 +1,22 @@
 import store from '@/store/index'
+import { isBoolean } from 'lodash'
+
+function handleAuth (mark) {
+    const user = store.getters['user/user']
+    const role = store.getters['user/interfaces']
+
+    if (!user) return true
+    if (user.is_admin) return false
+
+    if (role) return role.filter(i => { return i.mark === mark })
+    else return []
+}
 
 export default {
-    install (Vue, options) {
+    install (app, options) {
         // 下拉框 禁止删除已选择选项或者默认选项
-        Vue.directive('default', {
-            updated (el, bindings, vnode) {
+        app.directive('default', {
+            updated (el, bindings) {
                 // values v-model 绑定值
                 // options 下拉选项
                 // prop 对应 options 中 的 value 属性
@@ -42,42 +54,19 @@ export default {
         })
 
         // 按钮权限判断指令
-        Vue.directive('auth', function (el, binding, node) {
-            let user = store.getters['user/user'],
-                mark = binding.arg,
-                role = store.getters['user/interfaces'],
-                t = mark.split('_')[0]
-
-            if (!user) return true
-
-            if (user.is_admin == true) return true
-
-            if (role) {
-                let item = role.filter((i) => {
-                    return i.mark == mark
-                })
-
-                node.context.auth[t] =
-                    item.length == 0 ? true : Boolean(item[0].disable)
-            } else node.context.auth[t] = true
+        app.directive('auth', (el, binding, node) => {
+            const mark = binding.arg
+            const t = mark.split('_')[0]
+            const item = handleAuth(mark)
+            if (isBoolean(item)) return item
+            node.context.auth[t] = item.length == 0 ? true : Boolean(item[0].disable)
         })
 
         // 注册权限判断事件
-        Vue.config.globalProperties.$auth = (mark) => {
-            let user = store.getters['user/user'],
-                role = store.getters['user/interfaces']
-
-            if (!user) return true
-
-            if (user.is_admin) return false
-
-            if (role) {
-                let item = role.filter((i) => {
-                    return i.mark == mark
-                })
-
-                return item.length == 0 ? true : Boolean(item[0].disable)
-            } else return true
+        app.config.globalProperties.$auth = (mark) => {
+            const item = handleAuth(mark)
+            if (isBoolean(item)) return item
+            return item.length == 0 ? true : Boolean(item[0].disable)
         }
-    },
+    }
 }

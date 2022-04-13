@@ -6,7 +6,7 @@ export default {
         Vue.config.errorHandler = function (error, instance, info) {
             nextTick(() => {
                 // 只在开发模式下打印 log
-                if (import.meta.env.NODE_ENV === 'development') {
+                if (import.meta.env.MODE === 'development') {
                     util.log.capsule('Admin', 'ErrorHandler', 'danger')
                     util.log.danger('>>>>>> 错误信息 >>>>>>')
                     console.log(info)

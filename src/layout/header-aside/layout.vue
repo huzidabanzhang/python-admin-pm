@@ -103,6 +103,7 @@
                 </div>
             </div>
         </div>
+        <adminBase :Visible="Visible"></adminBase>
     </div>
 </template>
 
@@ -110,14 +111,16 @@
 import adminMenuSide from './components/menu-side'
 import adminHeaderUser from './components/header-user/index.vue'
 import adminTabs from './components/tabs/index.vue'
+import adminBase from '@/layout/pages/sys/base/index'
 import useCurrentInstance from '@/proxy'
-import { computed, ref } from 'vue'
+import { computed, ref, provide } from 'vue'
 import { useStore } from "vuex"
 
 const { proxy } = useCurrentInstance()
 const store = useStore()
 const asideWidth = ref('200px')
 const asideWidthCollapse = ref('65px')
+const Visible = ref(false)
 const keepAlive = computed(() => store.state.page.keepAlive)
 const transitionActive = computed(() => store.state.transition.active)
 const asideCollapse = computed(() => store.state.menu.asideCollapse)
@@ -135,4 +138,8 @@ const styleLayoutMainGroup = computed(() => {
 const handleToggleAside = () => {
     store.dispatch('menu/asideCollapseToggle')
 }
+
+provide('handleVisible', (visible) => {
+    Visible.value = visible
+})
 </script>

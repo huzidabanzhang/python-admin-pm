@@ -1,10 +1,10 @@
 <template>
     <el-dialog
         title="备份数据库"
-        v-model="Visible"
-        width="40%"
+        width="400px"
         append-to-body
         destroy-on-close
+        v-model="Visible"
         @closed="handleClosed"
     >
         <el-form
@@ -32,77 +32,75 @@
                 <el-button @click="handleClosed">取 消</el-button>
                 <el-button
                     type="primary"
-                    @click="exportSql"
                     :loading="loading"
+                    @click="exportSql"
                 >提 交</el-button>
             </span>
         </template>
     </el-dialog>
 </template>
 
-<script>
-
-import * as Vue from 'vue'
+<script setup>
 import { ExportSql } from '@/api/sys.base'
 import { cloneDeep } from 'lodash'
-export default {
-    props: {
-        params: Object,
-        centerDialogVisible: Boolean,
+import { ref, watch } from 'vue'
+
+const props = defineProps({
+    params: Object,
+    centerDialogVisible: Boolean
+})
+const emits = defineEmits(['handleClose'])
+
+const rules = {
+    type: [
+        { required: true, message: '请选择备份方式', trigger: 'change' }
+    ]
+}
+const typeOption = [
+    { label: '数据加表结构', value: 1 },
+    { label: '表结构不包含数据', value: 2 },
+    { label: '数据不包含表结构', value: 3 }
+]
+const Visible = ref(false)
+const loading = ref(false)
+const form = ref({
+    type: 1
+})
+
+watch(
+    () => props.centerDialogVisible,
+    (val) => {
+        Visible.value = val
+        if (val) form.value = cloneDeep(props.params)
     },
-    data () {
-        return {
-            Visible: this.centerDialogVisible,
-            loading: false,
-            rules: {
-                type: [
-                    { required: true, message: '请选择备份方式', trigger: 'change' },
-                ],
-            },
-            form: {
-                type: 1,
-            },
-            typeOption: [
-                { label: '数据加表结构', value: 1 },
-                { label: '表结构不包含数据', value: 2 },
-                { label: '数据不包含表结构', value: 3 },
-            ],
-        }
-    },
-    watch: {
-        centerDialogVisible (newVal) {
-            this.Visible = newVal
-            if (newVal) this.form = cloneDeep(this.params)
-        },
-    },
-    methods: {
-        handleClosed () {
-            $emit(this, 'handleClose', false)
-        },
-        exportSql () {
-            this.loading = true
-            ExportSql({
-                type: this.form.type,
-            })
-                .then((response) => {
-                    const href = window.URL.createObjectURL(
-                        new Blob([response.data], { type: response.data.type })
-                    )
-                    let downloadElement = document.createElement('a')
-                    downloadElement.href = href
-                    downloadElement.download = response.headers.filename //下载后文件名
-                    document.body.appendChild(downloadElement)
-                    downloadElement.click() //点击下载
-                    document.body.removeChild(downloadElement) //下载完成移除元素
-                    window.URL.revokeObjectURL(href) //释放blob对象
-                    this.loading = false
-                    $emit(this, 'handleClose', false)
-                })
-                .catch(() => {
-                    this.loading = false
-                })
-        },
-    },
-    emits: ['handleClose'],
+    { immediate: true }
+)
+
+function handleClosed () {
+    emits('handleClose', false)
+}
+
+function exportSql () {
+    loading.value = true
+    ExportSql({
+        type: form.value.type,
+    })
+        .then((response) => {
+            const href = window.URL.createObjectURL(
+                new Blob([response.data], { type: response.data.type })
+            )
+            let downloadElement = document.createElement('a')
+            downloadElement.href = href
+            downloadElement.download = response.headers.filename //下载后文件名
+            document.body.appendChild(downloadElement)
+            downloadElement.click() //点击下载
+            document.body.removeChild(downloadElement) //下载完成移除元素
+            window.URL.revokeObjectURL(href) //释放blob对象
+            loading.value = false
+            emits('handleClose', false)
+        })
+        .catch(() => {
+            loading.value = false
+        })
 }
 </script>

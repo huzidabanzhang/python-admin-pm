@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite'
-const { resolve } = require('path')
 import vue from '@vitejs/plugin-vue'
 
+const { resolve } = require('path')
+const mdPlugin = require('vite-plugin-markdown')
 const publicPath = '/'
 const version = new Date().getTime()
 // 增加环境变量
@@ -26,6 +27,21 @@ export default defineConfig({
                     @import '@/assets/style/public.scss';
                 `
             }
+        },
+        postcss: {
+            plugins: [
+                // 移除打包element时的@charset警告
+                {
+                    postcssPlugin: 'internal:charset-removal',
+                    AtRule: {
+                        charset: (atRule) => {
+                            if (atRule.name === 'charset') {
+                                atRule.remove();
+                            }
+                        }
+                    }
+                }
+            ],
         }
     },
     server: {
@@ -33,13 +49,13 @@ export default defineConfig({
         publicPath, // 和 publicPath 保持一致
         https: false,
         hotOnly: false,
-        proxy: {
-            '/API': {
-                target: 'http://127.0.0.1:92', // 要跨域的域名
-                changeOrigin: true, // 是否开启跨域
-                rewrite: (path) => path.replace(/^\/API/, '')
-            }
-        }
+        // proxy: {
+        //     '/API': {
+        //         target: 'http://127.0.0.1:92', // 要跨域的域名
+        //         changeOrigin: true, // 是否开启跨域
+        //         rewrite: (path) => path.replace(/^\/API/, '')
+        //     }
+        // }
     },
     build: {
         target: 'modules',
@@ -50,5 +66,10 @@ export default defineConfig({
     define: {
         process: import.meta
     },
-    plugins: [vue()]
+    plugins: [
+        vue(),
+        mdPlugin.plugin({
+            mode: ['html']
+        })
+    ]
 })

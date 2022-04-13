@@ -3,63 +3,61 @@
         <template v-slot:header>
             <div>
                 <el-button
-                    type="primary"
-                    :icon="ElIconPlus"
                     circle
-                    @click="addInterface(auth.add)"
                     title="新增"
+                    type="primary"
                     v-auth:add_interface
+                    :icon="Plus"
+                    @click="editInterface(auth.add)"
                 ></el-button>
                 <el-button
-                    type="success"
-                    :icon="ElIconCheck"
                     circle
-                    @click="lockInterface(interface_id, false)"
                     title="显示"
+                    type="success"
+                    :icon="Check"
                     :disabled="auth.lock_all"
+                    @click="lockInterface(interface_id, false)"
                 ></el-button>
                 <el-button
-                    type="info"
-                    :icon="ElIconFa faBan"
                     circle
-                    @click="lockInterface(interface_id, true)"
                     title="隐藏"
+                    type="info"
+                    :icon="Close"
                     :disabled="auth.lock_all"
+                    @click="lockInterface(interface_id, true)"
                 ></el-button>
                 <el-button
-                    type="danger"
-                    :icon="ElIconDelete"
                     circle
-                    @click="delInterface(interface_id)"
                     title="删除"
+                    type="danger"
+                    :icon="Delete"
                     :disabled="auth.del_all"
+                    @click="delInterface(interface_id)"
                 ></el-button>
                 <el-button
-                    :icon="ElIconRefreshRight"
-                    @click="init"
-                    circle
                     title="刷新"
+                    circle
+                    :icon="RefreshRight"
+                    @click="init"
                 ></el-button>
 
                 <el-form
-                    :inline="true"
+                    inline
                     class="form-right"
                 >
                     <el-form-item>
                         <el-input
                             placeholder="接口名称"
-                            v-model="name"
+                            v-model="search.name"
                             clearable
-                            :clear="clear(name)"
                         >
                         </el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-select
-                            v-model="lock"
+                            v-model="search.disable"
                             placeholder="可见性"
                             clearable
-                            :clear="clear(lock)"
                         >
                             <el-option
                                 v-for="item in lockOption"
@@ -72,10 +70,9 @@
                     </el-form-item>
                     <el-form-item>
                         <el-select
-                            v-model="menu_id"
+                            v-model="search.menu_id"
                             placeholder="所属菜单"
                             clearable
-                            :clear="clear(menu_id)"
                         >
                             <el-option
                                 v-for="item in menuOption"
@@ -88,10 +85,9 @@
                     </el-form-item>
                     <el-form-item>
                         <el-select
-                            v-model="role_id"
+                            v-model="search.role_id"
                             placeholder="所属角色"
                             clearable
-                            :clear="clear(role_id)"
                         >
                             <el-option
                                 v-for="item in roleData"
@@ -104,10 +100,9 @@
                     </el-form-item>
                     <el-form-item>
                         <el-select
-                            v-model="method"
+                            v-model="search.method"
                             placeholder="请求方式"
                             clearable
-                            :clear="clear(method)"
                         >
                             <el-option
                                 v-for="item in methodOption"
@@ -120,10 +115,10 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button
-                            :icon="ElIconSearch"
                             type="primary"
+                            :icon="Search"
                             :loading="loading"
-                            @click="changeAll"
+                            @click="init()"
                         >搜索</el-button>
                     </el-form-item>
                 </el-form>
@@ -131,18 +126,18 @@
         </template>
 
         <el-table
-            :data="interfaceData"
             style="width: 100%"
             height="100%"
             type="ghost"
             v-loading="loading"
+            :data="interfaceData"
             @select="changeSelect"
             @select-all="changeSelect"
         >
             <el-table-column
                 type="selection"
                 width="55"
-                :selectable="isSelect"
+                :selectable="isAuth"
             >
             </el-table-column>
             <el-table-column
@@ -165,33 +160,43 @@
             >
             </el-table-column>
             <el-table-column
+                prop="disable"
+                label="可见性"
+                align="left"
+                width="100"
+            >
+                <template #default="scope">
+                    <el-button
+                        :type="scope.row.disable ? 'info' : 'success'"
+                        :disabled="auth.lock"
+                        @click="handleRowLock(scope.row)"
+                    >{{scope.row.disable ? '隐藏' : '显示'}}</el-button>
+                </template>
+            </el-table-column>
+            <el-table-column
                 prop="menus"
                 label="所属菜单"
                 align="center"
-                width="100"
+                width="150"
             >
-                <template v-slot="scope">
+                <template #default="scope">
                     <el-tag
                         v-for="(i, k) in scope.row.menus"
                         :key="i.menu_id"
-                    >{{
-            i.name
-          }}</el-tag>
+                    >{{i.name}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
                 prop="roles"
                 label="所属角色"
                 align="center"
-                width="100"
+                width="150"
             >
-                <template v-slot="scope">
+                <template #default="scope">
                     <el-tag
                         v-for="(i, k) in scope.row.roles"
                         :key="i.role_id"
-                    >{{
-            i.name
-          }}</el-tag>
+                    >{{i.name}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -207,35 +212,8 @@
                 align="left"
                 width="200"
             >
-                <template v-slot="scope">
+                <template #default="scope">
                     <el-tag>{{ scope.row.mark }}</el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="disable"
-                label="可见性"
-                align="left"
-                width="150"
-            >
-                <template v-slot="scope">
-                    <el-radio-group
-                        v-model="scope.row.disable"
-                        v-if="isSelect(scope.row) && !scope.row.forbid"
-                        :disabled="auth.lock"
-                        @change="
-              (label) => {
-                lockInterface([scope.row.interface_id], label, scope.row)
-              }
-            "
-                    >
-                        <el-radio-button :label="false">显示</el-radio-button>
-                        <el-radio-button :label="true">隐藏</el-radio-button>
-                    </el-radio-group>
-                    <el-button
-                        type="primary"
-                        :disabled="auth.lock"
-                        v-else
-                    >显示</el-button>
                 </template>
             </el-table-column>
             <el-table-column
@@ -246,19 +224,19 @@
             >
                 <template v-slot="scope">
                     <el-button
-                        :icon="ElIconEdit"
                         circle
-                        @click="editInterface(scope.row, auth.set)"
                         title="编辑"
+                        :icon="Edit"
+                        @click="editInterface(auth.set, scope.row)"
                     ></el-button>
                     <el-button
-                        type="danger"
-                        :icon="ElIconDelete"
+                        v-if="isAuth(scope.row)"
                         circle
-                        @click="delInterface([scope.row.interface_id], false)"
-                        v-if="isSelect(scope.row)"
+                        type="danger"
                         title="删除"
                         :disabled="auth.del"
+                        :icon="Delete"
+                        @click="delInterface([scope.row.interface_id], false)"
                     >
                     </el-button>
                 </template>
@@ -279,9 +257,9 @@
             ref="roleInfo"
             :title="title"
             :params="params"
-            :submit="btn_submit"
+            :submit="btnSubmit"
             :roles="roleData"
-            :def="role_default"
+            :def="roleDefault"
             :menus="menuOption"
             :centerDialogVisible="centerDialogVisible"
             @handleClose="handleClose"
@@ -290,245 +268,246 @@
     </admin-container>
 </template>
 
-<script>
-import * as Vue from 'vue'
+<script setup>
+import {
+    RefreshRight,
+    Plus,
+    Check,
+    Close,
+    Delete,
+    Edit,
+    Search
+} from '@element-plus/icons-vue'
 import {
     QueryInterfaceByParam,
     LockInterface,
     DelInterface,
 } from '@/api/sys.interface'
 import { QueryRoleByParam } from '@/api/sys.role'
+import { ref, reactive, onMounted } from 'vue'
 import { cloneDeep } from 'lodash'
-import Pagination from '@/layout/pages/pagination/index.vue'
+import { useStore } from 'vuex'
 import Info from './info.vue'
-import util from '@/libs/util.js'
+import Pagination from '@/layout/pages/pagination/index.vue'
 import setting from '@/setting.js'
-export default {
-    name: 'InterfacePage',
-    components: { Pagination, Info },
-    data () {
-        return {
-            interfaceData: [],
-            menuOption: [],
-            roleData: [],
-            role_default: null,
-            page: 1,
-            total: 0,
-            size: 20,
-            lock: '',
-            disable: '',
-            menu_id: '',
-            role_id: '',
-            lockOption: [
-                { label: '显示', value: 'false' },
-                { label: '隐藏', value: 'true' },
-            ],
-            method: '',
-            isMethod: '',
-            methodOption: [
-                { label: 'GET', value: 'GET' },
-                { label: 'POST', value: 'POST' },
-                { label: 'PUT', value: 'PUT' },
-                { label: 'DELETE', value: 'DELETE' },
-            ],
-            name: '',
-            isName: '',
-            loading: false,
-            title: '',
-            params: {},
-            centerDialogVisible: false,
-            interface_id: [],
-            btn_submit: false,
-            auth: {
-                add: false,
-                del: this.$auth('del_interface'),
-                set: this.$auth('set_interface'),
-                lock: this.$auth('lock_interface'),
-                del_all: true,
-                lock_all: true,
-            },
-            auth_all: {
-                del: this.$auth('del_interface'),
-                lock: this.$auth('lock_interface'),
-            },
-        }
-    },
-    mounted () {
-        let menus = util.getMenuTree(true)
-        this.menuOption = []
-        this.pushMenu(menus)
+import util from '@/libs/util.js'
+import useCurrentInstance from '@/proxy'
 
-        this.init()
-    },
-    methods: {
-        pushMenu (ary) {
-            ary.map((i) => {
-                if (i.children && i.children.length > 0) {
-                    this.pushMenu(i.children)
-                } else this.menuOption.push(i)
-            })
-        },
-        init (isTrue) {
-            this.changeSelect([])
-
-            if (isTrue) this.centerDialogVisible = false
-            let params = {
-                page: this.page,
-                page_size: this.size,
-            }
-            if (this.disable != '') params['disable'] = this.disable
-            if (this.isName != '') params['name'] = this.isName
-            if (this.isMethod != '') params['method'] = this.isMethod
-            if (this.menu_id != '') params['menu_id'] = this.menu_id
-            if (this.role_id != '') params['role_id'] = this.role_id
-
-            this.loading = true
-            QueryInterfaceByParam(params)
-                .then(async (res) => {
-                    this.total = res.total
-                    this.interfaceData = res.data
-                    this.loading = false
-                })
-                .catch(() => {
-                    this.loading = false
-                })
-
-            QueryRoleByParam({
-                is_default: true,
-            })
-                .then(async (res) => {
-                    this.roleData = res['data']
-                    this.role_default = res['default']
-                })
-                .catch(() => { })
-        },
-        changeAll () {
-            this.disable = this.lock
-            this.isName = this.name
-            this.isMethod = this.method
-            this.init()
-        },
-        clear (val) {
-            val = ''
-        },
-        handleSize (size) {
-            this.size = size
-            this.page = 1
-            this.init()
-        },
-        handleCurrent (page) {
-            this.page = page
-            this.init()
-        },
-        handleClose () {
-            this.centerDialogVisible = false
-        },
-        isSelect (row) {
-            return !setting.lock_interface.some((i) => {
-                return i == row.mark
-            })
-        },
-        addInterface (disabled) {
-            this.btn_submit = disabled
-            this.title = '新建接口'
-            this.params = {
-                method: 'GET',
-                forbid: true,
-                disable: false,
-                roles: [this.role_default],
-            }
-            this.centerDialogVisible = true
-        },
-        editInterface (params, disabled) {
-            let roles = params.roles.map((i) => {
-                return i.role_id
-            })
-
-            this.btn_submit = disabled
-            this.title = '编辑接口'
-            this.params = cloneDeep(params)
-            this.params.roles = roles
-            this.centerDialogVisible = true
-        },
-        changeSelect (selection) {
-            this.interface_id = selection.map((i) => {
-                return i.interface_id
-            })
-            for (let i in this.auth_all) {
-                if (!this.auth_all[i])
-                    this.auth[i + '_all'] = this.interface_id.length == 0
-            }
-        },
-        lockInterface (keys, disable, row) {
-            if (keys.length == 0) return this.$message.warning('未选择任何记录')
-
-            this.$confirm(
-                disable ? '确定要隐藏该接口吗' : '确定要显示该接口吗',
-                disable ? '隐藏接口' : '显示接口',
-                {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning',
-                }
-            )
-                .then(() => {
-                    this.Lock(keys, disable)
-                })
-                .catch(() => {
-                    if (row) row.disable = !disable
-                })
-        },
-        delInterface (interface_id) {
-            if (interface_id.length == 0)
-                return this.$message.warning('未选择任何记录')
-
-            this.$confirm('确定要删除该接口吗', '删除接口', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-            }).then(() => {
-                DelInterface({
-                    interface_id: interface_id,
-                }).then(async (res) => {
-                    this.getInterfaceInfo(interface_id, 1)
-                    this.$message.success('接口删除成功')
-                    this.init()
-                })
-            })
-        },
-        getInterfaceInfo (interface_id, type, disable) {
-            let interfaces = cloneDeep(this.$store.getters['user/interfaces'])
-            interface_id.map((i) => {
-                for (let j = 0; j < interfaces.length; j++) {
-                    if (i == interfaces[j].interface_id) {
-                        if (type == 1) {
-                            interfaces.splice(j)
-                            j--
-                        }
-
-                        if (type == 2) {
-                            interfaces[j].disable = disable == 'true' ? true : false
-                        }
-
-                        break
-                    }
-                }
-            })
-
-            util.initInterface(interfaces)
-        },
-        Lock (keys, disable) {
-            LockInterface({
-                interface_id: keys,
-                disable: disable,
-            }).then(async (res) => {
-                this.getInterfaceInfo(keys, 2, disable)
-                this.$message.success(disable ? '接口隐藏成功' : '接口显示成功')
-                this.init()
-            })
-        },
-    },
+const { proxy } = useCurrentInstance()
+const store = useStore()
+const lockOption = [
+    { label: '显示', value: 'false' },
+    { label: '隐藏', value: 'true' }
+]
+const methodOption = [
+    { label: 'GET', value: 'GET' },
+    { label: 'POST', value: 'POST' },
+    { label: 'PUT', value: 'PUT' },
+    { label: 'DELETE', value: 'DELETE' }
+]
+const auth = reactive({
+    add: false,
+    del: proxy.$auth('del_interface'),
+    set: proxy.$auth('set_interface'),
+    lock: proxy.$auth('lock_interface'),
+    del_all: true,
+    lock_all: true
+})
+const auth_all = {
+    del: proxy.$auth('del_interface'),
+    lock: proxy.$auth('lock_interface')
 }
+const interfaceData = ref([])
+const menuOption = ref([])
+const roleData = ref([])
+const interface_id = ref([])
+const params = ref({})
+const page = ref(1)
+const total = ref(0)
+const size = ref(20)
+const search = reactive({
+    disable: '',
+    menu_id: '',
+    role_id: '',
+    method: '',
+    name: ''
+})
+const title = ref('')
+const loading = ref(false)
+const centerDialogVisible = ref(false)
+const btnSubmit = ref(false)
+const roleDefault = ref(null)
+
+function pushMenu (ary) {
+    ary.map((i) => {
+        if (i.children && i.children.length > 0) {
+            pushMenu(i.children)
+        } else menuOption.value.push(i)
+    })
+}
+
+function init (visible) {
+    changeSelect([])
+    if (visible) centerDialogVisible.value = false
+    let params = {
+        page: page.value,
+        page_size: size.value
+    }
+
+    for (let i in search) {
+        if (search[i] !== '') params[i] = search[i]
+    }
+
+    loading.value = true
+
+    util.axiosAll(
+        [
+            QueryInterfaceByParam(params),
+            QueryRoleByParam({
+                is_default: true
+            })
+        ],
+        (res) => {
+            total.value = res[0].total
+            interfaceData.value = res[0].data
+
+            roleData.value = res[1].data
+            roleDefault.value = res[1].default
+
+            loading.value = false
+        },
+        (err) => {
+            loading.value = false
+        }
+    )
+}
+
+function handleSize (size) {
+    size.value = size
+    page.value = 1
+    init()
+}
+
+function handleCurrent (page) {
+    page.value = page
+    init()
+}
+
+function handleClose () {
+    centerDialogVisible.value = false
+}
+
+function isAuth (row) {
+    return !setting.lock_interface.some((i) => { return i === row.mark })
+}
+
+function editInterface (disabled, row) {
+    btnSubmit.value = disabled
+    title.value = row ? '编辑接口' : '新建接口'
+    params.value = row ? cloneDeep(row) : {
+        method: 'GET',
+        forbid: true,
+        disable: false,
+        menus: [],
+        roles: [roleDefault.value]
+    }
+    if (row) {
+        const roles = row.roles.map((i) => { return i.role_id })
+        const menus = row.menus.map((i) => { return i.menu_id })
+        params.value.roles = roles
+        params.value.menus = menus
+    }
+    centerDialogVisible.value = true
+}
+
+function changeSelect (selection) {
+    interface_id.value = selection.map((i) => {
+        return i.interface_id
+    })
+
+    for (let i in auth_all) {
+        if (!auth_all[i]) auth[i + '_all'] = interface_id.value.length === 0
+    }
+}
+
+function handleRowLock (row) {
+    if (!isAuth(row)) return true
+
+    lockAdmin([row.role_id], row.disable ? false : true)
+}
+
+function lockInterface (keys, disable) {
+    if (keys.length === 0) return proxy.$message.warning('未选择任何记录')
+
+    proxy.$confirm(
+        disable ? '确定要隐藏该接口吗' : '确定要显示该接口吗',
+        disable ? '隐藏接口' : '显示接口',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }
+    )
+        .then(() => {
+            Lock(keys, disable)
+        })
+        .catch()
+}
+
+function delInterface (interface_id) {
+    if (interface_id.length === 0)
+        return proxy.$message.warning('未选择任何记录')
+
+    proxy.$confirm('确定要删除该接口吗', '删除接口', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+    }).then(() => {
+        DelInterface({
+            interface_id: interface_id,
+        }).then(async (res) => {
+            getInterfaceInfo(interface_id, 1)
+            proxy.$message.success('接口删除成功')
+            init()
+        })
+    })
+}
+
+function getInterfaceInfo (interface_id, type, disable) {
+    let interfaces = cloneDeep(store.getters['user/interfaces'])
+    interface_id.map((i) => {
+        for (let j = 0; j < interfaces.length; j++) {
+            if (i === interfaces[j].interface_id) {
+                if (type === 1) {
+                    interfaces.splice(j)
+                    j--
+                }
+
+                if (type === 2) interfaces[j].disable = disable === 'true'
+                break
+            }
+        }
+    })
+
+    util.initInterface(interfaces)
+}
+
+function Lock (keys, disable) {
+    LockInterface({
+        interface_id: keys,
+        disable: disable,
+    }).then(async (res) => {
+        getInterfaceInfo(keys, 2, disable)
+        proxy.$message.success(disable ? '接口隐藏成功' : '接口显示成功')
+        init()
+    })
+}
+
+onMounted(() => {
+    menuOption.value = []
+    pushMenu(util.getMenuTree(true))
+    init()
+})
 </script>
 
 <style scoped>
@@ -540,11 +519,15 @@ export default {
 }
 .el-form-item.el-form-item {
     margin-bottom: 0;
+    margin-right: 16px;
 }
 .el-form--inline .el-form-item:last-child {
     margin-right: 0;
 }
 .form-right {
     float: right;
+}
+.el-table .cell .el-tag {
+    margin: 0 8px 8px 0;
 }
 </style>

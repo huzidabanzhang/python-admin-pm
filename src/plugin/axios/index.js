@@ -108,7 +108,7 @@ service.interceptors.request.use(
             }
         }
 
-        config.baseURL = store.state.api.base
+        config.baseURL = store.state.api.base + '/API'
 
         return config
     },

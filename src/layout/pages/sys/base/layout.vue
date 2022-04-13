@@ -1,7 +1,7 @@
 <template>
     <el-dialog
         title="数据库管理"
-        width="336px"
+        width="350px"
         append-to-body
         destroy-on-close
         v-model="visible"
@@ -9,21 +9,21 @@
     >
         <el-button-group>
             <el-button
-                type="primary"
+                type="danger"
                 v-auth:export_sql
-                :disabled="auth.export"
+                :disabled="$auth.export"
                 @click="handleDataBase('export')"
-            />
+            >备份数据库</el-button>
             <el-button
-                type="warning"
+                type="danger"
                 v-if="handleVisible"
                 @click="handleDataBase('import')"
-            />
+            >导入数据库</el-button>
             <el-button
                 type="danger"
                 v-if="handleVisible"
                 @click="handleDataBase('init')"
-            />
+            >重置数据库</el-button>
         </el-button-group>
 
         <input
@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, inject } from 'vue'
 import { useStore } from 'vuex'
 import { AgainCreateDrop, ImportSql } from '@/api/sys.base'
 import DataBase from './select.vue'
@@ -53,12 +53,13 @@ const store = useStore()
 const props = defineProps({
     Visible: Boolean
 })
-const emits = defineEmits(['handleClose'])
 
 const visible = ref(false)
 const centerDialogVisible = ref(false)
 const form = ref({ type: 1 })
 const user = computed(() => store.getters['user/user'])
+
+const handleVisibles = inject('handleVisible')
 
 watch(
     () => props.Visible,
@@ -69,7 +70,7 @@ watch(
 )
 
 function handleClose () {
-    emits('handleClose', false)
+    handleVisibles(false)
 }
 
 function handleDataBaseClose () {

@@ -10,7 +10,7 @@
 
 <script setup>
 import useCurrentInstance from '@/proxy'
-import { computed, ref, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 
 const { proxy } = useCurrentInstance()
 const props = defineProps({
@@ -24,7 +24,7 @@ const props = defineProps({
     },
     y: {
         type: Number,
-        default: 0,
+        default: 0
     }
 })
 const emits = defineEmits(['handleVisible'])

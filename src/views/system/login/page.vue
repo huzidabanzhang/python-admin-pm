@@ -169,7 +169,7 @@ const isDis = ref(false)
 watch(
     () => base,
     (value) => {
-        captchaUrl.value = value.value + '/v1/Admin/Captcha'
+        captchaUrl.value = value.value + '/API/v1/Admin/Captcha'
         refreshCaptcha()
 
     },
