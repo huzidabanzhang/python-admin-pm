@@ -1,8 +1,4 @@
-@import '~@/assets/style/theme/theme-base.scss';
-
-@import '~@/assets/style/theme/chubby/index.scss';
-@import '~@/assets/style/theme/line/index.scss';
-@import '~@/assets/style/theme/star/index.scss';
-@import '~@/assets/style/theme/chester/index.scss';
-@import '~@/assets/style/theme/tomorrow-night-blue/index.scss';
-@import '~@/assets/style/theme/violet/index.scss';
+@import "@/assets/style/theme/admin/index.scss";
+@import "@/assets/style/public-class.scss";
+@import "@/assets/style/theme/theme-base.scss";
+@import "element-plus/dist/index.css";

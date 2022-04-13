@@ -1,13 +1,10 @@
 <template>
-    <chubby-container class="page">
+    <admin-container class="page">
         <el-calendar
-            ref="calendar_info"
-            v-model="value"
+            ref="calendar"
+            v-model="time"
         >
-            <template
-                slot="dateCell"
-                slot-scope="{date, data}"
-            >
+            <template #dateCell="{ data }">
                 <div>{{ data.day.split('-').slice(1).join('-') }}</div>
                 <span
                     v-for="(item, index) in info[data.day]"
@@ -18,71 +15,71 @@
                 </span>
             </template>
         </el-calendar>
-    </chubby-container>
+    </admin-container>
 </template>
 
-<script>
+<script setup>
 import { GetLoginInfo } from '@api/sys.base'
-import setting from '@/setting.js'
-export default {
-    data () {
-        return {
-            user: this.$store.getters['chubby/user/user'],
-            info: {},
-            value: new Date()
-        }
-    },
-    mounted () {
-        this.init(this.getDate(this.value))
+import { computed, ref, onMounted, nextTick } from 'vue'
+import { useStore } from 'vuex'
+import useCurrentInstance from '@/proxy'
 
-        this.$nextTick(() => {
-            // 点击前一个月
-            let prevBtn = document.querySelector(
-                '.el-calendar__button-group .el-button-group>button:nth-child(1)')
+const { proxy } = useCurrentInstance()
+const store = useStore()
+const user = computed(() => store.getters['user/user'])
+const info = ref({})
+const time = ref(new Date())
 
-            let nextBtn = document.querySelector(
-                '.el-calendar__button-group .el-button-group>button:last-child')
+function init (time) {
+    let loadingInstance = proxy.$loading({
+        lock: true,
+        target: proxy.$refs.calendar.$el
+    })
 
-            let nowBtn = document.querySelector(
-                '.el-calendar__button-group .el-button-group>button:nth-child(2)')
-
-            prevBtn.addEventListener('click', () => {
-                this.init(this.getDate(this.value))
-            })
-
-            nextBtn.addEventListener('click', () => {
-                this.init(this.getDate(this.value))
-            })
-
-            nowBtn.addEventListener('click', () => {
-                this.init(this.getDate(this.value))
-            })
+    GetLoginInfo({
+        time: time,
+        admin_id: user.value.admin_id
+    })
+        .then(res => {
+            info.value = res
+            loadingInstance.close()
         })
-    },
-    methods: {
-        init (time) {
-            let loadingInstance = this.$loading({
-                lock: true,
-                target: this.$refs.calendar_info.$el
-            })
-
-            GetLoginInfo({
-                time: this.getDate(this.value),
-                admin_id: this.user.admin_id
-            })
-                .then(async res => {
-                    this.info = res
-                    loadingInstance.close()
-                })
-                .catch(() => {
-                    loadingInstance.close()
-                })
-        },
-        getDate (time) {
-            return time.getFullYear() + '-' + (time.getMonth() + 1)
-        }
-    }
+        .catch(() => {
+            loadingInstance.close()
+        })
 }
+
+function getDate (time) {
+    return time.getFullYear() + '-' + (time.getMonth() + 1)
+}
+
+onMounted(() => {
+    init(getDate(time.value))
+
+    nextTick(() => {
+        // 点击前一个月
+        let prevBtn = document.querySelector(
+            '.el-calendar__button-group .el-button-group>button:nth-child(1)')
+
+        let nextBtn = document.querySelector(
+            '.el-calendar__button-group .el-button-group>button:last-child')
+
+        let nowBtn = document.querySelector(
+            '.el-calendar__button-group .el-button-group>button:nth-child(2)')
+
+        prevBtn.addEventListener('click', () => {
+            init(getDate(time.value))
+        })
+
+        nextBtn.addEventListener('click', () => {
+            init(getDate(time.value))
+        })
+
+        nowBtn.addEventListener('click', () => {
+            init(getDate(time.value))
+        })
+    })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -92,7 +89,6 @@ export default {
         margin-bottom: 0;
     }
 }
-
 .calendar_span {
     font-size: 12px;
     text-align: right;
@@ -100,11 +96,9 @@ export default {
     display: inline-block;
     color: #909399;
 }
-
 .el-calendar-table .el-calendar-day {
     overflow: auto;
 }
-
 .header {
     text-align: center;
     & > span {
@@ -119,14 +113,12 @@ export default {
         margin-right: 5px;
     }
 }
-
 .el-form-item {
     margin-bottom: 10px;
     &:last-child {
         margin-bottom: 0;
     }
 }
-
 .page {
     .logo {
         width: 120px;

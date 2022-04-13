@@ -2,98 +2,98 @@ import request from '@/plugin/axios'
 
 /**
  * 导出数据库
- * @param {*} data 
+ * @param {*} data
  */
-export function ExportSql (data) {
+export function ExportSql(data) {
   return request({
     url: '/v1/Base/ExportSql',
     method: 'post',
     data,
     headers: { isCheck: true },
-    responseType: 'blob'
+    responseType: 'blob',
   })
 }
 
 /**
  * 导入数据库
- * @param {*} data 
+ * @param {*} data
  */
-export function ImportSql (data) {
+export function ImportSql(data) {
   return request({
     url: '/v1/Base/ImportSql',
     method: 'post',
     data,
-    headers: { 'content-type': 'multipart/form-data' }
+    headers: { 'content-type': 'multipart/form-data' },
   })
 }
 
 /**
  * 初始化数据库和原始数据
  */
-export function CreateDrop () {
+export function CreateDrop() {
   return request({
     url: '/v1/Base/CreateDrop',
-    method: 'get'
+    method: 'get',
   })
 }
 
 /**
  * 初始化数据库和原始数据(新建后想重新初始化)
  */
-export function AgainCreateDrop () {
+export function AgainCreateDrop() {
   return request({
     url: '/v1/Base/AgainCreateDrop',
-    method: 'get'
+    method: 'get',
   })
 }
 
 /**
  * 获取用户登录情况
- * @param {*} data 
+ * @param {*} data
  */
-export function GetLoginInfo (data) {
+export function GetLoginInfo(data) {
   return request({
     url: '/v1/Base/GetLoginInfo',
     method: 'post',
     data,
-    headers: { isCheck: true }
+    headers: { isCheck: true },
   })
 }
 
 /**
  * 获取所有用户登录次数
- * @param {*} data 
+ * @param {*} data
  */
-export function GetAllUserLoginCount (data) {
+export function GetAllUserLoginCount(data) {
   return request({
     url: '/v1/Base/GetAllUserLoginCount',
     method: 'post',
     data,
-    headers: { isCheck: true }
+    headers: { isCheck: true },
   })
 }
 
 /**
  * 获取所有用户登录次数
- * @param {*} data 
+ * @param {*} data
  */
-export function GetUserLoginIp (data) {
+export function GetUserLoginIp(data) {
   return request({
     url: '/v1/Base/GetUserLoginIp',
     method: 'post',
     data,
-    headers: { isCheck: true }
+    headers: { isCheck: true },
   })
 }
 
 /**
  * 获取README.md的内容
- * @param {*} data 
+ * @param {*} data
  */
-export function GetReadmeContent () {
+export function GetReadmeContent() {
   return request({
     url: '/v1/Base/GetReadmeContent',
     method: 'post',
-    headers: { isCheck: true }
+    headers: { isCheck: true },
   })
 }

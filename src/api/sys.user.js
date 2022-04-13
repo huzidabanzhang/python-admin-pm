@@ -2,96 +2,96 @@ import request from '@/plugin/axios'
 
 /**
  * 管理员登录
- * @param {*} data 
+ * @param {*} data
  */
-export function AccountLogin (data) {
+export function AccountLogin(data) {
   return request({
     url: '/v1/Admin/Login',
     method: 'post',
-    data
+    data,
   })
 }
 
 /**
  * 管理员登出
  */
-export function AccountLogout () {
+export function AccountLogout() {
   return request({
     url: '/v1/Admin/Logout',
-    method: 'get'
+    method: 'get',
   })
 }
 
 /**
  * 初始化数据库和原始数据
  */
-export function checkDb () {
+export function checkDb() {
   return request({
     url: '/v1/Admin/checkDb',
-    method: 'get'
+    method: 'get',
   })
 }
 
 /**
  * 新建管理员用户
- * @param {*} data 
+ * @param {*} data
  */
-export function CreateAdmin (data) {
+export function CreateAdmin(data) {
   return request({
     url: '/v1/Admin/CreateAdmin',
     method: 'post',
     data,
-    headers: { isCheck: true }
+    headers: { isCheck: true },
   })
 }
 
 /**
  * 隐藏管理员用户
- * @param {*} data 
+ * @param {*} data
  */
-export function LockAdmin (data) {
+export function LockAdmin(data) {
   return request({
     url: '/v1/Admin/LockAdmin',
     method: 'post',
     data,
-    headers: { isCheck: true }
+    headers: { isCheck: true },
   })
 }
 
 /**
  * 删除管理员用户
- * @param {*} data 
+ * @param {*} data
  */
-export function DelAdmin (data) {
+export function DelAdmin(data) {
   return request({
     url: '/v1/Admin/DelAdmin',
     method: 'post',
     data,
-    headers: { isCheck: true }
+    headers: { isCheck: true },
   })
 }
 
 /**
  * 修改管理员用户信息
- * @param {*} data 
+ * @param {*} data
  */
-export function ModifyAdmin (data) {
+export function ModifyAdmin(data) {
   return request({
     url: '/v1/Admin/ModifyAdmin',
     method: 'post',
-    data
+    data,
   })
 }
 
 /**
  * 获取管理员用户列表
- * @param {*} data 
+ * @param {*} data
  */
-export function QueryAdminByParam (data) {
+export function QueryAdminByParam(data) {
   return request({
     url: '/v1/Admin/QueryAdminByParam',
     method: 'post',
     data,
-    headers: { isCheck: true }
+    headers: { isCheck: true },
   })
 }

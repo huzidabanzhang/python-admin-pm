@@ -1,71 +1,74 @@
 <template>
-  <div
-    class="chubby-contextmenu"
-    v-show="flag"
-    :style="style">
-    <slot/>
-  </div>
+    <div
+        class="admin-contextmenu"
+        v-show="flag"
+        :style="style"
+    >
+        <slot />
+    </div>
 </template>
 
-<script>
-export default {
-  name: 'chubby-contextmenu',
-  props: {
+<script setup>
+import useCurrentInstance from '@/proxy'
+import { computed, onMounted } from 'vue'
+
+const { proxy } = useCurrentInstance()
+const props = defineProps({
     visible: {
-      type: Boolean,
-      default: false
+        type: Boolean,
+        default: false,
     },
     x: {
-      type: Number,
-      default: 0
+        type: Number,
+        default: 0,
     },
     y: {
-      type: Number,
-      default: 0
+        type: Number,
+        default: 0
     }
-  },
-  computed: {
-    flag: {
-      get () {
-        if (this.visible) {
-          // 注册全局监听事件 [ 目前只考虑鼠标解除触发 ]
-          window.addEventListener('mousedown', this.watchContextmenu)
+})
+const emits = defineEmits(['handleVisible'])
+
+const style = computed(() => {
+    return {
+        left: props.x + 'px',
+        top: props.y + 'px',
+        display: props.visible ? 'block' : 'none '
+    }
+})
+const flag = computed({
+    get () {
+        if (props.visible) {
+            // 注册全局监听事件 [ 目前只考虑鼠标解除触发 ]
+            window.addEventListener('mousedown', proxy.watchContextmenu)
         }
-        return this.visible
-      },
-      set (newVal) {
-        this.$emit('update:visible', newVal)
-      }
+        return props.visible
     },
-    style () {
-      return {
-        left: this.x + 'px',
-        top: this.y + 'px',
-        display: this.visible ? 'block' : 'none '
-      }
+    set (newVal) {
+        emits("handleVisible", newVal)
     }
-  },
-  methods: {
-    watchContextmenu (event) {
-      if (!this.$el.contains(event.target) || event.button !== 0) this.flag = false
-      window.removeEventListener('mousedown', this.watchContextmenu)
-    }
-  },
-  mounted () {
-    // 将菜单放置到body下
-    document.querySelector('body').appendChild(this.$el)
-  }
+})
+
+function watchContextmenu (event) {
+    if (!proxy.$el.contains(event.target) || event.button !== 0) flag.value = false
+    window.removeEventListener('mousedown', proxy.watchContextmenu)
 }
+
+onMounted(() => {
+    // 将菜单放置到body下
+    document.querySelector('body').appendChild(proxy.$el)
+})
+
 </script>
 
 <style>
-.chubby-contextmenu {
-  position: absolute;
-  padding: 5px 0;
-  z-index: 2018;
-  background: #FFF;
-  border: 1px solid #cfd7e5;
-  border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+.admin-contextmenu {
+    position: absolute;
+    padding: 5px 0;
+    z-index: 2018;
+    background: #fff;
+    border: 1px solid #cfd7e5;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 </style>
