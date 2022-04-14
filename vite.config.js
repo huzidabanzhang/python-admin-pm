@@ -45,26 +45,30 @@ export default defineConfig({
         }
     },
     server: {
-        port: 5001,
-        publicPath, // 和 publicPath 保持一致
-        https: false,
-        hotOnly: false,
-        // proxy: {
-        //     '/API': {
-        //         target: 'http://127.0.0.1:92', // 要跨域的域名
-        //         changeOrigin: true, // 是否开启跨域
-        //         rewrite: (path) => path.replace(/^\/API/, '')
-        //     }
-        // }
+        port: 5001
     },
     build: {
         target: 'modules',
         outDir: 'dist', //指定输出路径
         assetsDir: 'assets', // 指定生成静态资源的存放路径
-        minify: 'terser' // 混淆器，terser构建后文件体积更小
-    },
-    define: {
-        process: import.meta
+        minify: 'terser', // 混淆器，terser构建后文件体积更小
+        terserOptions: {
+            compress: {
+                //生产环境时移除console
+                drop_console: true,
+                drop_debugger: true,
+            },
+        },
+        // 取消计算文件大小，加快打包速度
+        reportCompressedSize: false,
+        sourcemap: true,
+        rollupOptions: {
+            output: {
+                chunkFileNames: 'js/[name]-[hash].js',
+                entryFileNames: 'js/[name]-[hash].js',
+                assetFileNames: '[ext]/[name]-[hash].[ext]'
+            }
+        }
     },
     plugins: [
         vue(),
