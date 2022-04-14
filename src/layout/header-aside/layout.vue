@@ -111,7 +111,7 @@
 import adminMenuSide from './components/menu-side'
 import adminHeaderUser from './components/header-user/index.vue'
 import adminTabs from './components/tabs/index.vue'
-import adminBase from '@/layout/pages/sys/base/index'
+import adminBase from '@/layout/pages/sys/base/index.vue'
 import useCurrentInstance from '@/proxy'
 import { computed, ref, provide } from 'vue'
 import { useStore } from "vuex"
