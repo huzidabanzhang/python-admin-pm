@@ -25,63 +25,55 @@
                     />
                     <!-- form -->
                     <div class="page-login--form">
-                        <el-card shadow="never">
-                            <el-form
-                                ref="loginForm"
-                                label-position="top"
-                                size="large"
-                                :rules="rules"
-                                :model="formLogin"
-                            >
-                                <el-form-item prop="username">
-                                    <el-input
-                                        type="text"
-                                        placeholder="用户名"
-                                        v-model="formLogin.username"
-                                    >
-                                        <template v-slot:prepend>
-                                            <i class="fa fa-user-circle-o"></i>
-                                        </template>
-                                    </el-input>
-                                </el-form-item>
-                                <el-form-item prop="password">
-                                    <el-input
-                                        type="password"
-                                        placeholder="密码"
-                                        show-password
-                                        v-model="formLogin.password"
-                                    >
-                                        <template v-slot:prepend>
-                                            <i class="fa fa-keyboard-o"></i>
-                                        </template>
-                                    </el-input>
-                                </el-form-item>
-                                <el-form-item prop="code">
-                                    <el-input
-                                        type="text"
-                                        placeholder="验证码"
-                                        v-model="formLogin.code"
-                                        @keyup.enter="handleSubmit"
-                                    >
-                                        <template v-slot:append>
-                                            <img
-                                                class="login-code"
-                                                :src="captcha"
-                                                @click="refreshCaptcha"
-                                            />
-                                        </template>
-                                    </el-input>
-                                </el-form-item>
-                                <el-button
-                                    type="primary"
-                                    class="button-login"
-                                    :disabled="!isDis"
-                                    @click="handleSubmit"
+                        <el-form
+                            ref="loginForm"
+                            label-position="top"
+                            size="large"
+                            :rules="rules"
+                            :model="formLogin"
+                        >
+                            <el-form-item prop="username">
+                                <el-input
+                                    type="text"
+                                    placeholder="用户名"
+                                    :prefix-icon="User"
+                                    v-model="formLogin.username"
+                                />
+                            </el-form-item>
+                            <el-form-item prop="password">
+                                <el-input
+                                    type="password"
+                                    placeholder="密码"
+                                    show-password
+                                    :prefix-icon="Lock"
+                                    v-model="formLogin.password"
+                                />
+                            </el-form-item>
+                            <el-form-item prop="code">
+                                <el-input
+                                    type="text"
+                                    placeholder="验证码"
+                                    v-model="formLogin.code"
+                                    @keyup.enter="handleSubmit"
                                 >
-                                    登 录
-                                </el-button>
-                            </el-form>
-                        </el-card>
+                                    <template v-slot:append>
+                                        <img
+                                            class="login-code"
+                                            :src="captcha"
+                                            @click="refreshCaptcha"
+                                        />
+                                    </template>
+                                </el-input>
+                            </el-form-item>
+                            <el-button
+                                type="primary"
+                                class="button-login"
+                                :disabled="!isDis"
+                                @click="handleSubmit"
+                            >
+                                登 录
+                            </el-button>
+                        </el-form>
                     </div>
                 </div>
                 <div class="page-login--content-footer">
@@ -99,11 +91,6 @@
                             target="_blank"
                         >浙ICP备2021024276号</a>
                     </p>
-                    <p class="page-login--content-footer-options">
-                        <a href="#">帮助</a>
-                        <a href="#">隐私</a>
-                        <a href="#">条款</a>
-                    </p>
                 </div>
             </div>
         </div>
@@ -116,6 +103,7 @@ import environment from '@/layout/pages/environment/index.vue'
 import util from '@/libs/util'
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import { Lock, User } from '@element-plus/icons-vue'
 
 const { proxy } = useCurrentInstance()
 const store = useStore()
@@ -281,6 +269,11 @@ function handleSubmit () {
         // 输入框左边的图表区域缩窄
         .el-input-group__prepend {
             padding: 0px 14px;
+        }
+        .el-input--large {
+            .el-input__prefix {
+                left: 12px;
+            }
         }
         .login-code {
             height: 40px - 2px;

@@ -24,8 +24,10 @@ $theme-multiple-page-control-background-color-active: #fff;
 $theme-menu-item-color-hover: var(--el-color-primary);
 $theme-menu-item-background-color-hover: var(--el-color-primary-light-9);
 
+// 顶栏背景色
+$theme-header-backgroud-color: #24292b;
 // 顶栏上的文字颜色
-$theme-header-item-color: $color-text-normal;
+$theme-header-item-color: #ffffff;
 $theme-header-item-background-color: transparent;
 // 顶栏上的项目在 hover 时
 $theme-header-item-color-hover: #409eff;
@@ -37,6 +39,8 @@ $theme-header-item-background-color-focus: rgba(#fff, 0.5);
 $theme-header-item-color-active: #409eff;
 $theme-header-item-background-color-active: rgba(#fff, 0.5);
 
+// 侧边栏背景色
+$theme-aside-background-color: #ffffff;
 // 侧边栏上的文字颜色
 $theme-aside-item-color: $color-text-normal;
 $theme-aside-item-background-color: transparent;

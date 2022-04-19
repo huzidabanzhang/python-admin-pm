@@ -23,9 +23,8 @@
                 </admin-contextmenu>
                 <el-tabs
                     class="admin-multiple-page-control"
-                    :model-value="current"
                     type="card"
-                    :closable="true"
+                    :model-value="current"
                     @tab-click="handleClick"
                     @edit="handleTabsEdit"
                     @contextmenu="handleContextmenu"
@@ -33,8 +32,9 @@
                     <el-tab-pane
                         v-for="page in opened"
                         :key="page.fullPath"
-                        :label="page.meta.title || '未命名'"
+                        :label="page.meta.title"
                         :name="page.fullPath"
+                        :closable="isTabClosable(page)"
                     />
                 </el-tabs>
             </div>
@@ -113,6 +113,14 @@ const tagName = ref('/index')
 
 const opened = computed(() => store.state.page.opened)
 const current = computed(() => store.state.page.current)
+
+/**
+ * @description 计算某个标签页是否可关闭
+ * @param {Object} page 其中一个标签页
+ */
+function isTabClosable (page) {
+    return page.name !== 'index'
+}
 
 /**
  * @description 右键菜单功能点击

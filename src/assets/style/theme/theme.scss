@@ -84,6 +84,8 @@
 
     // 顶栏
     .admin-theme-header {
+        background-color: $theme-header-backgroud-color;
+        color: $theme-header-item-color;
         // 顶栏菜单空间不足时显示的滚动控件
         .admin-theme-header-menu {
             .admin-theme-header-menu__prev,
@@ -93,16 +95,6 @@
                 &:hover {
                     color: $theme-header-item-color-hover;
                     background: $theme-header-item-background-color-hover;
-                }
-            }
-        }
-        // 切换按钮
-        .toggle-aside-btn {
-            i {
-                color: $theme-header-item-color;
-                background: $theme-header-item-background-color;
-                &:hover {
-                    color: $theme-header-item-color-hover;
                 }
             }
         }
@@ -197,6 +189,7 @@
     .admin-theme-container {
         // 侧边栏
         .admin-theme-container-aside {
+            background-color: $theme-aside-background-color;
             // 菜单为空的时候显示的信息
             .admin-layout-header-aside-menu-empty {
                 background: $theme-aside-menu-empty-background-color;
@@ -213,6 +206,16 @@
                     }
                     span {
                         color: $theme-aside-menu-empty-text-color-hover;
+                    }
+                }
+            }
+            // 切换按钮
+            .toggle-aside-btn {
+                i {
+                    color: $color-text-placehoder;
+                    background: $theme-header-item-background-color;
+                    &:hover {
+                        color: $theme-header-item-color-hover;
                     }
                 }
             }
@@ -346,6 +349,7 @@
                         }
                         .admin-container-full__footer {
                             border-top: $theme-container-border-inner;
+                            border-bottom: $theme-container-border-inner;
                             background: $theme-container-header-footer-background-color;
                         }
                     }
@@ -364,6 +368,7 @@
                         }
                         .admin-container-full-bs__footer {
                             border-top: $theme-container-border-inner;
+                            border-bottom: $theme-container-border-inner;
                             background: $theme-container-header-footer-background-color;
                         }
                     }
