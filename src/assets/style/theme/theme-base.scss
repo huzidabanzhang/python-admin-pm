@@ -78,9 +78,12 @@
             .admin-theme-container-aside {
                 transition: width 0.3s;
                 position: relative;
+                box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.04), 0px 4px 12px rgba(0, 0, 0, 0.03),
+                    0px 4px 16px 2px rgba(0, 0, 0, 0.02);
                 .admin-layout-header-aside-menu-side {
                     @extend %full;
                     overflow: hidden;
+                    bottom: 60px;
                 }
             }
             .admin-theme-container-main {
@@ -89,10 +92,10 @@
                 overflow: hidden;
                 .admin-theme-container-main-layer {
                     position: absolute;
-                    top: 0px;
-                    bottom: 0px;
-                    left: 0px;
-                    right: 0px;
+                    top: 16px;
+                    bottom: 16px;
+                    left: 16px;
+                    right: 16px;
                 }
                 .admin-theme-container-main-body {
                     position: relative;
@@ -118,27 +121,20 @@
         .admin-theme-header {
             // logo区域
             .logo-group {
+                padding: 0 16px;
                 transition: width 0.3s;
                 float: left;
                 text-align: center;
                 img {
-                    height: 40px;
-                    top: 12px;
+                    height: 30px;
+                    top: 15px;
                     position: relative;
                 }
-            }
-            // 折叠侧边栏切换按钮
-            .toggle-aside-btn {
-                float: left;
-                height: 60px;
-                width: 60px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                @extend %unable-select;
-                i {
-                    font-size: 20px;
-                    margin-top: 4px;
+                .logo-title {
+                    line-height: 60px;
+                    height: 60px;
+                    padding-left: 8px;
+                    position: fixed;
                 }
             }
             // [菜单] 顶栏
@@ -170,6 +166,10 @@
                 height: 60px;
                 display: flex;
                 align-items: center;
+                .item {
+                    @extend %unable-select;
+                    margin: 0 12px;
+                }
                 .btn-text {
                     padding: 14px 12px;
                     border-radius: 4px;
@@ -180,6 +180,8 @@
                 }
                 .el-dropdown {
                     @extend %unable-select;
+                    line-height: 60px;
+                    height: 60px;
                 }
             }
         }
@@ -191,6 +193,22 @@
                     width: 20px;
                     text-align: center;
                     font-size: 16px;
+                }
+                // 折叠侧边栏切换按钮
+                .toggle-aside-btn {
+                    height: 60px;
+                    width: 100%;
+                    display: flex;
+                    justify-content: right;
+                    align-items: center;
+                    right: 24px;
+                    bottom: 0;
+                    position: absolute;
+                    @extend %unable-select;
+                    i {
+                        font-size: 16px;
+                        margin-top: 4px;
+                    }
                 }
                 // [菜单] 正常状态
                 .el-menu {
@@ -244,7 +262,6 @@
                     height: 41px;
                     // 多页面控制器
                     .admin-multiple-page-control-group {
-                        padding-right: 20px;
                         .admin-multiple-page-control-content {
                             overflow: auto;
                             position: relative;
@@ -288,7 +305,7 @@
                         .admin-container-full {
                             position: absolute;
                             top: 0px;
-                            right: 20px;
+                            right: 0px;
                             bottom: 0px;
                             left: 0px;
                             display: flex;
@@ -312,7 +329,7 @@
                         .admin-container-full-bs {
                             position: absolute;
                             top: 0px;
-                            right: 20px;
+                            right: 0px;
                             bottom: 0px;
                             left: 0px;
                             display: flex;
@@ -338,7 +355,7 @@
                         .admin-container-ghost {
                             position: absolute;
                             top: 0px;
-                            right: 20px;
+                            right: 0px;
                             bottom: 0px;
                             left: 0px;
                             display: flex;
@@ -364,7 +381,7 @@
                         .admin-container-ghost-bs {
                             position: absolute;
                             top: 0px;
-                            right: 20px;
+                            right: 0px;
                             bottom: 0px;
                             left: 0px;
                             display: flex;
@@ -390,7 +407,7 @@
                         .admin-container-card {
                             position: absolute;
                             top: 0px;
-                            right: 20px;
+                            right: 0px;
                             bottom: 0px;
                             left: 0px;
                             display: flex;
@@ -420,7 +437,7 @@
                         .admin-container-card-bs {
                             position: absolute;
                             top: 0px;
-                            right: 20px;
+                            right: 0px;
                             bottom: 0px;
                             left: 0px;
                             display: flex;

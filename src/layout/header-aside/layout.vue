@@ -19,31 +19,29 @@
             >
                 <div
                     class="logo-group"
-                    :style="{ width: asideCollapse ? asideWidthCollapse : asideWidth }"
                     flex-box="0"
                 >
-                    <img
-                        v-if="asideCollapse"
-                        :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/icon-only.png`"
-                    />
-                    <img
-                        v-else
-                        :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`"
-                    />
+                    <img :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`" />
+                    <span class="logo-title">后台管理系统</span>
                 </div>
-                <div
-                    class="toggle-aside-btn"
-                    @click="handleToggleAside"
-                    flex-box="0"
-                >
-                    <admin-icon name="bars" />
-                </div>
+
                 <div flex-box="1"></div>
                 <!-- 顶栏右侧 -->
                 <div
                     class="admin-header-right"
                     flex-box="0"
                 >
+                    <!-- <el-badge
+                        is-dot
+                        class="item"
+                    >
+                        <el-icon>
+                            <bell />
+                        </el-icon>
+                    </el-badge>
+
+                    <el-divider direction="vertical" /> -->
+
                     <admin-header-user />
                 </div>
             </div>
@@ -64,6 +62,19 @@
                     }"
                 >
                     <admin-menu-side />
+
+                    <div
+                        class="toggle-aside-btn"
+                        @click="handleToggleAside"
+                        flex-box="0"
+                    >
+                        <el-icon v-if="!asideCollapse">
+                            <fold />
+                        </el-icon>
+                        <el-icon v-else>
+                            <expand />
+                        </el-icon>
+                    </div>
                 </div>
                 <!-- 主体 -->
                 <div
@@ -115,6 +126,7 @@ import adminBase from '@/layout/pages/sys/base/index.vue'
 import useCurrentInstance from '@/proxy'
 import { computed, ref, provide } from 'vue'
 import { useStore } from "vuex"
+import { Bell, Fold, Expand } from '@element-plus/icons-vue'
 
 const { proxy } = useCurrentInstance()
 const store = useStore()
@@ -127,10 +139,8 @@ const asideCollapse = computed(() => store.state.menu.asideCollapse)
 const themeActiveSetting = computed(() => store.getters['theme/activeSetting'])
 const styleLayoutMainGroup = computed(() => {
     return {
-        ...(themeActiveSetting.backgroundImage
-            ? {
-                backgroundImage: `url('${proxy.$baseUrl}${themeActiveSetting.backgroundImage}')`,
-            }
+        ...(themeActiveSetting.preview
+            ? { backgroundImage: `url('${proxy.$baseUrl}${themeActiveSetting.preview}')` }
             : {})
     }
 })

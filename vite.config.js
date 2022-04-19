@@ -36,12 +36,12 @@ export default defineConfig({
                     AtRule: {
                         charset: (atRule) => {
                             if (atRule.name === 'charset') {
-                                atRule.remove();
+                                atRule.remove()
                             }
                         }
                     }
                 }
-            ],
+            ]
         }
     },
     server: {
@@ -56,8 +56,8 @@ export default defineConfig({
             compress: {
                 //生产环境时移除console
                 drop_console: true,
-                drop_debugger: true,
-            },
+                drop_debugger: true
+            }
         },
         // 取消计算文件大小，加快打包速度
         reportCompressedSize: false,

@@ -40,6 +40,20 @@ export default {
         },
     },
     render () {
+        let slots = {
+            default: () => {
+                return [this.$slots.default()]
+            }
+        }
+
+        if (this.$slots.header) slots.header = () => {
+            return [this.$slots.header()]
+        }
+
+        if (this.$slots.footer) slots.footer = () => {
+            return [this.$slots.footer()]
+        }
+
         return h(
             'div',
             {
@@ -54,17 +68,7 @@ export default {
                         ...this.$attrs,
                         onScroll: (e) => this.$emit(this, 'scroll', e)
                     },
-                    {
-                        default: () => {
-                            return [this.$slots.default()]
-                        },
-                        header: () => {
-                            return this.$slots.header ? [this.$slots.header()] : null
-                        },
-                        footer: () => {
-                            return this.$slots.footer ? [this.$slots.footer()] : null
-                        }
-                    }
+                    slots
                 )
             ]
         )
