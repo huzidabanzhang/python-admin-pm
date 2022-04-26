@@ -236,7 +236,7 @@
                         title="删除"
                         :disabled="auth.del"
                         :icon="Delete"
-                        @click="delInterface([scope.row.interface_id], false)"
+                        @click="delInterface([scope.row.interface_id])"
                     >
                     </el-button>
                 </template>
@@ -268,7 +268,7 @@
     </admin-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
     RefreshRight,
     Plus,
@@ -276,238 +276,249 @@ import {
     Close,
     Delete,
     Edit,
-    Search
-} from '@element-plus/icons-vue'
+    Search,
+} from "@element-plus/icons-vue";
 import {
     QueryInterfaceByParam,
     LockInterface,
     DelInterface,
-} from '@/api/sys.interface'
-import { QueryRoleByParam } from '@/api/sys.role'
-import { ref, reactive, onMounted } from 'vue'
-import { cloneDeep } from 'lodash'
-import { useStore } from 'vuex'
-import Info from './info.vue'
-import Pagination from '@/layout/pages/pagination/index.vue'
-import setting from '@/setting.js'
-import util from '@/libs/util.js'
-import useCurrentInstance from '@/proxy'
+} from "@/api/sys.interface";
+import { QueryRoleByParam } from "@/api/sys.role";
+import { ref, reactive, onMounted } from "vue";
+import { cloneDeep } from "lodash";
+import { useStore } from "vuex";
+import Info from "./info.vue";
+import Pagination from "@/layout/pages/pagination/index.vue";
+import setting from "@/setting";
+import util from "@/libs/util";
+import useCurrentInstance from "@/proxy";
 
-const { proxy } = useCurrentInstance()
-const store = useStore()
+const { proxy } = useCurrentInstance() as any;
+const store = useStore();
 const lockOption = [
-    { label: '显示', value: 'false' },
-    { label: '隐藏', value: 'true' }
-]
+    { label: "显示", value: "false" },
+    { label: "隐藏", value: "true" },
+];
 const methodOption = [
-    { label: 'GET', value: 'GET' },
-    { label: 'POST', value: 'POST' },
-    { label: 'PUT', value: 'PUT' },
-    { label: 'DELETE', value: 'DELETE' }
-]
+    { label: "GET", value: "GET" },
+    { label: "POST", value: "POST" },
+    { label: "PUT", value: "PUT" },
+    { label: "DELETE", value: "DELETE" },
+];
 const auth = reactive({
     add: false,
-    del: proxy.$auth('del_interface'),
-    set: proxy.$auth('set_interface'),
-    lock: proxy.$auth('lock_interface'),
+    del: proxy.$auth("del_interface"),
+    set: proxy.$auth("set_interface"),
+    lock: proxy.$auth("lock_interface"),
     del_all: true,
-    lock_all: true
-})
+    lock_all: true,
+});
 const auth_all = {
-    del: proxy.$auth('del_interface'),
-    lock: proxy.$auth('lock_interface')
-}
-const interfaceData = ref([])
-const menuOption = ref([])
-const roleData = ref([])
-const interface_id = ref([])
-const params = ref({})
-const page = ref(1)
-const total = ref(0)
-const size = ref(20)
+    del: proxy.$auth("del_interface"),
+    lock: proxy.$auth("lock_interface"),
+};
+const interfaceData = ref([]);
+const menuOption = ref([]);
+const roleData = ref([]);
+const interface_id = ref([]);
+const params = ref({}) as any;
+const page = ref(1);
+const total = ref(0);
+const size = ref(20);
 const search = reactive({
-    disable: '',
-    menu_id: '',
-    role_id: '',
-    method: '',
-    name: ''
-})
-const title = ref('')
-const loading = ref(false)
-const centerDialogVisible = ref(false)
-const btnSubmit = ref(false)
-const roleDefault = ref(null)
+    disable: "",
+    menu_id: "",
+    role_id: "",
+    method: "",
+    name: "",
+});
+const title = ref("");
+const loading = ref(false);
+const centerDialogVisible = ref(false);
+const btnSubmit = ref(false);
+const roleDefault = ref(null);
 
-function pushMenu (ary) {
+function pushMenu(ary) {
     ary.map((i) => {
         if (i.children && i.children.length > 0) {
-            pushMenu(i.children)
-        } else menuOption.value.push(i)
-    })
+            pushMenu(i.children);
+        } else menuOption.value.push(i);
+    });
 }
 
-function init (visible) {
-    changeSelect([])
-    if (visible) centerDialogVisible.value = false
+function init(visible = false) {
+    changeSelect([]);
+    if (visible) centerDialogVisible.value = false;
     let params = {
         page: page.value,
-        page_size: size.value
-    }
+        page_size: size.value,
+    };
 
     for (let i in search) {
-        if (search[i] !== '') params[i] = search[i]
+        if (search[i] !== "") params[i] = search[i];
     }
 
-    loading.value = true
+    loading.value = true;
 
     util.axiosAll(
         [
             QueryInterfaceByParam(params),
             QueryRoleByParam({
-                is_default: true
-            })
+                is_default: true,
+            }),
         ],
         (res) => {
-            total.value = res[0].total
-            interfaceData.value = res[0].data
+            total.value = res[0].total;
+            interfaceData.value = res[0].data;
 
-            roleData.value = res[1].data
-            roleDefault.value = res[1].default
+            roleData.value = res[1].data;
+            roleDefault.value = res[1].default;
 
-            loading.value = false
+            loading.value = false;
         },
         (err) => {
-            loading.value = false
+            loading.value = false;
         }
-    )
+    );
 }
 
-function handleSize (size) {
-    size.value = size
-    page.value = 1
-    init()
+function handleSize(size) {
+    size.value = size;
+    page.value = 1;
+    init();
 }
 
-function handleCurrent (page) {
-    page.value = page
-    init()
+function handleCurrent(page) {
+    page.value = page;
+    init();
 }
 
-function handleClose () {
-    centerDialogVisible.value = false
+function handleClose() {
+    centerDialogVisible.value = false;
 }
 
-function isAuth (row) {
-    return !setting.lock_interface.some((i) => { return i === row.mark })
+function isAuth(row) {
+    return !setting.lock_interface.some((i) => {
+        return i === row.mark;
+    });
 }
 
-function editInterface (disabled, row) {
-    btnSubmit.value = disabled
-    title.value = row ? '编辑接口' : '新建接口'
-    params.value = row ? cloneDeep(row) : {
-        method: 'GET',
-        forbid: true,
-        disable: false,
-        menus: [],
-        roles: [roleDefault.value]
-    }
+function editInterface(disabled, row) {
+    btnSubmit.value = disabled;
+    title.value = row ? "编辑接口" : "新建接口";
+    params.value = row
+        ? cloneDeep(row)
+        : {
+              method: "GET",
+              forbid: true,
+              disable: false,
+              menus: [],
+              roles: [roleDefault.value],
+          };
     if (row) {
-        const roles = row.roles.map((i) => { return i.role_id })
-        const menus = row.menus.map((i) => { return i.menu_id })
-        params.value.roles = roles
-        params.value.menus = menus
+        const roles = row.roles.map((i) => {
+            return i.role_id;
+        });
+        const menus = row.menus.map((i) => {
+            return i.menu_id;
+        });
+        params.value.roles = roles;
+        params.value.menus = menus;
     }
-    centerDialogVisible.value = true
+    centerDialogVisible.value = true;
 }
 
-function changeSelect (selection) {
+function changeSelect(selection) {
     interface_id.value = selection.map((i) => {
-        return i.interface_id
-    })
+        return i.interface_id;
+    });
 
     for (let i in auth_all) {
-        if (!auth_all[i]) auth[i + '_all'] = interface_id.value.length === 0
+        if (!auth_all[i]) auth[i + "_all"] = interface_id.value.length === 0;
     }
 }
 
-function handleRowLock (row) {
-    if (!isAuth(row)) return true
+function handleRowLock(row) {
+    if (!isAuth(row)) return true;
 
-    lockAdmin([row.role_id], row.disable ? false : true)
+    delInterface([row.role_id]);
 }
 
-function lockInterface (keys, disable) {
-    if (keys.length === 0) return proxy.$message.warning('未选择任何记录')
+function lockInterface(keys, disable) {
+    if (keys.length === 0) return proxy.$message.warning("未选择任何记录");
 
-    proxy.$confirm(
-        disable ? '确定要隐藏该接口吗' : '确定要显示该接口吗',
-        disable ? '隐藏接口' : '显示接口',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        }
-    )
+    proxy
+        .$confirm(
+            disable ? "确定要隐藏该接口吗" : "确定要显示该接口吗",
+            disable ? "隐藏接口" : "显示接口",
+            {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+            }
+        )
         .then(() => {
-            Lock(keys, disable)
+            Lock(keys, disable);
         })
-        .catch()
+        .catch();
 }
 
-function delInterface (interface_id) {
+function delInterface(interface_id) {
     if (interface_id.length === 0)
-        return proxy.$message.warning('未选择任何记录')
+        return proxy.$message.warning("未选择任何记录");
 
-    proxy.$confirm('确定要删除该接口吗', '删除接口', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-    }).then(() => {
-        DelInterface({
-            interface_id: interface_id,
-        }).then(async (res) => {
-            getInterfaceInfo(interface_id, 1)
-            proxy.$message.success('接口删除成功')
-            init()
+    proxy
+        .$confirm("确定要删除该接口吗", "删除接口", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
         })
-    })
+        .then(() => {
+            DelInterface({
+                interface_id: interface_id,
+            }).then(async (res) => {
+                getInterfaceInfo(interface_id, 1);
+                proxy.$message.success("接口删除成功");
+                init();
+            });
+        });
 }
 
-function getInterfaceInfo (interface_id, type, disable) {
-    let interfaces = cloneDeep(store.getters['user/interfaces'])
+function getInterfaceInfo(interface_id, type, disable = "") {
+    let interfaces = cloneDeep(store.getters["user/interfaces"]);
     interface_id.map((i) => {
         for (let j = 0; j < interfaces.length; j++) {
             if (i === interfaces[j].interface_id) {
                 if (type === 1) {
-                    interfaces.splice(j)
-                    j--
+                    interfaces.splice(j);
+                    j--;
                 }
 
-                if (type === 2) interfaces[j].disable = disable === 'true'
-                break
+                if (type === 2) interfaces[j].disable = disable === "true";
+                break;
             }
         }
-    })
+    });
 
-    util.initInterface(interfaces)
+    util.initInterface(interfaces);
 }
 
-function Lock (keys, disable) {
+function Lock(keys, disable) {
     LockInterface({
         interface_id: keys,
         disable: disable,
     }).then(async (res) => {
-        getInterfaceInfo(keys, 2, disable)
-        proxy.$message.success(disable ? '接口隐藏成功' : '接口显示成功')
-        init()
-    })
+        getInterfaceInfo(keys, 2, disable);
+        proxy.$message.success(disable ? "接口隐藏成功" : "接口显示成功");
+        init();
+    });
 }
 
 onMounted(() => {
-    menuOption.value = []
-    pushMenu(util.getMenuTree(true))
-    init()
-})
+    menuOption.value = [];
+    pushMenu(util.getMenuTree(true));
+    init();
+});
 </script>
 
 <style scoped>

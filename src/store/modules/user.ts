@@ -10,7 +10,7 @@ export default {
          * @description 返回菜单数据
          * @param {*} state vuex state
          */
-        menus (state) {
+        menus(state) {
             try {
                 return state.info.menus
             } catch (error) {
@@ -21,7 +21,7 @@ export default {
          * @description 返回接口数据
          * @param {*} state vuex state
          */
-        interfaces (state) {
+        interfaces(state) {
             try {
                 return state.info.interfaces
             } catch (error) {
@@ -32,14 +32,14 @@ export default {
          * @description 返回用户所有数据
          * @param {*} state vuex state
          */
-        info (state) {
+        info(state) {
             return state.info
         },
         /**
          * @description 返回用户基本数据
          * @param {*} state vuex state
          */
-        user (state) {
+        user(state) {
             try {
                 return state.info.user
             } catch (error) {
@@ -50,7 +50,7 @@ export default {
          * @description 返回是否初始化
          * @param {*} state vuex state
          */
-        isInit (state) {
+        isInit(state) {
             return state.isInit
         },
     },
@@ -60,8 +60,8 @@ export default {
          * @param {Object} context
          * @param {*} info info
          */
-        set ({ state, dispatch }, info) {
-            return new Promise(async (resolve) => {
+        set({ state, dispatch }, info) {
+            return new Promise<void>(async (resolve) => {
                 // store 赋值
                 state.info = info
                 // 持久化
@@ -83,8 +83,8 @@ export default {
          * @description 从数据库取用户数据
          * @param {Object} context
          */
-        load ({ state, dispatch }) {
-            return new Promise(async (resolve) => {
+        load({ state, dispatch }) {
+            return new Promise<void>(async (resolve) => {
                 // store 赋值
                 state.info = await dispatch(
                     'db/get',
@@ -106,7 +106,7 @@ export default {
          * @description 修改是否初始化
          * @param {Object} state state
          */
-        setInit (state, isInit) {
+        setInit(state, isInit) {
             state.isInit = isInit
         },
     },

@@ -1,5 +1,5 @@
 // 设置文件
-import setting from '@/setting.js'
+import setting from '@/setting'
 
 export default {
   namespaced: true,
@@ -14,7 +14,7 @@ export default {
      * @param {Boolean} active 新的状态
      */
     set({ state, dispatch }, active) {
-      return new Promise(async (resolve) => {
+      return new Promise<void>(async (resolve) => {
         // store 赋值
         state.active = active
         // 持久化
@@ -37,7 +37,7 @@ export default {
      * @param {Object} context
      */
     load({ state, dispatch }) {
-      return new Promise(async (resolve) => {
+      return new Promise<void>(async (resolve) => {
         // store 赋值
         state.active = await dispatch(
           'db/get',

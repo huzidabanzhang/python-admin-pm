@@ -20,21 +20,19 @@ export default db
  * @param {Object} payload dbName {String} 数据库名称
  * @param {Object} payload path {String} 路径
  * @param {Object} payload user {Boolean} 区分用户
- * @param {Object} payload validator {Function} 数据校验钩子 返回 true 表示验证通过
  * @param {Object} payload defaultValue {*} 初始化默认值
  * @returns {String} 可以直接使用的路径
  */
-export function pathInit ({
+export function pathInit({
     dbName = 'database',
     path = '',
     user = true,
-    validator = () => true,
-    defaultValue = ''
+    defaultValue = '' as any
 }) {
     const token = util.cookies.get('token') || 'test'
     const currentPath = `${dbName}.${user ? `user.${token}` : 'public'}${path ? `.${path}` : ''}`
     const value = db.get(currentPath).value()
-    if (!(value !== undefined && validator(value))) {
+    if (!(value !== undefined)) {
         db
             .set(currentPath, defaultValue)
             .write()
@@ -50,7 +48,7 @@ export function pathInit ({
  * @param {Object} payload value {*} 需要存储的值
  * @param {Object} payload user {Boolean} 是否区分用户
  */
-export function dbSet ({
+export function dbSet({
     dbName = 'database',
     path = '',
     value = '',
@@ -71,13 +69,13 @@ export function dbSet ({
  * @param {Object} payload defaultValue {*} 取值失败的默认值
  * @param {Object} payload user {Boolean} 是否区分用户
  */
-export function dbGet ({
+export function dbGet({
     dbName = 'database',
     path = '',
-    defaultValue = '',
+    defaultValue = '' as any,
     user = false
 }) {
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
         resolve(cloneDeep(db.get(pathInit({
             dbName,
             path,
@@ -91,16 +89,15 @@ export function dbGet ({
  * @description 获取存储数据库对象
  * @param {Object} payload user {Boolean} 是否区分用户
  */
-export function database ({
+export function database({
     dbName = 'database',
     path = '',
     user = false,
-    validator = () => true,
-    defaultValue = ''
+    defaultValue = '' as any
 } = {}) {
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
         resolve(db.get(pathInit({
-            dbName, path, user, validator, defaultValue
+            dbName, path, user, defaultValue
         })))
     })
 }

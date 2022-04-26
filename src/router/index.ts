@@ -75,19 +75,19 @@ const frameOut = [
 // 导出需要显示菜单的
 export const frameInRoutes = frameIn
 
-// 导出路由 在 main.js 里使用
+// 导出路由 在 main 里使用
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         ...frameIn,
         ...frameOut
     ]
-})
+}) as any
 
 let RouteFresh = true
 
 // 处理动态理由 刷新后失效的问题 通过判断RouteFresh来确定是否加载
-async function ResetRoute (to, next) {
+async function ResetRoute(to, next) {
     if (RouteFresh) {
         await store.dispatch('db/get', {
             dbName: 'sys',

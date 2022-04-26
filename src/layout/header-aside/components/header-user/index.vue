@@ -39,81 +39,87 @@
     </el-dropdown>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
-import { useStore } from "vuex"
-import { cloneDeep } from 'lodash'
-import Admin from '@/layout/pages/sys/admin/info.vue'
-import useCurrentInstance from '@/proxy'
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
+import { cloneDeep } from "lodash";
+import { AgainCreateDrop } from "@api/sys.base";
+import Admin from "@/layout/pages/sys/admin/info.vue";
+import useCurrentInstance from "@/proxy";
 
-const { proxy } = useCurrentInstance()
-const store = useStore()
-const user = computed(() => store.getters['user/user'])
-const params = ref({})
-const centerDialogVisible = ref(false)
+const { proxy } = useCurrentInstance() as any;
+const store = useStore();
+const user = computed(() => store.getters["user/user"]) as any;
+const params = ref({});
+const centerDialogVisible = ref(false);
 
-function getUsernameFlter () {
+function getUsernameFlter() {
     if (user.value && Object.keys(user.value).length > 0) {
-        let name = user.value.nickname ? user.value.nickname : user.value.username
-        return name ? `你好 ${name}` : '未登录'
+        let name = user.value.nickname
+            ? user.value.nickname
+            : user.value.username;
+        return name ? `你好 ${name}` : "未登录";
     }
-    return '未登录'
+    return "未登录";
 }
 
-function getInfo () {
-    params.value = cloneDeep(user.value)
-    centerDialogVisible.value = true
+function getInfo() {
+    params.value = cloneDeep(user.value);
+    centerDialogVisible.value = true;
 }
 
-function handleClose (data) {
-    if (data.admin_id) user.value = cloneDeep(data)
-    centerDialogVisible.value = false
+function handleClose(data) {
+    if (data.admin_id) user.value = cloneDeep(data);
+    centerDialogVisible.value = false;
 }
 
-function isMark () {
-    return user.value ? user.value.is_admin : false
+function isMark() {
+    return user.value ? user.value.is_admin : false;
 }
 
-function handleCommand (command) {
+function handleCommand(command) {
     switch (command) {
-        case 'admin':
-            getInfo()
-            break
-        case 'logout':
-            store.dispatch('account/logout', {
-                confirm: true
-            })
-            break
-        case 'database':
-            proxy.$confirm('重置数据库将清空所有数据，确定要重置吗？', '提示',
-                {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
+        case "admin":
+            getInfo();
+            break;
+        case "logout":
+            store.dispatch("account/logout", {
+                confirm: true,
+            });
+            break;
+        case "database":
+            proxy
+                .$confirm("重置数据库将清空所有数据，确定要重置吗？", "提示", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning",
                 })
                 .then(() => {
-                    let loadingInstance = proxy.$loading(proxy.loadOption('正在重置数据库中.....'))
+                    let loadingInstance = proxy.$loading(
+                        proxy.loadOption("正在重置数据库中.....")
+                    );
                     AgainCreateDrop()
-                        .then(res => {
-                            loadingInstance.close()
-                            proxy.$confirm('请重新登录', '提示',
-                                {
-                                    confirmButtonText: '确定',
-                                    type: 'success',
+                        .then((res) => {
+                            loadingInstance.close();
+                            proxy
+                                .$confirm("请重新登录", "提示", {
+                                    confirmButtonText: "确定",
+                                    type: "success",
                                     showClose: false,
                                     showCancelButton: false,
                                     closeOnClickModal: false,
                                     closeOnPressEscape: false,
-                                    closeOnHashChange: false
-                                }).then(() => {
-                                    store.dispatch('account/logout')
+                                    closeOnHashChange: false,
                                 })
+                                .then(() => {
+                                    store.dispatch("account/logout");
+                                });
                         })
-                        .catch(async res => {
-                            loadingInstance.close()
-                        })
-                })
-            break
+                        .catch(async (res) => {
+                            loadingInstance.close();
+                        });
+                });
+            break;
     }
 }
 </script>

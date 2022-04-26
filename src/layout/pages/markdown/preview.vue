@@ -5,26 +5,24 @@
     ></div>
 </template>
 
-<script setup>
-import { ref, watch } from 'vue'
-import 'github-markdown-css/github-markdown.css'  //导入
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import "github-markdown-css/github-markdown.css"; //导入
 
-const props = defineProps(['content', 'loadingInstance'])
+const props = defineProps(["content", "loadingInstance"]);
 
-const html = ref('')
+const html = ref("");
 
 watch(
     () => props.content,
     (value) => {
-        html.value = value
+        html.value = value;
         try {
-            props.loadingInstance.close()
-        } catch (error) {
-
-        }
+            props.loadingInstance.close();
+        } catch (error) {}
     },
     { immediate: true }
-)
+);
 </script>
 
 <style lang="scss" scoped>

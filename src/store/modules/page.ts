@@ -1,6 +1,6 @@
 import { get } from 'lodash'
 import router from '@/router'
-import setting from '@/setting.js'
+import setting from '@/setting'
 
 // 判定是否需要缓存
 const isKeepAlive = (data) => get(data, 'meta.cache', false)
@@ -24,9 +24,9 @@ export default {
          * @description 确认已经加载多标签页数据
          * @param {Object} context
          */
-        isLoaded ({ state }) {
+        isLoaded({ state }) {
             if (state.value) return Promise.resolve()
-            return new Promise((resolve) => {
+            return new Promise<void>((resolve) => {
                 const timer = setInterval(() => {
                     if (state.openedLoaded) {
                         resolve(clearInterval(timer))
@@ -39,8 +39,8 @@ export default {
          * @description 从持久化数据载入标签页列表
          * @param {Object} context
          */
-        openedLoad ({ state, commit, dispatch }) {
-            return new Promise(async (resolve) => {
+        openedLoad({ state, commit, dispatch }) {
+            return new Promise<void>(async (resolve) => {
                 // store 赋值
                 const value = await dispatch(
                     'db/get',
@@ -86,8 +86,8 @@ export default {
          * 将 opened 属性赋值并持久化 在这之前请先确保已经更新了 state.opened
          * @param {Object} context
          */
-        openadmindb ({ state, dispatch }) {
-            return new Promise(async (resolve) => {
+        openadmindb({ state, dispatch }) {
+            return new Promise<void>(async (resolve) => {
                 // 设置数据
                 dispatch(
                     'db/set',
@@ -109,11 +109,11 @@ export default {
          * @param {Object} context
          * @param {Object} payload { index, params, query, fullPath } 路由信息
          */
-        openedUpdate (
+        openedUpdate(
             { state, commit, dispatch },
             { index, params, query, fullPath }
         ) {
-            return new Promise(async (resolve) => {
+            return new Promise<void>(async (resolve) => {
                 // 更新页面列表某一项
                 let page = state.opened[index]
                 page.params = params || page.params
@@ -132,8 +132,8 @@ export default {
          * @param {Object} context
          * @param {Object} payload new tag info
          */
-        add ({ state, commit, dispatch }, { tag, params, query, fullPath }) {
-            return new Promise(async (resolve) => {
+        add({ state, commit, dispatch }, { tag, params, query, fullPath }) {
+            return new Promise<void>(async (resolve) => {
                 // 设置新的 tag 在新打开一个以前没打开过的页面时使用
                 let newTag = tag
                 newTag.params = params || newTag.params
@@ -157,8 +157,8 @@ export default {
          * @param {Object} context
          * @param {Object} payload 从路由钩子的 to 对象上获取 { name, params, query, fullPath } 路由信息
          */
-        open ({ state, commit, dispatch }, { name, params, query, fullPath }) {
-            return new Promise(async (resolve) => {
+        open({ state, commit, dispatch }, { name, params, query, fullPath }) {
+            return new Promise<void>(async (resolve) => {
                 // 已经打开的页面
                 let opened = state.opened
                 // 判断此页面是否已经打开 并且记录位置
@@ -200,8 +200,8 @@ export default {
          * @param {Object} context
          * @param {Object} payload { tagName: 要关闭的标签名字 }
          */
-        close ({ state, commit, dispatch }, { tagName }) {
-            return new Promise(async (resolve) => {
+        close({ state, commit, dispatch }, { tagName }) {
+            return new Promise<void>(async (resolve) => {
                 // 下个新的页面
                 let newPage = state.opened[0]
                 const isCurrent = state.current === tagName
@@ -252,8 +252,8 @@ export default {
          * @param {Object} context
          * @param {Object} payload { pageSelect: 当前选中的tagName }
          */
-        closeLeft ({ state, commit, dispatch }, { pageSelect } = {}) {
-            return new Promise(async (resolve) => {
+        closeLeft({ state, commit, dispatch }, { pageSelect = null } = {}) {
+            return new Promise<void>(async (resolve) => {
                 const pageAim = pageSelect || state.current
                 let currentIndex = 0
                 state.opened.forEach((page, index) => {
@@ -283,8 +283,8 @@ export default {
          * @param {Object} context
          * @param {Object} payload { pageSelect: 当前选中的tagName }
          */
-        closeRight ({ state, commit, dispatch }, { pageSelect } = {}) {
-            return new Promise(async (resolve) => {
+        closeRight({ state, commit, dispatch }, { pageSelect = null } = {}) {
+            return new Promise<void>(async (resolve) => {
                 const pageAim = pageSelect || state.current
                 let currentIndex = 0
                 state.opened.forEach((page, index) => {
@@ -313,8 +313,8 @@ export default {
          * @param {Object} context
          * @param {Object} payload { pageSelect: 当前选中的tagName }
          */
-        closeOther ({ state, commit, dispatch }, { pageSelect } = {}) {
-            return new Promise(async (resolve) => {
+        closeOther({ state, commit, dispatch }, { pageSelect = null } = {}) {
+            return new Promise<void>(async (resolve) => {
                 const pageAim = pageSelect || state.current
                 let currentIndex = 0
                 state.opened.forEach((page, index) => {
@@ -351,8 +351,8 @@ export default {
          * @description 关闭所有 tag
          * @param {Object} context
          */
-        closeAll ({ state, commit, dispatch }) {
-            return new Promise(async (resolve) => {
+        closeAll({ state, commit, dispatch }) {
+            return new Promise<void>(async (resolve) => {
                 // 删除打开的页面 并在缓存设置中删除
                 state.opened
                     .splice(1)
@@ -376,7 +376,7 @@ export default {
          * @description 从已经打开的页面记录中更新需要缓存的页面记录
          * @param {Object} state state
          */
-        keepAliveRefresh (state) {
+        keepAliveRefresh(state) {
             state.keepAlive = state.opened
                 .filter((item) => isKeepAlive(item))
                 .map((e) => e.name)
@@ -386,7 +386,7 @@ export default {
          * @param {Object} state state
          * @param {String} name name
          */
-        keepAliveRemove (state, name) {
+        keepAliveRemove(state, name) {
             const list = [...state.keepAlive]
             const index = list.findIndex((item) => item === name)
 
@@ -400,7 +400,7 @@ export default {
          * @param {Object} state state
          * @param {String} name name
          */
-        keepAlivePush (state, name) {
+        keepAlivePush(state, name) {
             const keep = [...state.keepAlive]
             keep.push(name)
             state.keepAlive = keep
@@ -409,7 +409,7 @@ export default {
          * @description 清空页面缓存设置
          * @param {Object} state state
          */
-        keepAliveClean (state) {
+        keepAliveClean(state) {
             state.keepAlive = []
         },
         /**
@@ -418,7 +418,7 @@ export default {
          * @param {Object} state state
          * @param {String} fullPath new fullPath
          */
-        currentSet (state, fullPath) {
+        currentSet(state, fullPath) {
             state.current = fullPath
         },
         /**
@@ -427,7 +427,7 @@ export default {
          * @param {Object} state state
          * @param {Array} routes routes
          */
-        init (state, routes) {
+        init(state, routes) {
             const pool = []
             const push = function (routes) {
                 routes.forEach((route) => {

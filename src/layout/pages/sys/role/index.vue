@@ -93,132 +93,133 @@
     </admin-container>
 </template>
 
-<script setup>
-import {
-    Plus,
-    Delete,
-    RefreshRight,
-    Search
-} from '@element-plus/icons-vue'
-import { QueryRoleByParam, LockRole, DelRole } from '@/api/sys.role'
-import { cloneDeep } from 'lodash'
-import { ref, reactive, onMounted } from 'vue'
-import Info from './info.vue'
-import setting from '@/setting.js'
-import useCurrentInstance from '@/proxy'
+<script setup lang="ts">
+import { Plus, Delete, RefreshRight, Search } from "@element-plus/icons-vue";
+import { QueryRoleByParam, LockRole, DelRole } from "@/api/sys.role";
+import { cloneDeep } from "lodash";
+import { ref, reactive, onMounted } from "vue";
+import Info from "./info.vue";
+import setting from "@/setting";
+import useCurrentInstance from "@/proxy";
 
-const { proxy } = useCurrentInstance()
+const { proxy } = useCurrentInstance() as any;
 const auth_all = {
-    set: proxy.$auth('set_role', 'all'),
-    del: proxy.$auth('del_role', 'all'),
-    lock: proxy.$auth('lock_role', 'all')
-}
+    set: proxy.$auth("set_role", "all"),
+    del: proxy.$auth("del_role", "all"),
+    lock: proxy.$auth("lock_role", "all"),
+};
 const statusOption = [
-    { label: '显示', value: 'false' },
-    { label: '隐藏', value: 'true' }
-]
-const mark = setting.SYS_ADMIN.mark
+    { label: "显示", value: "false" },
+    { label: "隐藏", value: "true" },
+];
+const mark = setting.SYS_ADMIN.mark;
 
 const auth = reactive({
     add: false,
-    del: true
-})
-const roleData = ref([])
-const params = ref({})
-const loading = ref(false)
-const centerDialogVisible = ref(false)
-const btnSubmit = ref(false)
+    del: true,
+});
+const roleData = ref([]);
+const params = ref({});
+const loading = ref(false);
+const centerDialogVisible = ref(false);
+const btnSubmit = ref(false);
 const search = reactive({
-    status: ''
-})
-const title = ref('')
+    status: "",
+});
+const title = ref("");
 const select = ref({
-    role_id: null
-})
+    role_id: null,
+}) as any;
 
-function init (visible) {
-    if (visible == true) centerDialogVisible.value = false
-    let params = {}
-    if (search.status !== '') params['disable'] = search.status
+function init(visible = false) {
+    if (visible == true) centerDialogVisible.value = false;
+    let params = {};
+    if (search.status !== "") params["disable"] = search.status;
 
-    loading.value = true
+    loading.value = true;
     QueryRoleByParam(params)
         .then(async (res) => {
-            roleData.value = res
-            loading.value = false
+            roleData.value = res;
+            loading.value = false;
         })
         .catch(() => {
-            loading.value = false
-        })
+            loading.value = false;
+        });
 }
 
-function handleClose () {
-    centerDialogVisible.value = false
+function handleClose() {
+    centerDialogVisible.value = false;
 }
 
-function getRole (item) {
-    select.value = item
-    auth.del = item.mark === mark
+function getRole(item) {
+    select.value = item;
+    auth.del = item.mark === mark;
 }
 
-function editRole (disabled, role) {
-    btnSubmit.value = disabled
-    title.value = role ? '编辑角色' : '新建角色'
-    params.value = role ? cloneDeep(role) : {
-        disable: false
-    }
-    centerDialogVisible.value = true
+function editRole(disabled, role) {
+    btnSubmit.value = disabled;
+    title.value = role ? "编辑角色" : "新建角色";
+    params.value = role
+        ? cloneDeep(role)
+        : {
+              disable: false,
+          };
+    centerDialogVisible.value = true;
 }
 
-function lockRole (keys, disable) {
-    if (auth_all.lock) return true
+function lockRole(keys, disable) {
+    if (auth_all.lock) return true;
 
-    if (keys.length == 0) return proxy.$message.warning('未选择任何记录')
+    if (keys.length == 0) return proxy.$message.warning("未选择任何记录");
 
-    proxy.$confirm(
-        disable ? '确定要隐藏该角色吗' : '确定要显示该角色吗',
-        disable ? '隐藏角色' : '显示角色',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-        }
-    ).then(() => {
-        Lock(keys, disable)
-    })
+    proxy
+        .$confirm(
+            disable ? "确定要隐藏该角色吗" : "确定要显示该角色吗",
+            disable ? "隐藏角色" : "显示角色",
+            {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+            }
+        )
+        .then(() => {
+            Lock(keys, disable);
+        });
 }
 
-function Lock (keys, disable) {
+function Lock(keys, disable) {
     LockRole({
         role_id: keys,
         disable: disable,
     }).then(async (res) => {
-        select.value = { role_id: null }
-        init()
-    })
+        select.value = { role_id: null };
+        init();
+    });
 }
 
-function delRole () {
+function delRole() {
     if (select.value.role_id !== null && select.value.mark !== mark) {
-        proxy.$confirm('确定要删除该角色吗', '删除角色', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-        }).then(() => {
-            DelRole({
-                role_id: [select.value.role_id],
-            }).then(async (res) => {
-                proxy.$message.success('删除角色成功')
-                select.value = { role_id: null }
-                init()
+        proxy
+            .$confirm("确定要删除该角色吗", "删除角色", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
             })
-        })
-    } else proxy.$message.warning('未选择任何记录')
+            .then(() => {
+                DelRole({
+                    role_id: [select.value.role_id],
+                }).then(async (res) => {
+                    proxy.$message.success("删除角色成功");
+                    select.value = { role_id: null };
+                    init();
+                });
+            });
+    } else proxy.$message.warning("未选择任何记录");
 }
 
 onMounted(() => {
-    init()
-})
+    init();
+});
 </script>
 
 <style scoped>

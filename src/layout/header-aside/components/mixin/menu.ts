@@ -1,4 +1,4 @@
-import util from '@/libs/util.js'
+import util from '@/libs/util'
 
 export default {
     inject: ['handleVisible'],

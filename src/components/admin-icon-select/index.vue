@@ -113,99 +113,98 @@
     </span>
 </template>
 
-<script setup>
-import {
-    Delete,
-    Search
-} from '@element-plus/icons-vue'
-import { ref, computed, watch } from 'vue'
-import icon from './data/index'
-import useCurrentInstance from '@/proxy'
+<script setup lang="ts">
+import { Delete, Search } from "@element-plus/icons-vue";
+import { ref, computed, watch } from "vue";
+import icon from "./data/index";
+import useCurrentInstance from "@/proxy";
 
-const { proxy } = useCurrentInstance()
+const { proxy } = useCurrentInstance() as any;
 const props = defineProps({
     // 值
     value: {
         type: String,
         required: false,
-        default: ''
+        default: "",
     },
     // 占位符
     placeholder: {
         type: String,
         required: false,
-        default: '请选择'
+        default: "请选择",
     },
     // 弹出界面的方向
     placement: {
         type: String,
         required: false,
-        default: 'right'
+        default: "right",
     },
     // 是否可清空
     clearable: {
         type: Boolean,
         required: false,
-        default: true
+        default: true,
     },
     // 是否允许用户输入
     userInput: {
         type: Boolean,
         required: false,
-        default: false
+        default: false,
     },
     // 是否在选择后自动关闭
     autoClose: {
         type: Boolean,
         required: false,
-        default: true
-    }
-})
-const emits = defineEmits(['update:value'])
+        default: true,
+    },
+});
+const emits = defineEmits(["update:value"]);
 
-const popover = ref()
-const popButton = ref()
-const currentValue = ref('')
-const searchText = ref('')
-const collapseActive = ref([])
+const popover = ref();
+const popButton = ref();
+const currentValue = ref("");
+const searchText = ref("");
+const collapseActive = ref([]);
 const bind = computed(() => {
     return {
         placeholder: props.placeholder,
         clearable: props.clearable,
-        ...proxy.$attrs
-    }
-})
-const searchMode = computed(() => { return !!searchText.value })
+        ...proxy.$attrs,
+    };
+});
+const searchMode = computed(() => {
+    return !!searchText.value;
+});
 const iconFilted = computed(() => {
     return icon
         .map((iconClass) => ({
             title: iconClass.title,
             icon: iconClass.icon.filter(
                 (icon) => icon.indexOf(searchText.value) >= 0
-            )
+            ),
         }))
-        .filter((iconClass) => iconClass.icon.length > 0)
-})
+        .filter((iconClass) => iconClass.icon.length > 0);
+});
 
 watch(
     () => props.value,
     (value) => {
-        currentValue.value = value
+        currentValue.value = value;
     },
     { immediate: true }
-)
+);
 
-function selectIcon (iconName = '') {
-    emits('update:value', iconName)
-    if (iconName && props.autoClose) proxy.$refs.popover.hide()
+function selectIcon(iconName = "") {
+    emits("update:value", iconName);
+    if (iconName && props.autoClose) (proxy.$refs.popover as any).hide();
 }
 
-function clear () {
-    emits('update:value', '')
+function clear() {
+    emits("update:value", "");
 }
 
-function blur () {
-    emits('update:value', this.currentValue)
+function blur() {
+    emits("update:value", this.currentValue);
 }
 </script>
 

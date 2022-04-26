@@ -1,5 +1,5 @@
 // 设置文件
-import setting from '@/setting.js'
+import setting from '@/setting'
 
 export default {
   namespaced: true,
@@ -24,7 +24,7 @@ export default {
      * @param {String} themeValue 需要激活的主题名称
      */
     set({ state, commit, dispatch }, themeName) {
-      return new Promise(async (resolve) => {
+      return new Promise<void>(async (resolve) => {
         // 检查这个主题在主题列表里是否存在
         state.activeName = state.list.find((e) => e.name === themeName)
           ? themeName
@@ -50,7 +50,7 @@ export default {
      * @description 从持久化数据加载主题设置     * @param {Object} context
      */
     load({ state, commit, dispatch }) {
-      return new Promise(async (resolve) => {
+      return new Promise<void>(async (resolve) => {
         // store 赋值
         let activeName = await dispatch(
           'db/get',

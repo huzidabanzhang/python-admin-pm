@@ -79,56 +79,57 @@
     </div>
 </template>
 
-<script setup>
-import useCurrentInstance from '@/proxy'
-import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
+<script setup lang="ts">
+import useCurrentInstance from "@/proxy";
+import { computed, ref } from "vue";
+import { useStore } from "vuex";
 
-const { proxy } = useCurrentInstance()
-const store = useStore()
+const { proxy } = useCurrentInstance() as any;
+const store = useStore();
 
-const dialogVisible = ref(false)
-const custom = ref('')
-const base = computed(() => store.getters['api/base'])
-const options = computed(() => store.getters['api/options'])
+const dialogVisible = ref(false);
+const custom = ref("");
+const base = computed(() => store.getters["api/base"]);
+const options = computed(() => store.getters["api/options"]);
 
-function onClose () {
-    dialogVisible.value = false
+function onClose() {
+    dialogVisible.value = false;
 }
 
-function onSelect (value) {
-    proxy.$confirm('确定切换该环境嘛？', '提示',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
+function onSelect(value) {
+    proxy
+        .$confirm("确定切换该环境嘛？", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
         })
         .then(async () => {
-            await store.commit('user/setInit', false)
-            let is_route = store.dispatch('api/set', value)
-            if (Object.keys(is_route).length == 0) proxy.$router.push({
-                path: '/'
-            })
-            onClose()
+            await store.commit("user/setInit", false);
+            let is_route = store.dispatch("api/set", value);
+            if (Object.keys(is_route).length == 0)
+                proxy.$router.push({
+                    path: "/",
+                });
+            onClose();
         })
-        .catch()
+        .catch();
 }
 
-function onRemove (value) {
-    proxy.$confirm('确定删除该环境嘛？', '提示',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
+function onRemove(value) {
+    proxy
+        .$confirm("确定删除该环境嘛？", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
         })
         .then(() => {
-            store.dispatch('api/remove', value)
+            store.dispatch("api/remove", value);
         })
-        .catch()
+        .catch();
 }
 
-function isItemActive (value) {
-    return base.value === value
+function isItemActive(value) {
+    return base.value === value;
 }
 </script>
 

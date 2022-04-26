@@ -97,118 +97,118 @@
     </div>
 </template>
 
-<script setup>
-import useCurrentInstance from '@/proxy'
-import environment from '@/layout/pages/environment/index.vue'
-import util from '@/libs/util'
-import { computed, ref, watch } from 'vue'
-import { useStore } from 'vuex'
-import { Lock, User } from '@element-plus/icons-vue'
+<script setup lang="ts">
+import useCurrentInstance from "@/proxy";
+import environment from "@/layout/pages/environment/index.vue";
+import util from "@/libs/util";
+import { computed, ref, watch } from "vue";
+import { useStore } from "vuex";
+import { Lock, User } from "@element-plus/icons-vue";
 
-const { proxy } = useCurrentInstance()
-const store = useStore()
+const { proxy } = useCurrentInstance() as any;
+const store = useStore();
 
 const rules = {
     username: [
         {
             required: true,
-            message: '请输入用户名',
-            trigger: 'blur'
+            message: "请输入用户名",
+            trigger: "blur",
         },
         {
             min: 4,
             max: 20,
-            message: '长度在 4 到 20 个字之间',
-            trigger: 'blur'
-        }
+            message: "长度在 4 到 20 个字之间",
+            trigger: "blur",
+        },
     ],
     password: [
         {
             required: true,
-            message: '请输入密码',
-            trigger: 'blur'
+            message: "请输入密码",
+            trigger: "blur",
         },
         {
             min: 6,
             max: 20,
-            message: '长度在 6 到 20 个字之间',
-            trigger: 'blur'
-        }
+            message: "长度在 6 到 20 个字之间",
+            trigger: "blur",
+        },
     ],
     code: [
         {
             required: true,
-            message: '请输入验证码',
-            trigger: 'blur'
-        }
-    ]
-}
+            message: "请输入验证码",
+            trigger: "blur",
+        },
+    ],
+};
 const formLogin = ref({
-    username: '',
-    password: '',
-    code: '',
-})
-const captcha = ref('')
-const captchaUrl = ref('')
-const base = computed(() => store.getters['api/base'])
-const isInit = computed(() => store.getters['user/isInit'])
-const isDis = ref(false)
+    username: "",
+    password: "",
+    code: "",
+});
+const captcha = ref("");
+const captchaUrl = ref("");
+const base = computed(() => store.getters["api/base"]);
+const isInit = computed(() => store.getters["user/isInit"]);
+const isDis = ref(false);
 
 watch(
     () => base,
     (value) => {
-        captchaUrl.value = value.value + '/API/v1/Admin/Captcha'
-        refreshCaptcha()
-
+        captchaUrl.value = value.value + "/API/v1/Admin/Captcha";
+        refreshCaptcha();
     },
     {
         immediate: true,
-        deep: true
+        deep: true,
     }
-)
+);
 
 watch(
     () => isInit,
     (value) => {
-        isDis.value = value.value
-        util.isInitialized()
+        isDis.value = value.value;
+        util.isInitialized();
     },
     {
         immediate: true,
-        deep: true
+        deep: true,
     }
-)
+);
 
-function refreshCaptcha () {
-    captcha.value = captchaUrl.value + '?rand=' + Math.random()
+function refreshCaptcha() {
+    captcha.value = captchaUrl.value + "?rand=" + Math.random();
 }
 
-function handleSubmit () {
+function handleSubmit() {
     proxy.$refs.loginForm.validate((valid) => {
         if (valid) {
             let loadingInstance = proxy.$loading(
-                proxy.loadOption('正在登陆中.....')
-            )
+                proxy.loadOption("正在登陆中.....")
+            );
 
-            store.dispatch('account/login', {
-                username: formLogin.value.username,
-                password: formLogin.value.password,
-                code: formLogin.value.code
-            })
+            store
+                .dispatch("account/login", {
+                    username: formLogin.value.username,
+                    password: formLogin.value.password,
+                    code: formLogin.value.code,
+                })
                 .then(() => {
-                    loadingInstance.close()
+                    loadingInstance.close();
                     // 重定向对象不存在则返回顶层路径
-                    proxy.$router.replace(proxy.$route.query.redirect || '/')
+                    proxy.$router.replace(proxy.$route.query.redirect || "/");
                 })
                 .catch(() => {
-                    loadingInstance.close()
-                    refreshCaptcha()
-                })
+                    loadingInstance.close();
+                    refreshCaptcha();
+                });
         } else {
             // 登录表单校验失败
-            proxy.$message.error('用户名、密码或者验证码不能为空')
+            proxy.$message.error("用户名、密码或者验证码不能为空");
         }
-    })
+    });
 }
 </script>
 

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import viteCompression from 'vite-plugin-compression'
 
 const { resolve } = require('path')
 const mdPlugin = require('vite-plugin-markdown')
@@ -74,6 +75,10 @@ export default defineConfig({
         vue(),
         mdPlugin.plugin({
             mode: ['html']
+        }),
+        viteCompression({
+            algorithm: 'gzip',
+            threshold: 10240
         })
     ]
 })

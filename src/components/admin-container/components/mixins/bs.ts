@@ -9,19 +9,19 @@ export default {
             default: () => ({}),
         },
     },
-    data () {
+    data() {
         return {
             BS: null,
         }
     },
-    mounted () {
+    mounted() {
         this.scrollInit()
     },
-    beforeUnmount () {
+    beforeUnmount() {
         this.scrollDestroy()
     },
     methods: {
-        scrollInit () {
+        scrollInit() {
             // 初始化 bs
             this.BS = new BScroll(
                 this.$refs.wrapper,
@@ -39,13 +39,13 @@ export default {
             )
             // 滚动时发出事件 并且统一返回的数据格式
             this.BS.on('scroll', ({ x, y }) =>
-                $emit(this, 'scroll', {
+                this.$emit(this, 'scroll', {
                     x: -x,
                     y: -y,
                 })
             )
         },
-        scrollDestroy () {
+        scrollDestroy() {
             try {
                 this.BS.destroy()
             } catch (e) {
@@ -54,13 +54,13 @@ export default {
             }
         },
         // 外部调用的方法 返回顶部
-        scrollToTop () {
+        scrollToTop() {
             if (this.BS) this.BS.scrollTo(0, 0, 300)
         },
         // 手动发出滚动事件
-        scroll () {
+        scroll() {
             if (this.BS) {
-                $emit(this, 'scroll', {
+                this.$emit(this, 'scroll', {
                     x: -this.BS.x,
                     y: -this.BS.y,
                 })

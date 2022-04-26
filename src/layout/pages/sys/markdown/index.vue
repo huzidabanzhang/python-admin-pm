@@ -21,38 +21,38 @@
     </admin-container>
 </template>
 
-<script setup>
-import { GetReadmeContent } from '@api/sys.base'
-import { ref, onMounted } from 'vue'
-import { html } from '/README.md'
-import Preview from '@/layout/pages/markdown/preview.vue'
-import useCurrentInstance from '@/proxy'
+<script setup lang="ts">
+import { GetReadmeContent } from "@api/sys.base";
+import { ref, onMounted } from "vue";
+import { html } from "/README.md";
+import Preview from "@/layout/pages/markdown/preview.vue";
+import useCurrentInstance from "@/proxy";
 
-const { proxy } = useCurrentInstance()
-const data = ['vue-admin', 'python-admin']
-const value = ref('vue-admin')
-const content = ref('')
-let loadingInstance = ''
+const { proxy } = useCurrentInstance() as any;
+const data = ["vue-admin", "python-admin"];
+const value = ref("vue-admin");
+const content = ref("");
+let loadingInstance = "" as any;
 
-function handleChange () {
+function handleChange() {
     loadingInstance = proxy.$loading(
-        proxy.loadOption('', proxy.$refs.MARK_PREVIEW.$el, false)
-    )
+        proxy.loadOption("", proxy.$refs.MARK_PREVIEW.$el, false)
+    );
 
-    if (value.value == 'vue-admin') {
-        content.value = html
+    if (value.value == "vue-admin") {
+        content.value = html;
     } else {
         GetReadmeContent()
-            .then(async res => {
-                content.value = res.content
+            .then(async (res) => {
+                content.value = res.content;
             })
             .catch(() => {
-                loadingInstance.close()
-            })
+                loadingInstance.close();
+            });
     }
 }
 
 onMounted(() => {
-    handleChange()
-})
+    handleChange();
+});
 </script>

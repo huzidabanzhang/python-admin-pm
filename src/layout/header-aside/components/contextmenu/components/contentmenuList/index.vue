@@ -24,21 +24,21 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const props = defineProps({
     menulist: {
         type: Array,
-        default: () => []
-    }
-})
-const emits = defineEmits(['rowClick'])
+        default: () => [],
+    } as any,
+});
+const emits = defineEmits(["rowClick"]);
 
-function rowClick (event) {
-    let target = event.target
+function rowClick(event) {
+    let target = event.target;
     while (!target.dataset.value) {
-        target = target.parentNode
+        target = target.parentNode;
     }
-    emits('rowClick', target.dataset.value)
+    emits("rowClick", target.dataset.value);
 }
 </script>
 

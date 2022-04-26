@@ -1,6 +1,6 @@
 import { uniqueId } from 'lodash'
 // 设置文件
-import setting from '@/setting.js'
+import setting from '@/setting'
 
 /**
  * 给菜单数据补充上 path 字段
@@ -35,7 +35,7 @@ export default {
      * @param {Boolean} collapse is collapse
      */
     asideCollapseSet({ state, dispatch }, collapse) {
-      return new Promise(async (resolve) => {
+      return new Promise<void>(async (resolve) => {
         // store 赋值
         state.asideCollapse = collapse
         // 持久化
@@ -58,7 +58,7 @@ export default {
      * @param {Object} context
      */
     asideCollapseToggle({ state, dispatch }) {
-      return new Promise(async (resolve) => {
+      return new Promise<void>(async (resolve) => {
         // store 赋值
         state.asideCollapse = !state.asideCollapse
         // 持久化
@@ -81,7 +81,7 @@ export default {
      * @param {Object} context
      */
     asideCollapseLoad({ state, dispatch }) {
-      return new Promise(async (resolve) => {
+      return new Promise<void>(async (resolve) => {
         // store 赋值
         state.asideCollapse = await dispatch(
           'db/get',
