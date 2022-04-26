@@ -166,7 +166,7 @@
                         type="danger"
                         :icon="Delete"
                         :disabled="auth.del"
-                        @click="delAdmin([scope.row], false)"
+                        @click="delAdmin([scope.row])"
                     >
                     </el-button>
                 </template>
@@ -197,7 +197,7 @@
     </admin-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
     RefreshRight,
     Plus,
@@ -205,191 +205,202 @@ import {
     Close,
     Delete,
     Edit,
-    Search
-} from '@element-plus/icons-vue'
-import { QueryAdminByParam, LockAdmin, DelAdmin } from '@/api/sys.user'
-import { QueryRoleByParam } from '@/api/sys.role'
-import { ref, reactive, onMounted } from 'vue'
-import { cloneDeep } from 'lodash'
-import Admin from './info.vue'
-import Pagination from '@/layout/pages/pagination/index.vue'
-import setting from '@/setting.js'
-import useCurrentInstance from '@/proxy'
+    Search,
+} from "@element-plus/icons-vue";
+import { QueryAdminByParam, LockAdmin, DelAdmin } from "@/api/sys.user";
+import { QueryRoleByParam } from "@/api/sys.role";
+import { ref, reactive, onMounted } from "vue";
+import { cloneDeep } from "lodash";
+import Admin from "./info.vue";
+import Pagination from "@/layout/pages/pagination/index.vue";
+import setting from "@/setting";
+import useCurrentInstance from "@/proxy";
 
-const { proxy } = useCurrentInstance()
+const { proxy } = useCurrentInstance() as any;
 
 const lockOption = [
-    { label: '显示', value: 'false' },
-    { label: '隐藏', value: 'true' }
-]
+    { label: "显示", value: "false" },
+    { label: "隐藏", value: "true" },
+];
 const auth = reactive({
     add: false,
-    del: proxy.$auth('del_admin'),
-    lock: proxy.$auth('lock_admin'),
-    set: proxy.$auth('set_admin'),
+    del: proxy.$auth("del_admin"),
+    lock: proxy.$auth("lock_admin"),
+    set: proxy.$auth("set_admin"),
     del_all: true,
-    lock_all: true
-})
+    lock_all: true,
+});
 const auth_all = {
-    del: proxy.$auth('del_admin'),
-    lock: proxy.$auth('lock_admin')
-}
+    del: proxy.$auth("del_admin"),
+    lock: proxy.$auth("lock_admin"),
+};
 
-const adminData = ref([])
-const roleOption = ref([])
-const roleParams = ref([])
-const admin_id = ref([])
-const admins = ref([])
-const params = ref({})
-const page = ref(1)
-const total = ref(0)
-const size = ref(20)
+const adminData = ref([]);
+const roleOption = ref([]);
+const roleParams = ref([]);
+const admin_id = ref([]);
+const admins = ref([]);
+const params = ref({});
+const page = ref(1);
+const total = ref(0);
+const size = ref(20);
 const search = reactive({
-    lock: '',
-    role: ''
-})
-const title = ref('')
-const loading = ref(false)
-const centerDialogVisible = ref(false)
-const btnSubmit = ref(false)
+    lock: "",
+    role: "",
+});
+const title = ref("");
+const loading = ref(false);
+const centerDialogVisible = ref(false);
+const btnSubmit = ref(false);
 
-function init (visible) {
-    changeSelect([])
+function init(visible = false) {
+    changeSelect([]);
 
-    if (visible) centerDialogVisible.value = false
+    if (visible) centerDialogVisible.value = false;
 
     let params = {
         page: page.value,
         page_size: size.value,
-    }
-    if (search.lock !== '') params['disable'] = search.lock
-    if (search.role !== '') params['role_id'] = search.role
+    };
+    if (search.lock !== "") params["disable"] = search.lock;
+    if (search.role !== "") params["role_id"] = search.role;
 
-    loading.value = true
+    loading.value = true;
     QueryAdminByParam(params)
         .then(async (res) => {
-            total.value = res.total
-            adminData.value = res.data
-            loading.value = false
+            total.value = res.total;
+            adminData.value = res.data;
+            loading.value = false;
         })
         .catch(() => {
-            loading.value = false
-        })
+            loading.value = false;
+        });
 }
 
-function getRoleList () {
+function getRoleList() {
     QueryRoleByParam({
         disable: false,
     }).then(async (res) => {
-        roleParams.value = res
+        roleParams.value = res;
         roleOption.value = res.map((i) => {
-            return { label: i.name, value: i.role_id }
-        })
-        init()
-    })
+            return { label: i.name, value: i.role_id };
+        });
+        init();
+    });
 }
 
-function getRoleName (role_id) {
-    const item = roleOption.value.find((i) => { return i.value == role_id })
-    return item ? item.label : '未选择角色'
+function getRoleName(role_id) {
+    const item = roleOption.value.find((i) => {
+        return i.value == role_id;
+    });
+    return item ? item.label : "未选择角色";
 }
 
-function handleSize (size) {
-    size.value = size
-    page.value = 1
-    init()
+function handleSize(size) {
+    size.value = size;
+    page.value = 1;
+    init();
 }
 
-function handleCurrent (page) {
-    page.value = page
-    init()
+function handleCurrent(page) {
+    page.value = page;
+    init();
 }
 
-function isAdmin (row) {
-    return row.username !== setting.SYS_ADMIN.name
+function isAdmin(row) {
+    return row.username !== setting.SYS_ADMIN.name;
 }
 
-function handleClose () {
-    centerDialogVisible.value = false
+function handleClose() {
+    centerDialogVisible.value = false;
 }
 
-function changeSelect (selection) {
-    admin_id.value = selection.map((i) => { return i.admin_id })
+function changeSelect(selection) {
+    admin_id.value = selection.map((i) => {
+        return i.admin_id;
+    });
     admins.value = selection.map((i) => {
         return {
             role_id: i.role_id,
-            admin_id: i.admin_id
-        }
-    })
+            admin_id: i.admin_id,
+        };
+    });
 
     for (let i in auth_all) {
-        if (!auth_all[i]) auth[i + '_all'] = admin_id.value.length === 0
+        if (!auth_all[i]) auth[i + "_all"] = admin_id.value.length === 0;
     }
 }
 
-function editAdmin (disabled, row) {
-    btnSubmit.value = disabled
-    title.value = params ? '编辑管理员' : '新建管理员'
-    params.value = row ? cloneDeep(row) : {
-        sex: 1,
-        disable: false
-    }
-    centerDialogVisible.value = true
+function editAdmin(disabled, row) {
+    btnSubmit.value = disabled;
+    title.value = params ? "编辑管理员" : "新建管理员";
+    params.value = row
+        ? cloneDeep(row)
+        : {
+              sex: 1,
+              disable: false,
+          };
+    centerDialogVisible.value = true;
 }
 
-function handleRowLock (row) {
-    if (!isAdmin(row)) return true
+function handleRowLock(row) {
+    if (!isAdmin(row)) return true;
 
-    lockAdmin([row.admin_id], row.disable ? false : true)
+    lockAdmin([row.admin_id], row.disable ? false : true);
 }
 
-function lockAdmin (keys, disable) {
-    if (keys.length == 0) return proxy.$message.warning('未选择任何记录')
+function lockAdmin(keys, disable) {
+    if (keys.length == 0) return proxy.$message.warning("未选择任何记录");
 
-    proxy.$confirm(
-        disable ? '确定要隐藏该管理员吗' : '确定要显示该管理员吗',
-        disable ? '隐藏管理员' : '显示管理员',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        }
-    )
+    proxy
+        .$confirm(
+            disable ? "确定要隐藏该管理员吗" : "确定要显示该管理员吗",
+            disable ? "隐藏管理员" : "显示管理员",
+            {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+            }
+        )
         .then(() => {
-            Lock(keys, disable)
+            Lock(keys, disable);
         })
-        .catch()
+        .catch();
 }
 
-function Lock (keys, disable) {
+function Lock(keys, disable) {
     LockAdmin({
         admin_id: keys,
-        disable: disable
+        disable: disable,
     }).then(async (res) => {
-        init()
-    })
+        init();
+    });
 }
 
-function delAdmin (admins) {
-    if (admins.length == 0) return proxy.$message.warning('未选择任何记录')
+function delAdmin(admins) {
+    if (admins.length == 0) return proxy.$message.warning("未选择任何记录");
 
-    proxy.$confirm('确定要删除该管理员吗', '删除管理员', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-    }).then(() => {
-        DelAdmin({
-            admin_id: admins.map((i) => { return i.admin_id })
-        }).then(async (res) => {
-            proxy.$message.success('删除管理员成功')
-            init()
+    proxy
+        .$confirm("确定要删除该管理员吗", "删除管理员", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
         })
-    })
+        .then(() => {
+            DelAdmin({
+                admin_id: admins.map((i) => {
+                    return i.admin_id;
+                }),
+            }).then(async (res) => {
+                proxy.$message.success("删除管理员成功");
+                init();
+            });
+        });
 }
 
 onMounted(() => {
-    getRoleList()
-})
+    getRoleList();
+});
 </script>
 
 <style scoped>

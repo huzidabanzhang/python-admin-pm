@@ -102,66 +102,63 @@
     </admin-container>
 </template>
 
-<script setup>
-import {
-    Search,
-    RefreshRight,
-} from '@element-plus/icons-vue'
-import { QueryLogByParam } from '@/api/sys.log'
-import { ref, onMounted } from 'vue'
-import Pagination from '@/layout/pages/pagination/index.vue'
+<script setup lang="ts">
+import { Search, RefreshRight } from "@element-plus/icons-vue";
+import { QueryLogByParam } from "@/api/sys.log";
+import { ref, onMounted } from "vue";
+import Pagination from "@/layout/pages/pagination/index.vue";
 
 const statusOption = [
-    { label: '成功', value: 0 },
-    { label: '失败', value: 1 },
-    { label: '隐藏', value: 2 }
-]
-const logData = ref([])
-const page = ref(1)
-const total = ref(0)
-const size = ref(20)
-const value = ref('')
-const loading = ref(false)
+    { label: "成功", value: 0 },
+    { label: "失败", value: 1 },
+    { label: "隐藏", value: 2 },
+];
+const logData = ref([]);
+const page = ref(1);
+const total = ref(0);
+const size = ref(20);
+const value = ref("");
+const loading = ref(false);
 
-function init () {
+function init() {
     let params = {
         type: [1], // 其他类型
         page: page.value,
-        page_size: size.value
-    }
-    if (value.value != '') params['status'] = [value.value]
+        page_size: size.value,
+    };
+    if (value.value != "") params["status"] = [value.value];
 
-    loading.value = true
+    loading.value = true;
     QueryLogByParam(params)
         .then(async (res) => {
-            logData.value = res.data
-            total.value = res.total
-            loading.value = false
+            logData.value = res.data;
+            total.value = res.total;
+            loading.value = false;
         })
         .catch(() => {
-            loading.value = false
-        })
+            loading.value = false;
+        });
 }
 
-function changeStatus () {
-    page.value = 1
-    init()
+function changeStatus() {
+    page.value = 1;
+    init();
 }
 
-function handleSize (size) {
-    page.value = 1
-    size.value = size
-    init()
+function handleSize(size) {
+    page.value = 1;
+    size.value = size;
+    init();
 }
 
-function handleCurrent (page) {
-    page.value = page
-    init()
+function handleCurrent(page) {
+    page.value = page;
+    init();
 }
 
 onMounted(() => {
-    init()
-})
+    init();
+});
 </script>
 
 <style scoped>

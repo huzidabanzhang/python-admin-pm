@@ -301,28 +301,38 @@
     </admin-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
     Setting,
     Picture,
     UploadFilled,
     Back,
-    Plus
-} from '@element-plus/icons-vue'
-import { DelDocument, RetrieveDocument, DownDocument, QueryDocumentByParam } from '@api/sys.document'
-import { DelFolder, CreateFolder, ModifyFolder, QueryFolderByParam } from '@api/sys.folder'
-import { cloneDeep } from 'lodash'
-import { ref, watch } from 'vue'
-import { useStore } from 'vuex'
-import Pagination from '@/layout/pages/pagination/index.vue'
-import Upload from '@/layout/pages/upload/index.vue'
-import useCurrentInstance from '@/proxy'
+    Plus,
+} from "@element-plus/icons-vue";
+import {
+    DelDocument,
+    RetrieveDocument,
+    DownDocument,
+    QueryDocumentByParam,
+} from "@api/sys.document";
+import {
+    DelFolder,
+    CreateFolder,
+    ModifyFolder,
+    QueryFolderByParam,
+} from "@api/sys.folder";
+import { cloneDeep } from "lodash";
+import { ref, watch } from "vue";
+import { useStore } from "vuex";
+import Pagination from "@/layout/pages/pagination/index.vue";
+import Upload from "@/layout/pages/upload/index.vue";
+import useCurrentInstance from "@/proxy";
 
-const { proxy } = useCurrentInstance()
-const store = useStore()
+const { proxy } = useCurrentInstance() as any;
+const store = useStore();
 const props = defineProps({
-    visible: Boolean
-})
+    visible: Boolean,
+});
 const auth = {
     add: false,
     down: false,
@@ -330,317 +340,336 @@ const auth = {
     retrieve: false,
     addf: false,
     setf: false,
-    listf: false
-}
-const loading = ref(false)
-const isDel = ref(false)
-const centerDialogVisible = ref(false)
-const Visible = ref(false)
-const is_sys = ref(false)
-const data = ref([])
-const checked = ref([])
-const prev = ref({})
-const form = ref({})
-const tree = ref([{
-    name: '根目录',
-    folder_id: '0',
-    index: 0
-}])
-const page = ref(1)
-const total = ref(0)
-const size = ref(40)
-const pid = ref('0')
-const src = store.getters['api/base'] + '/API/v1/Document/GetDocument'
-const user = store.getters['user/user']
+    listf: false,
+    delf: false,
+};
+const loading = ref(false);
+const isDel = ref(false);
+const centerDialogVisible = ref(false);
+const Visible = ref(false);
+const is_sys = ref(false);
+const data = ref([]);
+const checked = ref([]);
+const prev = ref({});
+const form = ref({}) as any;
+const tree = ref([
+    {
+        name: "根目录",
+        folder_id: "0",
+        index: 0,
+    },
+]);
+const page = ref(1);
+const total = ref(0);
+const size = ref(40);
+const pid = ref("0");
+const src = store.getters["api/base"] + "/API/v1/Document/GetDocument";
+const user = store.getters["user/user"];
 
 watch(
     () => props.visible,
     (val) => {
-        if (val) getFolder(pid.value, true)
+        if (val) getFolder(pid.value, true);
     },
     {
         immediate: true,
-        deep: true
+        deep: true,
     }
-)
+);
 
-function init () {
+function init() {
     let params = {
         page: page.value,
         page_size: size.value,
         deleted: isDel.value,
-        folder_id: pid.value
-    }
+        folder_id: pid.value,
+    };
 
-    loading.value = true
+    loading.value = true;
     QueryDocumentByParam(params)
-        .then(async res => {
-            checked.value = []
-            patotale.value = res.total
+        .then(async (res) => {
+            checked.value = [];
+            total.value = res.total;
             for (let i = 0; i < data.value.length; i++) {
                 if (data.value[i].is_folder == false) {
-                    data.value.splice(i)
-                    i--
+                    data.value.splice(i);
+                    i--;
                 }
             }
             for (let i = 0; i < res.data.length; i++) {
-                let item = res.data[i]
-                item.is_folder = false
-                data.value.push(item)
+                let item = res.data[i];
+                item.is_folder = false;
+                data.value.push(item);
             }
-            loading.value = false
+            loading.value = false;
         })
         .catch(() => {
-            loading.value = false
-        })
+            loading.value = false;
+        });
 }
 
-function changeFolder (visible) {
-    isDel.value = visible
+function changeFolder(visible) {
+    isDel.value = visible;
     if (visible) {
-        data.value = []
-        page.value = 1
-        init()
-    } else getFolder(pid.value, true)
+        data.value = [];
+        page.value = 1;
+        init();
+    } else getFolder(pid.value, true);
 }
 
-function getFolder (pid, isInit) {
-    loading.value = true
+function getFolder(pid, isInit) {
+    loading.value = true;
     QueryFolderByParam({
         pid: pid,
-        admin_id: user.admin_id
+        admin_id: user.admin_id,
     })
-        .then(async res => {
-            data.value = res.map(i => {
-                let item = i
-                item.is_folder = true
-                return item
-            })
-            if (isInit) page.value = 1
-            init()
+        .then(async (res) => {
+            data.value = res.map((i) => {
+                let item = i;
+                item.is_folder = true;
+                return item;
+            });
+            if (isInit) page.value = 1;
+            init();
         })
         .catch(() => {
-            loading.value = false
-        })
+            loading.value = false;
+        });
 }
 
-function down (src, name) {
+function down(src, name) {
     DownDocument({
         src: src,
-        name: name
+        name: name,
     }).then((response) => {
-        const href = window.URL.createObjectURL(new Blob([response.data], { type: response.data.type }))
-        let downloadElement = document.createElement('a')
-        downloadElement.href = href
-        downloadElement.download = name //下载后文件名
-        document.body.appendChild(downloadElement)
-        downloadElement.click() //点击下载
-        document.body.removeChild(downloadElement);//下载完成移除元素
-        window.URL.revokeObjectURL(href) //释放blob对象
-    })
+        const href = window.URL.createObjectURL(
+            new Blob([response.data], { type: response.data.type })
+        );
+        let downloadElement = document.createElement("a");
+        downloadElement.href = href;
+        downloadElement.download = name; //下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); //点击下载
+        document.body.removeChild(downloadElement); //下载完成移除元素
+        window.URL.revokeObjectURL(href); //释放blob对象
+    });
 }
 
-function handleSize (size) {
-    size.value = size
-    page.value = 1
-    init()
+function handleSize(size) {
+    size.value = size;
+    page.value = 1;
+    init();
 }
 
-function handleCurrent (page) {
-    page.value = page
-    init()
+function handleCurrent(page) {
+    page.value = page;
+    init();
 }
 
-function handleClose (params) {
-    centerDialogVisible.value = params.change
-    page.value = 1
-    init()
+function handleClose(params) {
+    centerDialogVisible.value = params.change;
+    page.value = 1;
+    init();
 }
 
-function bytesToSize (bytes) {
-    if (bytes === 0) return '0 B'
+function bytesToSize(bytes) {
+    if (bytes === 0) return "0 B";
     let k = 1024,
-        sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-        i = Math.floor(Math.log(bytes) / Math.log(k))
+        sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+        i = Math.floor(Math.log(bytes) / Math.log(k));
 
-    return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
+    return (bytes / Math.pow(k, i)).toPrecision(3) + " " + sizes[i];
 }
 
-function addFolder () {
-    proxy.$prompt('', '新建文件夹', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPlaceholder: '请输入文件夹名',
-        beforeClose: (action, instance, done) => {
-            if (action === 'confirm') {
-                instance.confirmButtonLoading = true
-                instance.confirmButtonText = '提交中...'
-                CreateFolder({
-                    name: instance.inputValue,
-                    pid: pid.value,
-                    is_sys: is_sys.value,
-                    admin_id: user.admin_id
-                })
-                    .then(async res => {
-                        instance.confirmButtonLoading = false
-                        getFolder(pid.value, false)
-                        done()
-                    })
-                    .catch(() => {
-                        instance.confirmButtonLoading = false
-                    })
-            } else {
-                done()
-            }
-        }
-    }).then(() => {
-        proxy.$message.success('创建文件夹成功')
-    }).catch()
+function addFolder() {
+    proxy
+        .$prompt("", "新建文件夹", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            inputPlaceholder: "请输入文件夹名",
+            beforeClose: (action, instance, done) => {
+                if (action === "confirm") {
+                    instance.confirmButtonLoading = true;
+                    instance.confirmButtonText = "提交中...";
+                    CreateFolder({
+                        name: instance.inputValue,
+                        pid: pid.value,
+                        is_sys: is_sys.value,
+                        admin_id: user.admin_id,
+                    } as any)
+                        .then(async (res) => {
+                            instance.confirmButtonLoading = false;
+                            getFolder(pid.value, false);
+                            done();
+                        })
+                        .catch(() => {
+                            instance.confirmButtonLoading = false;
+                        });
+                } else {
+                    done();
+                }
+            },
+        })
+        .then(() => {
+            proxy.$message.success("创建文件夹成功");
+        })
+        .catch();
 }
 
-function setFolder (item) {
-    proxy.$prompt('', '重命名文件夹', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPlaceholder: '请输入文件夹名',
-        inputValue: item.name,
-        beforeClose: (action, instance, done) => {
-            if (action === 'confirm') {
-                instance.confirmButtonLoading = true
-                instance.confirmButtonText = '提交中...'
-                ModifyFolder({
-                    name: instance.inputValue,
-                    folder_id: item.folder_id
-                })
-                    .then(async res => {
-                        instance.confirmButtonLoading = false
-                        item.name = instance.inputValue
-                        done()
+function setFolder(item) {
+    proxy
+        .$prompt("", "重命名文件夹", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            inputPlaceholder: "请输入文件夹名",
+            inputValue: item.name,
+            beforeClose: (action, instance, done) => {
+                if (action === "confirm") {
+                    instance.confirmButtonLoading = true;
+                    instance.confirmButtonText = "提交中...";
+                    ModifyFolder({
+                        name: instance.inputValue,
+                        folder_id: item.folder_id,
                     })
-                    .catch(() => {
-                        instance.confirmButtonLoading = false
-                    })
-            } else {
-                done()
-            }
-        }
-    }).then(() => {
-        proxy.$message.success('重命名文件夹成功')
-    }).catch()
+                        .then(async (res) => {
+                            instance.confirmButtonLoading = false;
+                            item.name = instance.inputValue;
+                            done();
+                        })
+                        .catch(() => {
+                            instance.confirmButtonLoading = false;
+                        });
+                } else {
+                    done();
+                }
+            },
+        })
+        .then(() => {
+            proxy.$message.success("重命名文件夹成功");
+        })
+        .catch();
 }
 
-function delFile (id) {
-    proxy.$confirm('确定将文件删除吗？', '提示',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
+function delFile(id) {
+    proxy
+        .$confirm("确定将文件删除吗？", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
         })
         .then(() => {
             DelDocument({
-                document_id: id
-            })
-                .then(async res => {
-                    proxy.$message.success('删除文件成功')
-                    init()
-                })
-        })
+                document_id: id,
+            }).then(async (res) => {
+                proxy.$message.success("删除文件成功");
+                init();
+            });
+        });
 }
 
-function retrieveFile (id, deleted) {
-    proxy.$confirm(deleted ? '确定将文件移到回收站吗？' : '确定还原文件吗？', '提示',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        })
+function retrieveFile(id, deleted) {
+    proxy
+        .$confirm(
+            deleted ? "确定将文件移到回收站吗？" : "确定还原文件吗？",
+            "提示",
+            {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+            }
+        )
         .then(() => {
             RetrieveDocument({
                 document_id: id,
-                deleted: deleted
-            })
-                .then(async res => {
-                    proxy.$message.success('移动文件成功')
-                    init()
-                })
-        })
+                deleted: deleted,
+            }).then(async (res) => {
+                proxy.$message.success("移动文件成功");
+                init();
+            });
+        });
 }
 
-function delFolder (id) {
-    proxy.$confirm('删除该文件夹，其中的文件将转移到根目录下，确定要删除吗？', '提示',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        })
+function delFolder(id) {
+    proxy
+        .$confirm(
+            "删除该文件夹，其中的文件将转移到根目录下，确定要删除吗？",
+            "提示",
+            {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+            }
+        )
         .then(() => {
             DelFolder({
-                folder_id: id.folder_id
-            })
-                .then(async res => {
-                    proxy.$message.success('删除文件夹成功')
-                    getFolder(pid.value, false)
-                })
-        })
+                folder_id: id.folder_id,
+            }).then(async (res) => {
+                proxy.$message.success("删除文件夹成功");
+                getFolder(pid.value, false);
+            });
+        });
 }
 
-function handleCommand (command) {
-    if (checked.value.length == 0) return proxy.$message.warning('未选择任何记录')
+function handleCommand(command) {
+    if (checked.value.length == 0)
+        return proxy.$message.warning("未选择任何记录");
     switch (command) {
-        case '1':
-            retrieveFile(checked.value, true)
+        case "1":
+            retrieveFile(checked.value, true);
             break;
-        case '2':
-            delFile(checked.value)
+        case "2":
+            delFile(checked.value);
             break;
-        case '3':
-            retrieveFile(checked.value, false)
+        case "3":
+            retrieveFile(checked.value, false);
             break;
     }
 }
 
-function openFolder (item) {
-    let data = cloneDeep(item)
-    data.index = tree.value.length
-    prev.value = data
-    tree.value.push(data)
-    pid.value = item.folder_id
-    is_sys.value = item.is_sys
-    getFolder(pid.value, true)
+function openFolder(item) {
+    let data = cloneDeep(item);
+    data.index = tree.value.length;
+    prev.value = data;
+    tree.value.push(data);
+    pid.value = item.folder_id;
+    is_sys.value = item.is_sys;
+    getFolder(pid.value, true);
 }
 
-function backFolder (item) {
-    let data = cloneDeep(item), count = tree.value.length - data.index
-    tree.value.splice(item.index, count)
-    pid.value = data.pid
-    if (pid.value == '0') {
-        prev.value = {}
-        is_sys.value = false
+function backFolder(item) {
+    let data = cloneDeep(item),
+        count = tree.value.length - data.index;
+    tree.value.splice(item.index, count);
+    pid.value = data.pid;
+    if (pid.value == "0") {
+        prev.value = {};
+        is_sys.value = false;
     } else {
-        prev.value = tree.value[item.index - 1]
-        is_sys.value = item.is_sys
+        prev.value = tree.value[item.index - 1];
+        is_sys.value = item.is_sys;
     }
-    getFolder(pid.value, true)
+    getFolder(pid.value, true);
 }
 
-function toFolder (item) {
-    let data = cloneDeep(item), count = tree.value.length - data.index + 1
-    tree.value.splice(item.index + 1, count)
-    pid.value = data.folder_id
-    if (pid.value == '0') {
-        prev.value = {}
-        is_sys.value = false
+function toFolder(item) {
+    let data = cloneDeep(item),
+        count = tree.value.length - data.index + 1;
+    tree.value.splice(item.index + 1, count);
+    pid.value = data.folder_id;
+    if (pid.value == "0") {
+        prev.value = {};
+        is_sys.value = false;
     } else {
-        prev.value = tree.value[item.index]
-        is_sys.value = item.is_sys
+        prev.value = tree.value[item.index];
+        is_sys.value = item.is_sys;
     }
-    getFolder(pid.value, true)
+    getFolder(pid.value, true);
 }
 
-function getFile (item) {
-    form.value = cloneDeep(item)
-    form.value.size = bytesToSize(form.value.size)
-    Visible.value = true
+function getFile(item) {
+    form.value = cloneDeep(item);
+    form.value.size = bytesToSize(form.value.size);
+    Visible.value = true;
 }
 </script>
 

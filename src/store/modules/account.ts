@@ -1,5 +1,5 @@
 import { ElMessageBox as MessageBox } from 'element-plus'
-import util from '@/libs/util.js'
+import util from '@/libs/util'
 import router from '@/router'
 import { AccountLogin, AccountLogout } from '@/api/sys.user'
 
@@ -15,7 +15,7 @@ export default {
          * @param {Object} payload route {Object} 登录成功后定向的路由对象 任何 vue-router 支持的格式
          */
         login ({ dispatch }, { username = '', password = '', code = '' } = {}) {
-            return new Promise((resolve, reject) => {
+            return new Promise<void>((resolve, reject) => {
                 // 开始请求登录接口
                 AccountLogin({
                     username,
@@ -98,7 +98,7 @@ export default {
          * @param {Object} context
          */
         load ({ dispatch }) {
-            return new Promise(async (resolve) => {
+            return new Promise<void>(async (resolve) => {
                 // DB -> store 加载用户名
                 await dispatch('user/load', null, { root: true })
                 // DB -> store 加载主题

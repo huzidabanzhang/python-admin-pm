@@ -6,14 +6,14 @@ import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash'
 
 // 创建一个错误
-function errorCreate (msg) {
+function errorCreate(msg) {
     const error = new Error(msg)
     errorLog(error)
     throw error
 }
 
 // 记录和显示错误
-function errorLog (error) {
+function errorLog(error) {
     // 打印到控制台
     if (import.meta.env.NODE_ENV === 'development') {
         util.log.danger('>>>>>> Error >>>>>>')
@@ -38,7 +38,7 @@ service.defaults.withCredentials = true
 // 存储的HTTP请求
 let pending = []
 let cancelToekn = axios.CancelToken
-let removePending = (config, isAll) => {
+let removePending = (config, isAll = false) => {
     for (let i = 0; i < pending.length; i++) {
         if (isAll) {
             pending[i].fun()
@@ -108,7 +108,7 @@ service.interceptors.request.use(
             }
         }
 
-        config.baseURL = store.state.api.base + '/API'
+        config.baseURL = (store.state as any).api.base + '/API'
 
         return config
     },

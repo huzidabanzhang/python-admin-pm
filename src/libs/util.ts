@@ -12,10 +12,10 @@ import { ElNotification, ElMessageBox, ElLoading } from 'element-plus'
 import { checkDb } from '@api/sys.user'
 import { CreateDrop } from '@api/sys.base'
 
-const util = {
+const util: any = {
     cookies,
     db,
-    log,
+    log
 }
 
 /**
@@ -56,7 +56,7 @@ util.open = function (url) {
     document.body.removeChild(document.getElementById('admin-link-temp'))
 }
 
-function componentToImport (ary) {
+function componentToImport(ary) {
     const modules = import.meta.glob('../layout/pages/**/**.vue')
     ary.forEach((i) => {
         if (i.componentPath != 'layout/header-aside') {
@@ -265,11 +265,11 @@ util.dealData = function (params) {
  */
 util.isInitialized = function () {
     if (!store.getters['user/isInit']) {
-        checkDb({})
+        checkDb()
             .then(res => {
                 store.commit('user/setInit', res)
 
-                if (!res) MessageBox.alert('系统暂不能正常使用, 是否初始化数据库', '重要提示', {
+                if (!res) ElMessageBox.alert('系统暂不能正常使用, 是否初始化数据库', '重要提示', {
                     confirmButtonText: '确定',
                     showClose: false,
                     callback: action => {
@@ -280,7 +280,7 @@ util.isInitialized = function () {
     }
 }
 
-function sys_to_init () {
+function sys_to_init() {
     let loadingInstance = ElLoading.service({
         lock: true,
         text: '系统初始化中，请耐心等待.....',
@@ -288,7 +288,7 @@ function sys_to_init () {
         background: 'rgba(0, 0, 0, 0.7)'
     })
 
-    CreateDrop({})
+    CreateDrop()
         .then(res => {
             loadingInstance.close()
             store.commit('user/setInit', true)

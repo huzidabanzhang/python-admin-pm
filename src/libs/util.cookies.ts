@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 
-const cookies = {}
+const cookies: any = {}
 
 /**
  * @description 存储 cookie 值

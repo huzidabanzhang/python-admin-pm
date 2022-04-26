@@ -123,193 +123,193 @@
     </el-dialog>
 </template>
 
-<script setup>
-import { ref, computed, watch } from 'vue'
-import { useStore } from "vuex"
-import { CreateAdmin, ModifyAdmin } from '@/api/sys.user'
-import { CreateDocument } from '@/api/sys.document'
-import { cloneDeep } from 'lodash'
-import util from '@/libs/util.js'
-import defaultImg from '@/assets/3ea6beec64369c2642b92c6726f1epng.png'
-import setting from '@/setting.js'
-import useCurrentInstance from '@/proxy'
+<script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useStore } from "vuex";
+import { CreateAdmin, ModifyAdmin } from "@/api/sys.user";
+import { CreateDocument } from "@/api/sys.document";
+import { cloneDeep } from "lodash";
+import util from "@/libs/util";
+import defaultImg from "@/assets/3ea6beec64369c2642b92c6726f1epng.png";
+import setting from "@/setting";
+import useCurrentInstance from "@/proxy";
 
-const { proxy } = useCurrentInstance()
-const store = useStore()
+const { proxy } = useCurrentInstance() as any;
+const store = useStore();
 
 const props = defineProps({
     title: {
         type: String,
-        default: '个人中心'
+        default: "个人中心",
     },
     params: {
         type: Object,
-        required: true
+        required: true,
     },
     role: {
         type: Array,
-        default: []
+        default: [],
     },
     centerDialogVisible: {
         type: Boolean,
-        required: true
+        required: true,
     },
     isAdmin: {
         type: Boolean,
-        default: true
+        default: true,
     },
     submit: {
         type: Boolean,
-        default: false
-    }
-})
-const emits = defineEmits(['callback', 'handleClose'])
+        default: false,
+    },
+});
+const emits = defineEmits(["callback", "handleClose"]);
 
 const rules = {
     username: [
-        { required: true, message: '请输入用户名', trigger: 'blur' },
+        { required: true, message: "请输入用户名", trigger: "blur" },
         {
             min: 4,
             max: 20,
-            message: '长度在 4 到 20 个字之间',
-            trigger: 'blur'
-        }
+            message: "长度在 4 到 20 个字之间",
+            trigger: "blur",
+        },
     ],
     password: [
-        { required: true, message: '请输入密码', trigger: 'blur' },
+        { required: true, message: "请输入密码", trigger: "blur" },
         {
             min: 4,
             max: 32,
-            message: '长度在 4 到 32 个字之间',
-            trigger: 'blur'
-        }
+            message: "长度在 4 到 32 个字之间",
+            trigger: "blur",
+        },
     ],
     email: [
         {
-            type: 'email',
-            message: '请输入正确的邮箱地址',
-            trigger: ['blur', 'change']
+            type: "email",
+            message: "请输入正确的邮箱地址",
+            trigger: ["blur", "change"],
         },
     ],
-    role_id: [{ required: true, message: '请选择角色', trigger: 'change' }]
-}
-const Visible = ref(false)
+    role_id: [{ required: true, message: "请选择角色", trigger: "change" }],
+};
+const Visible = ref(false);
 const form = ref({
     sex: 1,
     disable: false,
-})
-const avatar = ref('')
-const isSubmit = ref(false)
-const loading = ref(false)
-const imgLoad = ref(false)
-const roleOption = ref([])
-const API = ref('')
-const disabled = ref(false)
+}) as any;
+const avatar = ref("");
+const isSubmit = ref(false);
+const loading = ref(false);
+const imgLoad = ref(false);
+const roleOption = ref([]);
+const API = ref("");
+const disabled = ref(false);
 
 computed({
-    get () {
-        API.value = store.getters('api/base') + '/API/v1/Document/GetDocument'
-    }
-})
+    get() {
+        API.value = store.getters("api/base") + "/API/v1/Document/GetDocument";
+    },
+} as any);
 
 watch(
     () => props.centerDialogVisible,
     (val) => {
-        Visible.value = val
+        Visible.value = val;
         if (val) {
-            roleOption.value = props.role.map((i) => {
-                if (i.mark === setting.SYS_ADMIN.mark) i.disabled = true
-                return i
-            })
+            roleOption.value = props.role.map((i: any) => {
+                if (i.mark === setting.SYS_ADMIN.mark) i.disabled = true;
+                return i;
+            });
 
-            form.value = cloneDeep(props.params)
-            if (form.value.avatar && form.value.avatar !== '') {
-                avatar.value = API.value + form.value.avatar
-            } else avatar.value = ''
+            form.value = cloneDeep(props.params);
+            if (form.value.avatar && form.value.avatar !== "") {
+                avatar.value = API.value + form.value.avatar;
+            } else avatar.value = "";
         }
     },
     {
-        immediate: true
+        immediate: true,
     }
-)
+);
 
 watch(
     () => props.submit,
     (val) => {
-        disabled.value = val
+        disabled.value = val;
     },
     {
-        immediate: true
+        immediate: true,
     }
-)
+);
 
-function handelInfo (formName) {
+function handelInfo(formName) {
     proxy.$refs[formName].validate((valid) => {
         if (valid) {
-            isSubmit.value = true
-            let params = form.value
+            isSubmit.value = true;
+            let params = form.value;
 
             if (form.value.admin_id) {
                 ModifyAdmin(params)
-                    .then(res => {
+                    .then((res) => {
                         if (res.is_self == true) {
-                            util.updateUserInfo(res)
-                            proxy.$message.success('编辑成功')
-                            emits('callback', res.user)
-                            isSubmit.value = false
-                        } else handleInitParent(1)
+                            util.updateUserInfo(res);
+                            proxy.$message.success("编辑成功");
+                            emits("callback", res.user);
+                            isSubmit.value = false;
+                        } else handleInitParent(1);
                     })
                     .catch(() => {
-                        isSubmit.value = false
-                    })
+                        isSubmit.value = false;
+                    });
             } else {
                 CreateAdmin(params)
-                    .then(res => {
-                        handleInitParent(2)
+                    .then((res) => {
+                        handleInitParent(2);
                     })
                     .catch(() => {
-                        isSubmit.value = false
-                    })
+                        isSubmit.value = false;
+                    });
             }
         }
-    })
+    });
 }
 
-function handleInitParent (type) {
-    proxy.$message.success(type == 1 ? '编辑成功' : '创建成功')
-    emits('callback', true)
-    isSubmit.value = false
+function handleInitParent(type) {
+    proxy.$message.success(type == 1 ? "编辑成功" : "创建成功");
+    emits("callback", true);
+    isSubmit.value = false;
 }
 
-function handleClosed () {
-    emits('handleClose', false)
+function handleClosed() {
+    emits("handleClose", false);
 }
 
-function CreateUpload (params) {
-    const max = params.file.size / 1024 / 1024 < 2
+function CreateUpload(params) {
+    const max = params.file.size / 1024 / 1024 < 2;
     if (!max) {
-        proxy.$message.error('头像图片大小不能超过 2MB!')
-        proxy.$refs.avatar.uploadFiles = []
-        return false
+        proxy.$message.error("头像图片大小不能超过 2MB!");
+        proxy.$refs.avatar.uploadFiles = [];
+        return false;
     }
-    let formData = new FormData()
-    formData.append('uid[]', [1])
-    formData.append('document', params.file)
-    formData.append('admin_id', util.cookies.get('uuid'))
-    formData.append('status', 3)
+    let formData = new FormData() as any;
+    formData.append("uid[]", [1]);
+    formData.append("document", params.file);
+    formData.append("admin_id", util.cookies.get("uuid"));
+    formData.append("status", 3);
 
-    imgLoad.value = true
+    imgLoad.value = true;
     CreateDocument(formData)
         .then((res) => {
-            avatar.value = API.value + res[0].src
-            form.value.avatar = res[0].src
-            proxy.$refs.avatar.uploadFiles = []
-            proxy.$message.success('头像上传成功')
-            imgLoad.value = false
+            avatar.value = API.value + res[0].src;
+            form.value.avatar = res[0].src;
+            proxy.$refs.avatar.uploadFiles = [];
+            proxy.$message.success("头像上传成功");
+            imgLoad.value = false;
         })
         .catch(() => {
-            imgLoad.value = false
-        })
+            imgLoad.value = false;
+        });
 }
 </script>
 

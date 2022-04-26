@@ -130,14 +130,16 @@
     </el-dialog>
 </template>
 
-<script setup>
-import { CreateInterface, ModifyInterface } from '@/api/sys.interface'
-import { cloneDeep } from 'lodash'
-import { ref, watch } from 'vue'
-import useCurrentInstance from '@/proxy'
-import util from '@/libs/util.js'
+<script setup lang="ts">
+import { CreateInterface, ModifyInterface } from "@/api/sys.interface";
+import { cloneDeep } from "lodash";
+import { ref, watch } from "vue";
+import { useStore } from "vuex";
+import useCurrentInstance from "@/proxy";
+import util from "@/libs/util";
 
-const { proxy } = useCurrentInstance()
+const { proxy } = useCurrentInstance() as any;
+const store = useStore();
 const props = defineProps({
     title: String,
     params: Object,
@@ -146,119 +148,118 @@ const props = defineProps({
     submit: Boolean,
     menus: Array,
     def: String,
-    roles: Array
-})
-const emits = defineEmits(['callback', 'handleClose'])
+    roles: Array,
+});
+const emits = defineEmits(["callback", "handleClose"]);
 const rules = {
-    name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
-    path: [{ required: true, message: '请输入路由', trigger: 'blur' }],
+    name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+    path: [{ required: true, message: "请输入路由", trigger: "blur" }],
     method: [
         {
             required: true,
-            message: '请选择请求方式',
-            trigger: 'change'
-        }
+            message: "请选择请求方式",
+            trigger: "change",
+        },
     ],
-    description: [
-        { required: true, message: '请输入描述', trigger: 'blur' }
-    ],
-    mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
+    description: [{ required: true, message: "请输入描述", trigger: "blur" }],
+    mark: [{ required: true, message: "请输入标识", trigger: "blur" }],
     menus: [
         {
             required: true,
-            message: '请选择所属菜单',
-            trigger: 'change'
-        }
+            message: "请选择所属菜单",
+            trigger: "change",
+        },
     ],
     roles: [
         {
             required: true,
-            message: '请选择所属角色',
-            trigger: 'change'
-        }
-    ]
-}
+            message: "请选择所属角色",
+            trigger: "change",
+        },
+    ],
+};
 const methodOption = [
-    { label: 'GET', value: 'GET' },
-    { label: 'POST', value: 'POST' },
-    { label: 'PUT', value: 'PUT' },
-    { label: 'DELETE', value: 'DELETE' }
-]
-const Visible = ref(false)
-const isSubmit = ref(false)
-const loading = ref(false)
-const btn = ref(false)
-const menuOption = ref([])
-const roleOption = ref([])
+    { label: "GET", value: "GET" },
+    { label: "POST", value: "POST" },
+    { label: "PUT", value: "PUT" },
+    { label: "DELETE", value: "DELETE" },
+];
+const Visible = ref(false);
+const isSubmit = ref(false);
+const loading = ref(false);
+const btn = ref(false);
+const menuOption = ref([]);
+const roleOption = ref([]);
 const form = ref({
-    roles: []
-})
+    roles: [],
+}) as any;
 
 watch(
     () => props.centerDialogVisible,
     (val) => {
-        Visible.value = val
+        Visible.value = val;
         if (val) {
-            menuOption.value = props.menus
-            roleOption.value = props.roles
-            form.value = cloneDeep(props.params)
+            menuOption.value = props.menus;
+            roleOption.value = props.roles;
+            form.value = cloneDeep(props.params);
             setTimeout(() => {
-                proxy.$refs.interfaceForm.clearValidate()
-            })
+                proxy.$refs.interfaceForm.clearValidate();
+            });
         }
     },
     { immediate: true }
-)
+);
 
 watch(
     () => props.submit,
     (val) => {
-        btn.value = val
+        btn.value = val;
     },
     { immediate: true }
-)
+);
 
-function handelInfo (formName) {
+function handelInfo(formName) {
     proxy.$refs[formName].validate((valid) => {
         if (valid) {
-            isSubmit.value = true
-            let interfaces = cloneDeep(store.getters['user/interfaces'])
+            isSubmit.value = true;
+            let interfaces = cloneDeep(store.getters["user/interfaces"]);
 
             if (form.value.interface_id) {
                 ModifyInterface(form.value)
                     .then(async (res) => {
                         interfaces.map((i, index) => {
-                            if (i.interface_id === form.value.interface_id) return interfaces[index] = form.value
-                        })
-                        util.initInterface(interfaces)
-                        handleInitParent('接口编辑成功')
+                            if (i.interface_id === form.value.interface_id)
+                                return (interfaces[index] = form.value);
+                        });
+                        util.initInterface(interfaces);
+                        handleInitParent("接口编辑成功");
                     })
                     .catch(() => {
-                        isSubmit.value = false
-                    })
+                        isSubmit.value = false;
+                    });
             } else {
                 CreateInterface(form.value)
                     .then(async (res) => {
-                        interfaces.push(res)
-                        util.initInterface(interfaces)
-                        handleInitParent('接口创建成功')
+                        interfaces.push(res);
+                        util.initInterface(interfaces);
+                        handleInitParent("接口创建成功");
                     })
                     .catch(() => {
-                        isSubmit.value = false
-                    })
+                        isSubmit.value = false;
+                    });
             }
         }
-    })
+    });
 }
 
-function handleInitParent (title) {
-    proxy.$message.success(title)
-    emits('callback', true)
-    isSubmit.value = false
+function handleInitParent(title) {
+    proxy.$message.success(title);
+    emits("callback", true);
+    isSubmit.value = false;
 }
 
-function handleClosed () {
-    emits('handleClose', false)
+function handleClosed() {
+    emits("handleClose", false);
 }
 </script>
 

@@ -7,13 +7,11 @@
     </admin-container>
 </template>
 
-<script setup>
-import Markdown from '@/layout/pages/markdown/index.vue'
-import { ref } from 'vue'
+<script setup lang="ts">
+import Markdown from "@/layout/pages/markdown/index.vue";
+import { ref } from "vue";
 
-const content = ref('')
+const content = ref("");
 
-function handleSave () {
-
-}
+function handleSave() {}
 </script>

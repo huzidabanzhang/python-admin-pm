@@ -269,207 +269,211 @@
     </admin-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
     Plus,
     RefreshRight,
     Check,
     Delete,
     DocumentCopy,
-    Position
-} from '@element-plus/icons-vue'
+    Position,
+} from "@element-plus/icons-vue";
 import {
     QueryMenuByParam,
     CreateMenu,
     ModifyMenu,
     LockMenu,
     DelMenu,
-    GetMenuToInterface
-} from '@/api/sys.menu'
-import { QueryRoleByParam } from '@/api/sys.role'
-import { cloneDeep } from 'lodash'
-import { ref, reactive, onMounted } from 'vue'
-import util from '@/libs/util.js'
-import setting from '@/setting.js'
-import useCurrentInstance from '@/proxy'
+    GetMenuToInterface,
+} from "@/api/sys.menu";
+import { QueryRoleByParam } from "@/api/sys.role";
+import { cloneDeep } from "lodash";
+import { ref, reactive, onMounted } from "vue";
+import util from "@/libs/util";
+import setting from "@/setting";
+import useCurrentInstance from "@/proxy";
 
-const { proxy } = useCurrentInstance()
+const { proxy } = useCurrentInstance() as any;
 
 const tree_prop = {
-    label: 'title',
-    children: 'children'
-}
+    label: "title",
+    children: "children",
+};
 const menu_prop = {
-    value: 'menu_id',
-    label: 'title',
+    value: "menu_id",
+    label: "title",
     emitPath: false,
-    checkStrictly: true
-}
+    checkStrictly: true,
+};
 const rules = {
-    title: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
-    name: [{ required: true, message: '请输入路由名称', trigger: 'blur' }],
-    mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
-    path: [{ required: true, message: '请输入路径', trigger: 'blur' }],
+    title: [{ required: true, message: "请输入菜单名称", trigger: "blur" }],
+    name: [{ required: true, message: "请输入路由名称", trigger: "blur" }],
+    mark: [{ required: true, message: "请输入标识", trigger: "blur" }],
+    path: [{ required: true, message: "请输入路径", trigger: "blur" }],
     sort: [
-        { required: true, message: '请输入排序', trigger: 'blur' },
-        { type: 'number', message: '排序必须为数字值' },
+        { required: true, message: "请输入排序", trigger: "blur" },
+        { type: "number", message: "排序必须为数字值" },
     ],
-    icon: [{ required: true, message: '请选择图标', trigger: 'blur' }],
-    component: [
-        { required: true, message: '请输入路由组件', trigger: 'blur' },
-    ],
+    icon: [{ required: true, message: "请选择图标", trigger: "blur" }],
+    component: [{ required: true, message: "请输入路由组件", trigger: "blur" }],
     componentPath: [
-        { required: true, message: '请输入组件路径', trigger: 'blur' },
+        { required: true, message: "请输入组件路径", trigger: "blur" },
     ],
-    cache: [{ required: true, message: '请选择路由缓存', trigger: 'blur' }],
-    roles: [{ required: true, message: '请选择角色', trigger: 'blur' }]
-}
+    cache: [{ required: true, message: "请选择路由缓存", trigger: "blur" }],
+    roles: [{ required: true, message: "请选择角色", trigger: "blur" }],
+};
 const auth = reactive({
     add: false,
     set: false,
     interface: false,
-    del: false
-})
-const menuData = ref([])
-const treeData = ref([])
-const roleData = ref([])
-const interfaceData = ref([])
-const loading = ref(false)
-const formLoad = ref(false)
-const dialogTableVisible = ref(false)
-const dialogLoading = ref(false)
+    del: false,
+});
+const menuData = ref([]);
+const treeData = ref([]);
+const roleData = ref([]);
+const interfaceData = ref([]);
+const loading = ref(false);
+const formLoad = ref(false);
+const dialogTableVisible = ref(false);
+const dialogLoading = ref(false);
 const form = ref({
     cache: true,
     disable: false,
     sort: 1,
-    roles: []
-})
-const roleDefault = ref(null)
-const dialogTitle = ref('')
+    roles: [],
+}) as any;
+const roleDefault = ref(null);
+const dialogTitle = ref("");
 
-function init (visible) {
-    loading.value = true
+function init(visible = false) {
+    loading.value = true;
 
     util.axiosAll(
         [
             QueryMenuByParam({}),
             QueryRoleByParam({
-                is_default: true
-            })
+                is_default: true,
+            }),
         ],
         (res) => {
-            menuData.value = util.getMenuTree(false, cloneDeep(res[0]))
-            treeData.value = cloneDeep(menuData.value)
-            if (visible) util.initMenu(res[0], true)
+            menuData.value = util.getMenuTree(false, cloneDeep(res[0]));
+            treeData.value = cloneDeep(menuData.value);
+            if (visible) util.initMenu(res[0], true);
 
-            roleData.value = res[1].data
-            roleDefault.value = res[1].default
+            roleData.value = res[1].data;
+            roleDefault.value = res[1].default;
 
-            loading.value = false
+            loading.value = false;
         },
         (err) => {
-            loading.value = false
+            loading.value = false;
         }
-    )
+    );
 }
 
-function isHidden (mark) {
-    return !setting.hidden_menu.some((i) => { return i === mark })
+function isHidden(mark) {
+    return !setting.hidden_menu.some((i) => {
+        return i === mark;
+    });
 }
 
-function submit (formName) {
+function submit(formName) {
     proxy.$refs[formName].validate((valid) => {
         if (valid) {
-            formLoad.value = true
-            if (form.value.pid === null) form.value.pid = '0'
+            formLoad.value = true;
+            if (form.value.pid === null) form.value.pid = "0";
             if (form.value.menu_id) {
                 ModifyMenu(form.value)
                     .then(async (res) => {
-                        handleInitParent('菜单编辑成功')
+                        handleInitParent("菜单编辑成功");
                     })
                     .catch(() => {
-                        formLoad.value = false
-                    })
+                        formLoad.value = false;
+                    });
             } else {
                 CreateMenu(form.value)
                     .then(async (res) => {
-                        handleInitParent('菜单创建成功')
+                        handleInitParent("菜单创建成功");
                     })
                     .catch(() => {
-                        formLoad.value = false
-                    })
+                        formLoad.value = false;
+                    });
             }
         }
-    })
+    });
 }
 
-function copy_this () {
-    delete form.value['menu_id']
-    proxy.$refs['SYSMENU'].clearValidate()
+function copy_this() {
+    delete form.value["menu_id"];
+    proxy.$refs["SYSMENU"].clearValidate();
 }
 
-function handleInitParent (title) {
-    proxy.$message.success(title)
-    formLoad.value = false
-    init(true)
+function handleInitParent(title) {
+    proxy.$message.success(title);
+    formLoad.value = false;
+    init(true);
 }
 
-function getMenuItem (data) {
-    form.value = data ? cloneDeep(data) : {
-        cache: true,
-        disable: false,
-        sort: 1,
-        roles: roleDefault.value === null ? [] : [roleDefault.value]
-    }
-    treeData.value = cloneDeep(menuData.value)
-    disabledMenu(form.value, treeData.value)
-    proxy.$refs['SYSMENU'].clearValidate()
+function getMenuItem(data = null) {
+    form.value = data
+        ? cloneDeep(data)
+        : {
+              cache: true,
+              disable: false,
+              sort: 1,
+              roles: roleDefault.value === null ? [] : [roleDefault.value],
+          };
+    treeData.value = cloneDeep(menuData.value);
+    disabledMenu(form.value, treeData.value);
+    proxy.$refs["SYSMENU"].clearValidate();
 }
 
-function disabledMenu (item, data) {
+function disabledMenu(item, data) {
     data.map((i) => {
-        if (i.menu_id === item.menu_id) i.disabled = true
-        if (i.children) disabledMenu(item, i.children)
-    })
+        if (i.menu_id === item.menu_id) i.disabled = true;
+        if (i.children) disabledMenu(item, i.children);
+    });
 }
 
-function delMenu (menu_id) {
-    proxy.$confirm(
-        '删除后子菜单将自动到根菜单下，确定删除该菜单吗',
-        '删除菜单',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-        }
-    ).then(() => {
-        DelMenu({
-            menu_id: menu_id
-        }).then(async (res) => {
-            init(true)
-        })
-    })
+function delMenu(menu_id) {
+    proxy
+        .$confirm(
+            "删除后子菜单将自动到根菜单下，确定删除该菜单吗",
+            "删除菜单",
+            {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+            }
+        )
+        .then(() => {
+            DelMenu({
+                menu_id: menu_id,
+            }).then(async (res) => {
+                init(true);
+            });
+        });
 }
 
-function getMenuToInterface (title, menu_id) {
-    dialogTitle.value = title + '关联接口'
-    dialogTableVisible.value = true
-    dialogLoading.value = true
+function getMenuToInterface(title, menu_id) {
+    dialogTitle.value = title + "关联接口";
+    dialogTableVisible.value = true;
+    dialogLoading.value = true;
     GetMenuToInterface({
-        menu_id: menu_id
+        menu_id: menu_id,
     })
         .then(async (res) => {
-            interfaceData.value = res
-            dialogLoading.value = false
+            interfaceData.value = res;
+            dialogLoading.value = false;
         })
         .catch(() => {
-            dialogLoading.value = false
-        })
+            dialogLoading.value = false;
+        });
 }
 
 onMounted(() => {
-    init()
-})
+    init();
+});
 </script>
 
 <style lang="scss" scoped>

@@ -51,7 +51,7 @@ export default {
             // 如果和现在的值一样 直接返回
             if (state.base === value) return
 
-            return new Promise(async resolve => {
+            return new Promise<void>(async resolve => {
                 // 如果不是选项中的值 将其加入选项
                 const findIndex = [
                     ...state.optionsEnv,
@@ -114,7 +114,7 @@ export default {
          * @param {String} value
          */
         remove ({ state, dispatch }, value) {
-            return new Promise(async resolve => {
+            return new Promise<void>(async resolve => {
                 const index = state.optionsUser.map(e => e.value).indexOf(value)
                 if (index >= 0) {
                     // 移除
@@ -140,7 +140,7 @@ export default {
          * @param {Object} vuex process
          */
         load ({ state, dispatch }) {
-            return new Promise(async resolve => {
+            return new Promise<void>(async resolve => {
                 // 加载接口地址设置
                 state.base = await dispatch('db/get', {
                     dbName: 'sys',

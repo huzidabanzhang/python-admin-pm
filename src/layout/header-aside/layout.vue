@@ -118,38 +118,42 @@
     </div>
 </template>
 
-<script setup>
-import adminMenuSide from './components/menu-side'
-import adminHeaderUser from './components/header-user/index.vue'
-import adminTabs from './components/tabs/index.vue'
-import adminBase from '@/layout/pages/sys/base/index.vue'
-import useCurrentInstance from '@/proxy'
-import { computed, ref, provide } from 'vue'
-import { useStore } from "vuex"
-import { Bell, Fold, Expand } from '@element-plus/icons-vue'
+<script setup lang="ts">
+import adminMenuSide from "./components/menu-side";
+import adminHeaderUser from "./components/header-user/index.vue";
+import adminTabs from "./components/tabs/index.vue";
+import adminBase from "@/layout/pages/sys/base/index.vue";
+import useCurrentInstance from "@/proxy";
+import { computed, ref, provide } from "vue";
+import { useStore } from "vuex";
+import { Bell, Fold, Expand } from "@element-plus/icons-vue";
 
-const { proxy } = useCurrentInstance()
-const store = useStore()
-const asideWidth = ref('200px')
-const asideWidthCollapse = ref('65px')
-const Visible = ref(false)
-const keepAlive = computed(() => store.state.page.keepAlive)
-const transitionActive = computed(() => store.state.transition.active)
-const asideCollapse = computed(() => store.state.menu.asideCollapse)
-const themeActiveSetting = computed(() => store.getters['theme/activeSetting'])
+const { proxy } = useCurrentInstance() as any;
+const store = useStore();
+const asideWidth = ref("200px");
+const asideWidthCollapse = ref("65px");
+const Visible = ref(false);
+const keepAlive = computed(() => store.state.page.keepAlive);
+const transitionActive = computed(() => store.state.transition.active);
+const asideCollapse = computed(() => store.state.menu.asideCollapse);
+const themeActiveSetting = computed(
+    () => store.getters["theme/activeSetting"]
+) as any;
 const styleLayoutMainGroup = computed(() => {
     return {
         ...(themeActiveSetting.preview
-            ? { backgroundImage: `url('${proxy.$baseUrl}${themeActiveSetting.preview}')` }
-            : {})
-    }
-})
+            ? {
+                  backgroundImage: `url('${proxy.$baseUrl}${themeActiveSetting.preview}')`,
+              }
+            : {}),
+    };
+});
 
 const handleToggleAside = () => {
-    store.dispatch('menu/asideCollapseToggle')
-}
+    store.dispatch("menu/asideCollapseToggle");
+};
 
-provide('handleVisible', (visible) => {
-    Visible.value = visible
-})
+provide("handleVisible", (visible) => {
+    Visible.value = visible;
+});
 </script>
