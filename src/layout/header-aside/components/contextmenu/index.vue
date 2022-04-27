@@ -1,64 +1,59 @@
 <template>
-    <div
-        class="admin-contextmenu"
-        v-show="flag"
-        :style="style"
-    >
+    <div class="admin-contextmenu" v-show="flag" :style="style">
         <slot />
     </div>
 </template>
 
 <script setup lang="ts">
-import useCurrentInstance from "@/proxy";
-import { computed, onMounted } from "vue";
+import useCurrentInstance from '@/proxy'
+import { computed, onMounted } from 'vue'
 
-const { proxy } = useCurrentInstance() as any;
+const { proxy } = useCurrentInstance() as any
 const props = defineProps({
     visible: {
         type: Boolean,
-        default: false,
+        default: false
     },
     x: {
         type: Number,
-        default: 0,
+        default: 0
     },
     y: {
         type: Number,
-        default: 0,
-    },
-});
-const emits = defineEmits(["handleVisible"]);
+        default: 0
+    }
+})
+const emits = defineEmits(['handleVisible'])
 
 const style = computed(() => {
     return {
-        left: props.x + "px",
-        top: props.y + "px",
-        display: props.visible ? "block" : "none ",
-    };
-});
+        left: props.x + 'px',
+        top: props.y + 'px',
+        display: props.visible ? 'block' : 'none '
+    }
+})
 const flag = computed({
     get() {
         if (props.visible) {
             // 注册全局监听事件 [ 目前只考虑鼠标解除触发 ]
-            window.addEventListener("mousedown", proxy.watchContextmenu);
+            window.addEventListener('mousedown', proxy.watchContextmenu)
         }
-        return props.visible;
+        return props.visible
     },
     set(newVal) {
-        emits("handleVisible", newVal);
-    },
-});
+        emits('handleVisible', newVal)
+    }
+})
 
 function watchContextmenu(event) {
-    if (!proxy.$el.contains(event.target) || event.button !== 0)
-        flag.value = false;
-    window.removeEventListener("mousedown", proxy.watchContextmenu);
+    if (!proxy.$el.contains(event.target) || event.button !== 0) flag.value = false
+    window.removeEventListener('mousedown', proxy.watchContextmenu)
 }
 
 onMounted(() => {
     // 将菜单放置到body下
-    document.querySelector("body").appendChild(proxy.$el);
-});
+    document.querySelector('body').appendChild(proxy.$el)
+})
 </script>
 
 <style>

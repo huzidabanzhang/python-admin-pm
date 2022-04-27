@@ -4,16 +4,16 @@ export default {
     hotkey: {
         search: {
             open: 's',
-            close: 'esc',
-        },
+            close: 'esc'
+        }
     },
     // 侧边栏默认折叠状态
     menu: {
-        asideCollapse: false,
+        asideCollapse: false
     },
     // 整体风格大小
     size: {
-        type: 'default',
+        type: 'default'
     },
     // 在读取持久化数据失败时默认页面
     page: {
@@ -23,14 +23,14 @@ export default {
                 fullPath: '/index',
                 meta: {
                     title: '首页',
-                    auth: false,
-                },
-            },
-        ],
+                    auth: false
+                }
+            }
+        ]
     },
     // 菜单搜索
     search: {
-        enable: false,
+        enable: false
     },
     // 注册的主题
     theme: {
@@ -39,8 +39,8 @@ export default {
                 title: '经典',
                 name: 'admin',
                 preview: 'image/theme/admin/preview@2x.png',
-            },
-        ],
+            }
+        ]
     },
     // 是否默认开启页面切换动画
     transition: {
@@ -51,6 +51,6 @@ export default {
     lock_interface: ['lock_interface', 'del_interface', 'get_interface_list'],
     SYS_ADMIN: {
         name: 'Admin',
-        mark: 'SYS_ADMIN',
-    },
+        mark: 'SYS_ADMIN'
+    }
 }

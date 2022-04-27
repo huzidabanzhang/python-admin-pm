@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 export default function () {
     const languages = ref([])
 
-    function handleDealLanguages () {
+    function handleDealLanguages() {
         languages.value.forEach((i) => {
             const langs = JSON.parse(i.langs)
             for (let x in langs) {

@@ -1,7 +1,7 @@
 import store from '@/store/index'
 import { isBoolean } from 'lodash'
 
-function handleAuth (mark) {
+function handleAuth(mark) {
     const user = store.getters['user/user']
     const role = store.getters['user/interfaces']
 
@@ -13,10 +13,10 @@ function handleAuth (mark) {
 }
 
 export default {
-    install (app, options) {
+    install(app, options) {
         // 下拉框 禁止删除已选择选项或者默认选项
         app.directive('default', {
-            updated (el, bindings) {
+            updated(el, bindings) {
                 // values v-model 绑定值
                 // options 下拉选项
                 // prop 对应 options 中 的 value 属性

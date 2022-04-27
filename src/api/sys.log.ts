@@ -5,10 +5,10 @@ import request from '@/plugin/axios'
  * @param {*} data
  */
 export function QueryLogByParam(data) {
-  return request({
-    url: '/v1/Log/QueryLogByParam',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Log/QueryLogByParam',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }

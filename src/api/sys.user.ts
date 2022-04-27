@@ -5,31 +5,31 @@ import request from '@/plugin/axios'
  * @param {*} data
  */
 export function AccountLogin(data) {
-  return request({
-    url: '/v1/Admin/Login',
-    method: 'post',
-    data,
-  })
+    return request({
+        url: '/v1/Admin/Login',
+        method: 'post',
+        data,
+    })
 }
 
 /**
  * 管理员登出
  */
 export function AccountLogout() {
-  return request({
-    url: '/v1/Admin/Logout',
-    method: 'get',
-  })
+    return request({
+        url: '/v1/Admin/Logout',
+        method: 'get',
+    })
 }
 
 /**
  * 初始化数据库和原始数据
  */
 export function checkDb() {
-  return request({
-    url: '/v1/Admin/checkDb',
-    method: 'get',
-  })
+    return request({
+        url: '/v1/Admin/checkDb',
+        method: 'get',
+    })
 }
 
 /**
@@ -37,12 +37,12 @@ export function checkDb() {
  * @param {*} data
  */
 export function CreateAdmin(data) {
-  return request({
-    url: '/v1/Admin/CreateAdmin',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Admin/CreateAdmin',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -50,12 +50,12 @@ export function CreateAdmin(data) {
  * @param {*} data
  */
 export function LockAdmin(data) {
-  return request({
-    url: '/v1/Admin/LockAdmin',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Admin/LockAdmin',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -63,12 +63,12 @@ export function LockAdmin(data) {
  * @param {*} data
  */
 export function DelAdmin(data) {
-  return request({
-    url: '/v1/Admin/DelAdmin',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Admin/DelAdmin',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -76,11 +76,11 @@ export function DelAdmin(data) {
  * @param {*} data
  */
 export function ModifyAdmin(data) {
-  return request({
-    url: '/v1/Admin/ModifyAdmin',
-    method: 'post',
-    data,
-  })
+    return request({
+        url: '/v1/Admin/ModifyAdmin',
+        method: 'post',
+        data,
+    })
 }
 
 /**
@@ -88,10 +88,10 @@ export function ModifyAdmin(data) {
  * @param {*} data
  */
 export function QueryAdminByParam(data) {
-  return request({
-    url: '/v1/Admin/QueryAdminByParam',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Admin/QueryAdminByParam',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }

@@ -5,12 +5,12 @@ import request from '@/plugin/axios'
  * @param {*} data
  */
 export function CreateInterface(data) {
-  return request({
-    url: '/v1/Interface/CreateInterface',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Interface/CreateInterface',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -18,12 +18,12 @@ export function CreateInterface(data) {
  * @param {*} data
  */
 export function LockInterface(data) {
-  return request({
-    url: '/v1/Interface/LockInterface',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Interface/LockInterface',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -31,12 +31,12 @@ export function LockInterface(data) {
  * @param {*} data
  */
 export function DelInterface(data) {
-  return request({
-    url: '/v1/Interface/DelInterface',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Interface/DelInterface',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -44,12 +44,12 @@ export function DelInterface(data) {
  * @param {*} data
  */
 export function ModifyInterface(data) {
-  return request({
-    url: '/v1/Interface/ModifyInterface',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Interface/ModifyInterface',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -57,10 +57,10 @@ export function ModifyInterface(data) {
  * @param {*} data
  */
 export function QueryInterfaceByParam(data) {
-  return request({
-    url: '/v1/Interface/QueryInterfaceByParam',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Interface/QueryInterfaceByParam',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }

@@ -2,7 +2,7 @@ import { nextTick } from 'vue'
 import util from '@/libs/util'
 
 export default {
-    install (Vue) {
+    install(Vue) {
         Vue.config.errorHandler = function (error, instance, info) {
             nextTick(() => {
                 // 只在开发模式下打印 log

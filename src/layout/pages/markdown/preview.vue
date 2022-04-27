@@ -1,28 +1,25 @@
 <template>
-    <div
-        class="markdown-body"
-        v-html="html"
-    ></div>
+    <div class="markdown-body" v-html="html"></div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import "github-markdown-css/github-markdown.css"; //导入
+import { ref, watch } from 'vue'
+import 'github-markdown-css/github-markdown.css' //导入
 
-const props = defineProps(["content", "loadingInstance"]);
+const props = defineProps(['content', 'loadingInstance'])
 
-const html = ref("");
+const html = ref('')
 
 watch(
     () => props.content,
     (value) => {
-        html.value = value;
+        html.value = value
         try {
-            props.loadingInstance.close();
+            props.loadingInstance.close()
         } catch (error) {}
     },
     { immediate: true }
-);
+)
 </script>
 
 <style lang="scss" scoped>
