@@ -5,12 +5,12 @@ import request from '@/plugin/axios'
  * @param {*} data
  */
 export function CreateMenu(data) {
-  return request({
-    url: '/v1/Menu/CreateMenu',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Menu/CreateMenu',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -18,12 +18,12 @@ export function CreateMenu(data) {
  * @param {*} data
  */
 export function LockMenu(data) {
-  return request({
-    url: '/v1/Menu/LockMenu',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Menu/LockMenu',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -31,12 +31,12 @@ export function LockMenu(data) {
  * @param {*} data
  */
 export function DelMenu(data) {
-  return request({
-    url: '/v1/Menu/DelMenu',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Menu/DelMenu',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -44,12 +44,12 @@ export function DelMenu(data) {
  * @param {*} data
  */
 export function GetMenuToInterface(data) {
-  return request({
-    url: '/v1/Menu/GetMenuToInterface',
-    method: 'get',
-    data,
-    headers: { isCheck: true, isGet: true },
-  })
+    return request({
+        url: '/v1/Menu/GetMenuToInterface',
+        method: 'get',
+        data,
+        headers: { isCheck: true, isGet: true },
+    })
 }
 
 /**
@@ -57,12 +57,12 @@ export function GetMenuToInterface(data) {
  * @param {*} data
  */
 export function ModifyMenu(data) {
-  return request({
-    url: '/v1/Menu/ModifyMenu',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Menu/ModifyMenu',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -70,10 +70,10 @@ export function ModifyMenu(data) {
  * @param {*} data
  */
 export function QueryMenuByParam(data) {
-  return request({
-    url: '/v1/Menu/QueryMenuByParam',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Menu/QueryMenuByParam',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }

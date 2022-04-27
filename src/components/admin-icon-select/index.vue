@@ -8,34 +8,14 @@
             virtual-triggering
             trigger="click"
         >
-            <el-row
-                type="flex"
-                justify="end"
-                class="admin-mb-10"
-                v-if="clearable"
-            >
-                <el-button
-                    type="danger"
-                    :icon="Delete"
-                    class="admin-fr"
-                    size="small"
-                    @click="selectIcon()"
-                >
+            <el-row type="flex" justify="end" class="admin-mb-10" v-if="clearable">
+                <el-button type="danger" :icon="Delete" class="admin-fr" size="small" @click="selectIcon()">
                     清空
                 </el-button>
             </el-row>
-            <el-input
-                v-model="searchText"
-                :clearable="true"
-                placeholder="搜索 比如 'plus'"
-                :prefix-icon="Search"
-            >
+            <el-input v-model="searchText" :clearable="true" placeholder="搜索 比如 'plus'" :prefix-icon="Search">
             </el-input>
-            <el-collapse
-                v-if="!searchMode"
-                class="admin-icon-select--group"
-                v-model="collapseActive"
-            >
+            <el-collapse v-if="!searchMode" class="admin-icon-select--group" v-model="collapseActive">
                 <el-collapse-item
                     v-for="(item, index) in icon"
                     :key="index"
@@ -56,15 +36,8 @@
                     </el-row>
                 </el-collapse-item>
             </el-collapse>
-            <div
-                v-if="searchMode"
-                class="admin-icon-select--group"
-            >
-                <div
-                    class="admin-icon-select--class"
-                    v-for="(item, index) in iconFilted"
-                    :key="index"
-                >
+            <div v-if="searchMode" class="admin-icon-select--group">
+                <div class="admin-icon-select--class" v-for="(item, index) in iconFilted" :key="index">
                     <div class="admin-icon-select--class-title">{{ item.title }}</div>
                     <el-row class="admin-icon-select--class-row">
                         <el-col
@@ -89,10 +62,7 @@
             @blur="blur"
             @clear="clear"
         >
-            <i
-                v-if="value"
-                :class="'fa fa-' + value"
-            ></i>
+            <i v-if="value" :class="'fa fa-' + value"></i>
             <template #append>
                 <el-button ref="popButton">
                     <i class="fa fa-list"></i>
@@ -100,111 +70,103 @@
             </template>
         </el-input>
         <!-- 不允许用户输入 -->
-        <el-button
-            v-if="!userInput"
-            ref="popButton"
-        >
-            <i
-                v-if="value"
-                :class="'fa fa-' + value"
-            ></i>
+        <el-button v-if="!userInput" ref="popButton">
+            <i v-if="value" :class="'fa fa-' + value"></i>
             &nbsp;{{ value ? value : placeholder }}
         </el-button>
     </span>
 </template>
 
 <script setup lang="ts">
-import { Delete, Search } from "@element-plus/icons-vue";
-import { ref, computed, watch } from "vue";
-import icon from "./data/index";
-import useCurrentInstance from "@/proxy";
+import { Delete, Search } from '@element-plus/icons-vue'
+import { ref, computed, watch } from 'vue'
+import icon from './data/index'
+import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any;
+const { proxy } = useCurrentInstance() as any
 const props = defineProps({
     // 值
     value: {
         type: String,
         required: false,
-        default: "",
+        default: ''
     },
     // 占位符
     placeholder: {
         type: String,
         required: false,
-        default: "请选择",
+        default: '请选择'
     },
     // 弹出界面的方向
     placement: {
         type: String,
         required: false,
-        default: "right",
+        default: 'right'
     },
     // 是否可清空
     clearable: {
         type: Boolean,
         required: false,
-        default: true,
+        default: true
     },
     // 是否允许用户输入
     userInput: {
         type: Boolean,
         required: false,
-        default: false,
+        default: false
     },
     // 是否在选择后自动关闭
     autoClose: {
         type: Boolean,
         required: false,
-        default: true,
-    },
-});
-const emits = defineEmits(["update:value"]);
+        default: true
+    }
+})
+const emits = defineEmits(['update:value'])
 
-const popover = ref();
-const popButton = ref();
-const currentValue = ref("");
-const searchText = ref("");
-const collapseActive = ref([]);
+const popover = ref()
+const popButton = ref()
+const currentValue = ref('')
+const searchText = ref('')
+const collapseActive = ref([])
 const bind = computed(() => {
     return {
         placeholder: props.placeholder,
         clearable: props.clearable,
-        ...proxy.$attrs,
-    };
-});
+        ...proxy.$attrs
+    }
+})
 const searchMode = computed(() => {
-    return !!searchText.value;
-});
+    return !!searchText.value
+})
 const iconFilted = computed(() => {
     return icon
         .map((iconClass) => ({
             title: iconClass.title,
-            icon: iconClass.icon.filter(
-                (icon) => icon.indexOf(searchText.value) >= 0
-            ),
+            icon: iconClass.icon.filter((icon) => icon.indexOf(searchText.value) >= 0)
         }))
-        .filter((iconClass) => iconClass.icon.length > 0);
-});
+        .filter((iconClass) => iconClass.icon.length > 0)
+})
 
 watch(
     () => props.value,
     (value) => {
-        currentValue.value = value;
+        currentValue.value = value
     },
     { immediate: true }
-);
+)
 
-function selectIcon(iconName = "") {
-    emits("update:value", iconName);
-    if (iconName && props.autoClose) (proxy.$refs.popover as any).hide();
+function selectIcon(iconName = '') {
+    emits('update:value', iconName)
+    if (iconName && props.autoClose) (proxy.$refs.popover as any).hide()
 }
 
 function clear() {
-    emits("update:value", "");
+    emits('update:value', '')
 }
 
 function blur() {
-    emits("update:value", this.currentValue);
+    emits('update:value', this.currentValue)
 }
 </script>
 

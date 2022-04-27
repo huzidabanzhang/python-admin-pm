@@ -2,36 +2,18 @@
     <div class="page-login">
         <div class="page-login--layer page-login--layer-area">
             <ul class="circles">
-                <li
-                    v-for="n in 10"
-                    :key="n"
-                ></li>
+                <li v-for="n in 10" :key="n"></li>
             </ul>
         </div>
         <div class="page-login--layer">
-            <div
-                class="page-login--content"
-                flex="dir:top main:justify cross:stretch box:justify"
-            >
+            <div class="page-login--content" flex="dir:top main:justify cross:stretch box:justify">
                 <div class="page-login--content-header"></div>
-                <div
-                    class="page-login--content-main"
-                    flex="dir:top main:center cross:center"
-                >
+                <div class="page-login--content-main" flex="dir:top main:center cross:center">
                     <!-- logo -->
-                    <img
-                        class="page-login--logo"
-                        src="./image/logo.png"
-                    />
+                    <img class="page-login--logo" src="./image/logo.png" />
                     <!-- form -->
                     <div class="page-login--form">
-                        <el-form
-                            ref="loginForm"
-                            label-position="top"
-                            size="large"
-                            :rules="rules"
-                            :model="formLogin"
-                        >
+                        <el-form ref="loginForm" label-position="top" size="large" :rules="rules" :model="formLogin">
                             <el-form-item prop="username">
                                 <el-input
                                     type="text"
@@ -57,20 +39,11 @@
                                     @keyup.enter="handleSubmit"
                                 >
                                     <template v-slot:append>
-                                        <img
-                                            class="login-code"
-                                            :src="captcha"
-                                            @click="refreshCaptcha"
-                                        />
+                                        <img class="login-code" :src="captcha" @click="refreshCaptcha" />
                                     </template>
                                 </el-input>
                             </el-form-item>
-                            <el-button
-                                type="primary"
-                                class="button-login"
-                                :disabled="!isDis"
-                                @click="handleSubmit"
-                            >
+                            <el-button type="primary" class="button-login" :disabled="!isDis" @click="handleSubmit">
                                 登 录
                             </el-button>
                         </el-form>
@@ -78,18 +51,13 @@
                 </div>
                 <div class="page-login--content-footer">
                     <p class="page-login--content-footer-copyright">
-                        <a>
-                            构建于 {{ $buildTime }}
-                        </a>
+                        <a> 构建于 {{ $buildTime }} </a>
                         <el-divider direction="vertical" />
-                        <environment style="display: inline-block;" />
+                        <environment style="display: inline-block" />
                     </p>
                     <p class="page-login--content-footer-copyright">
                         Copyright@2019
-                        <a
-                            href="https://beian.miit.gov.cn/"
-                            target="_blank"
-                        >浙ICP备2021024276号</a>
+                        <a href="https://beian.miit.gov.cn/" target="_blank">浙ICP备2021024276号</a>
                     </p>
                 </div>
             </div>
@@ -98,117 +66,115 @@
 </template>
 
 <script setup lang="ts">
-import useCurrentInstance from "@/proxy";
-import environment from "@/layout/pages/environment/index.vue";
-import util from "@/libs/util";
-import { computed, ref, watch } from "vue";
-import { useStore } from "vuex";
-import { Lock, User } from "@element-plus/icons-vue";
+import useCurrentInstance from '@/proxy'
+import environment from '@/layout/pages/environment/index.vue'
+import util from '@/libs/util'
+import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+import { Lock, User } from '@element-plus/icons-vue'
 
-const { proxy } = useCurrentInstance() as any;
-const store = useStore();
+const { proxy } = useCurrentInstance() as any
+const store = useStore()
 
 const rules = {
     username: [
         {
             required: true,
-            message: "请输入用户名",
-            trigger: "blur",
+            message: '请输入用户名',
+            trigger: 'blur'
         },
         {
             min: 4,
             max: 20,
-            message: "长度在 4 到 20 个字之间",
-            trigger: "blur",
-        },
+            message: '长度在 4 到 20 个字之间',
+            trigger: 'blur'
+        }
     ],
     password: [
         {
             required: true,
-            message: "请输入密码",
-            trigger: "blur",
+            message: '请输入密码',
+            trigger: 'blur'
         },
         {
             min: 6,
             max: 20,
-            message: "长度在 6 到 20 个字之间",
-            trigger: "blur",
-        },
+            message: '长度在 6 到 20 个字之间',
+            trigger: 'blur'
+        }
     ],
     code: [
         {
             required: true,
-            message: "请输入验证码",
-            trigger: "blur",
-        },
-    ],
-};
+            message: '请输入验证码',
+            trigger: 'blur'
+        }
+    ]
+}
 const formLogin = ref({
-    username: "",
-    password: "",
-    code: "",
-});
-const captcha = ref("");
-const captchaUrl = ref("");
-const base = computed(() => store.getters["api/base"]);
-const isInit = computed(() => store.getters["user/isInit"]);
-const isDis = ref(false);
+    username: '',
+    password: '',
+    code: ''
+})
+const captcha = ref('')
+const captchaUrl = ref('')
+const base = computed(() => store.getters['api/base'])
+const isInit = computed(() => store.getters['user/isInit'])
+const isDis = ref(false)
 
 watch(
     () => base,
     (value) => {
-        captchaUrl.value = value.value + "/API/v1/Admin/Captcha";
-        refreshCaptcha();
+        captchaUrl.value = value.value + '/API/v1/Admin/Captcha'
+        refreshCaptcha()
     },
     {
         immediate: true,
-        deep: true,
+        deep: true
     }
-);
+)
 
 watch(
     () => isInit,
     (value) => {
-        isDis.value = value.value;
-        util.isInitialized();
+        isDis.value = value.value
+        util.isInitialized()
     },
     {
         immediate: true,
-        deep: true,
+        deep: true
     }
-);
+)
 
 function refreshCaptcha() {
-    captcha.value = captchaUrl.value + "?rand=" + Math.random();
+    captcha.value = captchaUrl.value + '?rand=' + Math.random()
 }
 
 function handleSubmit() {
     proxy.$refs.loginForm.validate((valid) => {
         if (valid) {
-            let loadingInstance = proxy.$loading(
-                proxy.loadOption("正在登陆中.....")
-            );
+            let loadingInstance = proxy.$loading(proxy.loadOption('正在登陆中.....'))
 
             store
-                .dispatch("account/login", {
+                .dispatch('account/login', {
                     username: formLogin.value.username,
                     password: formLogin.value.password,
-                    code: formLogin.value.code,
+                    code: formLogin.value.code
                 })
                 .then(() => {
-                    loadingInstance.close();
+                    loadingInstance.close()
                     // 重定向对象不存在则返回顶层路径
-                    proxy.$router.replace(proxy.$route.query.redirect || "/");
+                    proxy.$router.replace(proxy.$route.query.redirect || '/')
                 })
                 .catch(() => {
-                    loadingInstance.close();
-                    refreshCaptcha();
-                });
+                    loadingInstance.close()
+                    refreshCaptcha()
+                })
         } else {
             // 登录表单校验失败
-            proxy.$message.error("用户名、密码或者验证码不能为空");
+            proxy.$message.error('用户名、密码或者验证码不能为空')
         }
-    });
+    })
 }
 </script>
 

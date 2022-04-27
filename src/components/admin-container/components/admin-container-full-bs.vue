@@ -1,25 +1,14 @@
 <template>
     <div class="admin-container-full-bs">
-        <div
-            v-if="$slots.header"
-            class="admin-container-full-bs__header"
-            ref="header"
-        >
+        <div v-if="$slots.header" class="admin-container-full-bs__header" ref="header">
             <slot name="header" />
         </div>
-        <div
-            class="admin-container-full-bs__body"
-            ref="wrapper"
-        >
+        <div class="admin-container-full-bs__body" ref="wrapper">
             <div class="admin-container-full-bs__body-wrapper-inner">
                 <slot />
             </div>
         </div>
-        <div
-            v-if="$slots.footer"
-            class="admin-container-full-bs__footer"
-            ref="footer"
-        >
+        <div v-if="$slots.footer" class="admin-container-full-bs__footer" ref="footer">
             <slot name="footer" />
         </div>
     </div>
@@ -29,6 +18,6 @@
 import bs from './mixins/bs'
 export default {
     name: 'admin-container-card-bs',
-    mixins: [bs],
+    mixins: [bs]
 }
 </script>

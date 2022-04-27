@@ -8,7 +8,7 @@ import BScroll from 'better-scroll'
 export default {
     name: 'admin-layout-header-aside-menu-side',
     mixins: [menuMixin],
-    render () {
+    render() {
         return h(
             'div',
             {
@@ -57,7 +57,7 @@ export default {
             ]
         )
     },
-    data () {
+    data() {
         return {
             active: '',
             asideHeight: 300,
@@ -69,7 +69,7 @@ export default {
     },
     watch: {
         // 折叠和展开菜单的时候销毁 better scroll
-        asideCollapse (val) {
+        asideCollapse(val) {
             this.scrollDestroy()
             setTimeout(() => {
                 this.scrollInit()
@@ -77,20 +77,20 @@ export default {
         },
         // 监听路由 控制侧边栏激活状态
         '$route.fullPath': {
-            handler (value) {
+            handler(value) {
                 this.active = value
             },
             immediate: true,
         },
     },
-    mounted () {
+    mounted() {
         this.scrollInit()
     },
-    beforeUnmount () {
+    beforeUnmount() {
         this.scrollDestroy()
     },
     methods: {
-        scrollInit () {
+        scrollInit() {
             this.BS = new BScroll(this.$el, {
                 mouseWheel: true,
                 click: true,
@@ -101,7 +101,7 @@ export default {
                 // }
             })
         },
-        scrollDestroy () {
+        scrollDestroy() {
             try {
                 this.BS.destroy()
             } catch (e) {

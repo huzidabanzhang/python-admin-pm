@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="admin-contentmenu-list"
-        @click="rowClick"
-    >
+    <div class="admin-contentmenu-list" @click="rowClick">
         <div
             v-for="item in menulist"
             :key="item.value"
@@ -10,14 +7,8 @@
             class="admin-contentmenu-item"
             flex="cross:center main:center"
         >
-            <admin-icon
-                v-if="item.icon"
-                :name="item.icon"
-            />
-            <div
-                class="admin-contentmenu-item-title"
-                flex-box="1"
-            >
+            <admin-icon v-if="item.icon" :name="item.icon" />
+            <div class="admin-contentmenu-item-title" flex-box="1">
                 {{ item.title }}
             </div>
         </div>
@@ -28,17 +19,17 @@
 const props = defineProps({
     menulist: {
         type: Array,
-        default: () => [],
-    } as any,
-});
-const emits = defineEmits(["rowClick"]);
+        default: () => []
+    } as any
+})
+const emits = defineEmits(['rowClick'])
 
 function rowClick(event) {
-    let target = event.target;
+    let target = event.target
     while (!target.dataset.value) {
-        target = target.parentNode;
+        target = target.parentNode
     }
-    emits("rowClick", target.dataset.value);
+    emits('rowClick', target.dataset.value)
 }
 </script>
 

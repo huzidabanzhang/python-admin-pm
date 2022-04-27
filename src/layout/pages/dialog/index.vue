@@ -13,36 +13,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch } from 'vue'
 
 const props = defineProps({
     title: {
         type: String,
-        required: true,
+        required: true
     },
     content: {
         type: String,
-        required: true,
+        required: true
     },
     centerDialogVisible: {
         type: Boolean,
-        required: true,
-    },
-});
-const emits = defineEmits(["handleClose"]);
-const Visible = ref(false);
+        required: true
+    }
+})
+const emits = defineEmits(['handleClose'])
+const Visible = ref(false)
 
 watch(
     () => props.centerDialogVisible,
     (val) => {
-        Visible.value = val;
+        Visible.value = val
     },
     {
-        immediate: true,
+        immediate: true
     }
-);
+)
 
 function handleClosed() {
-    emits("handleClose", false);
+    emits('handleClose', false)
 }
 </script>

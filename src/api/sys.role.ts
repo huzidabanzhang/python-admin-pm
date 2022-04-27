@@ -5,12 +5,12 @@ import request from '@/plugin/axios'
  * @param {*} data
  */
 export function CreateRole(data) {
-  return request({
-    url: '/v1/Role/CreateRole',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Role/CreateRole',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -18,12 +18,12 @@ export function CreateRole(data) {
  * @param {*} data
  */
 export function LockRole(data) {
-  return request({
-    url: '/v1/Role/LockRole',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Role/LockRole',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -31,12 +31,12 @@ export function LockRole(data) {
  * @param {*} data
  */
 export function DelRole(data) {
-  return request({
-    url: '/v1/Role/DelRole',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Role/DelRole',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -44,12 +44,12 @@ export function DelRole(data) {
  * @param {*} data
  */
 export function ModifyRole(data) {
-  return request({
-    url: '/v1/Role/ModifyRole',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Role/ModifyRole',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }
 
 /**
@@ -57,10 +57,10 @@ export function ModifyRole(data) {
  * @param {*} data
  */
 export function QueryRoleByParam(data) {
-  return request({
-    url: '/v1/Role/QueryRoleByParam',
-    method: 'post',
-    data,
-    headers: { isCheck: true },
-  })
+    return request({
+        url: '/v1/Role/QueryRoleByParam',
+        method: 'post',
+        data,
+        headers: { isCheck: true },
+    })
 }

@@ -31,13 +31,13 @@ export default {
     },
     getters: {
         // 混合系统提供的地址和用户自己设置的地址记录
-        options (state) {
+        options(state) {
             return [
                 ...state.optionsUser,
                 ...state.optionsEnv
             ]
         },
-        base (state) {
+        base(state) {
             return state.base
         }
     },
@@ -47,7 +47,7 @@ export default {
          * @param {Object} vuex process
          * @param {String} value
          */
-        set ({ state, dispatch }, value) {
+        set({ state, dispatch }, value) {
             // 如果和现在的值一样 直接返回
             if (state.base === value) return
 
@@ -113,7 +113,7 @@ export default {
          * @param {Object} vuex process
          * @param {String} value
          */
-        remove ({ state, dispatch }, value) {
+        remove({ state, dispatch }, value) {
             return new Promise<void>(async resolve => {
                 const index = state.optionsUser.map(e => e.value).indexOf(value)
                 if (index >= 0) {
@@ -139,7 +139,7 @@ export default {
          * @description 加载设置
          * @param {Object} vuex process
          */
-        load ({ state, dispatch }) {
+        load({ state, dispatch }) {
             return new Promise<void>(async resolve => {
                 // 加载接口地址设置
                 state.base = await dispatch('db/get', {

@@ -14,7 +14,7 @@ export default {
          * @param {Object} payload code {String} 验证码
          * @param {Object} payload route {Object} 登录成功后定向的路由对象 任何 vue-router 支持的格式
          */
-        login ({ dispatch }, { username = '', password = '', code = '' } = {}) {
+        login({ dispatch }, { username = '', password = '', code = '' } = {}) {
             return new Promise<void>((resolve, reject) => {
                 // 开始请求登录接口
                 AccountLogin({
@@ -58,11 +58,11 @@ export default {
          * @param {Object} context
          * @param {Object} payload confirm {Boolean} 是否需要确认
          */
-        logout ({ commit, dispatch }, { confirm = false } = {}) {
+        logout({ commit, dispatch }, { confirm = false } = {}) {
             /**
              * @description 注销
              */
-            async function logout () {
+            async function logout() {
                 AccountLogout()
                     .then(async (res) => {
                         // 清空 vuex 用户信息 菜单 路由
@@ -97,7 +97,7 @@ export default {
          * @description 用户登录后从持久化数据加载一系列的设置
          * @param {Object} context
          */
-        load ({ dispatch }) {
+        load({ dispatch }) {
             return new Promise<void>(async (resolve) => {
                 // DB -> store 加载用户名
                 await dispatch('user/load', null, { root: true })

@@ -3,7 +3,7 @@ import util from '@/libs/util'
 export default {
     inject: ['handleVisible'],
     methods: {
-        handleMenuSelect (index, indexPath) {
+        handleMenuSelect(index, indexPath) {
             if (/^admin-menu-empty-\d+$/.test(index) || index === undefined) {
                 this.$message.warning('临时菜单')
             } else if (/^https:\/\/|http:\/\//.test(index)) {

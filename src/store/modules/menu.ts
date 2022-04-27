@@ -7,115 +7,115 @@ import setting from '@/setting'
  * @param {Array} menu 原始的菜单数据
  */
 function supplementMenuPath(menu) {
-  return menu.map((e) => ({
-    ...e,
-    path: e.path || uniqueId('admin-menu-empty-'),
-    ...(e.children
-      ? {
-          children: supplementMenuPath(e.children),
-        }
-      : {}),
-  }))
+    return menu.map((e) => ({
+        ...e,
+        path: e.path || uniqueId('admin-menu-empty-'),
+        ...(e.children
+            ? {
+                children: supplementMenuPath(e.children),
+            }
+            : {}),
+    }))
 }
 
 export default {
-  namespaced: true,
-  state: {
-    // 顶栏菜单
-    header: [],
-    // 侧栏菜单
-    aside: [],
-    // 侧边栏收缩
-    asideCollapse: setting.menu.asideCollapse,
-  },
-  actions: {
-    /**
-     * 设置侧边栏展开或者收缩
-     * @param {Object} context
-     * @param {Boolean} collapse is collapse
-     */
-    asideCollapseSet({ state, dispatch }, collapse) {
-      return new Promise<void>(async (resolve) => {
-        // store 赋值
-        state.asideCollapse = collapse
-        // 持久化
-        await dispatch(
-          'db/set',
-          {
-            dbName: 'sys',
-            path: 'menu.asideCollapse',
-            value: state.asideCollapse,
-            user: true,
-          },
-          { root: true }
-        )
-        // end
-        resolve()
-      })
+    namespaced: true,
+    state: {
+        // 顶栏菜单
+        header: [],
+        // 侧栏菜单
+        aside: [],
+        // 侧边栏收缩
+        asideCollapse: setting.menu.asideCollapse,
     },
-    /**
-     * 切换侧边栏展开和收缩
-     * @param {Object} context
-     */
-    asideCollapseToggle({ state, dispatch }) {
-      return new Promise<void>(async (resolve) => {
-        // store 赋值
-        state.asideCollapse = !state.asideCollapse
-        // 持久化
-        await dispatch(
-          'db/set',
-          {
-            dbName: 'sys',
-            path: 'menu.asideCollapse',
-            value: state.asideCollapse,
-            user: true,
-          },
-          { root: true }
-        )
-        // end
-        resolve()
-      })
+    actions: {
+        /**
+         * 设置侧边栏展开或者收缩
+         * @param {Object} context
+         * @param {Boolean} collapse is collapse
+         */
+        asideCollapseSet({ state, dispatch }, collapse) {
+            return new Promise<void>(async (resolve) => {
+                // store 赋值
+                state.asideCollapse = collapse
+                // 持久化
+                await dispatch(
+                    'db/set',
+                    {
+                        dbName: 'sys',
+                        path: 'menu.asideCollapse',
+                        value: state.asideCollapse,
+                        user: true,
+                    },
+                    { root: true }
+                )
+                // end
+                resolve()
+            })
+        },
+        /**
+         * 切换侧边栏展开和收缩
+         * @param {Object} context
+         */
+        asideCollapseToggle({ state, dispatch }) {
+            return new Promise<void>(async (resolve) => {
+                // store 赋值
+                state.asideCollapse = !state.asideCollapse
+                // 持久化
+                await dispatch(
+                    'db/set',
+                    {
+                        dbName: 'sys',
+                        path: 'menu.asideCollapse',
+                        value: state.asideCollapse,
+                        user: true,
+                    },
+                    { root: true }
+                )
+                // end
+                resolve()
+            })
+        },
+        /**
+         * 从持久化数据读取侧边栏展开或者收缩
+         * @param {Object} context
+         */
+        asideCollapseLoad({ state, dispatch }) {
+            return new Promise<void>(async (resolve) => {
+                // store 赋值
+                state.asideCollapse = await dispatch(
+                    'db/get',
+                    {
+                        dbName: 'sys',
+                        path: 'menu.asideCollapse',
+                        defaultValue: setting.menu.asideCollapse,
+                        user: true,
+                    },
+                    { root: true }
+                )
+                // end
+                resolve()
+            })
+        },
     },
-    /**
-     * 从持久化数据读取侧边栏展开或者收缩
-     * @param {Object} context
-     */
-    asideCollapseLoad({ state, dispatch }) {
-      return new Promise<void>(async (resolve) => {
-        // store 赋值
-        state.asideCollapse = await dispatch(
-          'db/get',
-          {
-            dbName: 'sys',
-            path: 'menu.asideCollapse',
-            defaultValue: setting.menu.asideCollapse,
-            user: true,
-          },
-          { root: true }
-        )
-        // end
-        resolve()
-      })
+    mutations: {
+        /**
+         * @description 设置顶栏菜单
+         * @param {Object} state state
+         * @param {Array} menu menu setting
+         */
+        headerSet(state, menu) {
+            // store 赋值
+            state.header = supplementMenuPath(menu)
+        },
+        /**
+         * @description 设置侧边栏菜单
+         * @param {Object} state state
+         * @param {Array} menu menu setting
+         */
+        asideSet(state, menu) {
+            // store 赋值
+            state.aside = supplementMenuPath(menu)
+        },
     },
-  },
-  mutations: {
-    /**
-     * @description 设置顶栏菜单
-     * @param {Object} state state
-     * @param {Array} menu menu setting
-     */
-    headerSet(state, menu) {
-      // store 赋值
-      state.header = supplementMenuPath(menu)
-    },
-    /**
-     * @description 设置侧边栏菜单
-     * @param {Object} state state
-     * @param {Array} menu menu setting
-     */
-    asideSet(state, menu) {
-      // store 赋值
-      state.aside = supplementMenuPath(menu)
-    },
-  },
 }
