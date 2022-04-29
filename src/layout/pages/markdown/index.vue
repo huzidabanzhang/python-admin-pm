@@ -11,7 +11,7 @@ import useCurrentInstance from '@/proxy'
 import MdEditor from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const store = useStore()
 const props = defineProps({
     content: String,
@@ -33,7 +33,7 @@ watch(
 )
 
 function handleSave(value, render) {
-    proxy.$message.warning('功能暂不开放')
+    _this.$message.warning('功能暂不开放')
 }
 
 async function handleImageCreate(files, callback) {

@@ -12,7 +12,7 @@
             <el-form-item label="头像" prop="avatar">
                 <el-upload
                     class="avatar-uploader"
-                    ref="avatar"
+                    ref="avatarRef"
                     action="1"
                     accept="image/jpeg, image/png, image/jpg, image/gif"
                     :http-request="CreateUpload"
@@ -62,7 +62,7 @@
         <template v-slot:footer>
             <span class="dialog-footer">
                 <el-button @click="handleClosed">取 消</el-button>
-                <el-button type="primary" :loading="isSubmit" :disabled="disabled" @click="handelInfo('adminForm')"
+                <el-button type="primary" :loading="isSubmit" :disabled="disabled" @click="handelInfo(adminForm)"
                     >提 交</el-button
                 >
             </span>
@@ -71,17 +71,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, reactive, unref } from 'vue'
 import { useStore } from 'vuex'
 import { CreateAdmin, ModifyAdmin } from '@/api/sys.user'
 import { CreateDocument } from '@/api/sys.document'
 import { cloneDeep } from 'lodash'
+import type { FormInstance, FormRules, UploadInstance } from 'element-plus'
 import util from '@/libs/util'
 import defaultImg from '@/assets/3ea6beec64369c2642b92c6726f1epng.png'
 import setting from '@/setting'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const store = useStore()
 
 const props = defineProps({
@@ -112,7 +113,7 @@ const props = defineProps({
 })
 const emits = defineEmits(['callback', 'handleClose'])
 
-const rules = {
+const rules = reactive<FormRules>({
     username: [
         { required: true, message: '请输入用户名', trigger: 'blur' },
         {
@@ -139,12 +140,14 @@ const rules = {
         }
     ],
     role_id: [{ required: true, message: '请选择角色', trigger: 'change' }]
-}
+})
 const Visible = ref(false)
 const form = ref({
     sex: 1,
     disable: false
 }) as any
+const adminForm = ref<FormInstance>()
+const avatarRef = ref<UploadInstance>()
 const avatar = ref('')
 const isSubmit = ref(false)
 const loading = ref(false)
@@ -156,8 +159,9 @@ const disabled = ref(false)
 computed({
     get() {
         API.value = store.getters('api/base') + '/API/v1/Document/GetDocument'
-    }
-} as any)
+    },
+    set() {}
+})
 
 watch(
     () => props.centerDialogVisible,
@@ -190,8 +194,8 @@ watch(
     }
 )
 
-function handelInfo(formName) {
-    proxy.$refs[formName].validate((valid) => {
+function handelInfo(formEl: FormInstance) {
+    formEl.validate((valid) => {
         if (valid) {
             isSubmit.value = true
             let params = form.value
@@ -201,7 +205,7 @@ function handelInfo(formName) {
                     .then((res) => {
                         if (res.is_self == true) {
                             util.updateUserInfo(res)
-                            proxy.$message.success('编辑成功')
+                            _this.$message.success('编辑成功')
                             emits('callback', res.user)
                             isSubmit.value = false
                         } else handleInitParent(1)
@@ -223,7 +227,7 @@ function handelInfo(formName) {
 }
 
 function handleInitParent(type) {
-    proxy.$message.success(type == 1 ? '编辑成功' : '创建成功')
+    _this.$message.success(type == 1 ? '编辑成功' : '创建成功')
     emits('callback', true)
     isSubmit.value = false
 }
@@ -235,8 +239,8 @@ function handleClosed() {
 function CreateUpload(params) {
     const max = params.file.size / 1024 / 1024 < 2
     if (!max) {
-        proxy.$message.error('头像图片大小不能超过 2MB!')
-        proxy.$refs.avatar.uploadFiles = []
+        _this.$message.error('头像图片大小不能超过 2MB!')
+        unref(avatarRef).uploadFiles = []
         return false
     }
     let formData = new FormData() as any
@@ -250,8 +254,8 @@ function CreateUpload(params) {
         .then((res) => {
             avatar.value = API.value + res[0].src
             form.value.avatar = res[0].src
-            proxy.$refs.avatar.uploadFiles = []
-            proxy.$message.success('头像上传成功')
+            unref(avatarRef).uploadFiles = []
+            _this.$message.success('头像上传成功')
             imgLoad.value = false
         })
         .catch(() => {

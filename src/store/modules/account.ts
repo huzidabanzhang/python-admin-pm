@@ -58,23 +58,14 @@ export default {
          * @param {Object} context
          * @param {Object} payload confirm {Boolean} 是否需要确认
          */
-        logout({ commit, dispatch }, { confirm = false } = {}) {
+        logout({ dispatch }, { confirm = false } = {}) {
             /**
              * @description 注销
              */
-            async function logout() {
+            function logout() {
                 AccountLogout()
-                    .then(async (res) => {
-                        // 清空 vuex 用户信息 菜单 路由
-                        await dispatch('user/set', {}, { root: true })
-                        // 删除cookie
-                        util.cookies.remove('token')
-                        util.cookies.remove('uuid')
-                        util.cookies.remove('password')
-                        // 跳转路由
-                        router.push({
-                            name: 'login',
-                        })
+                    .then(res => {
+                        dispatch('initUser')
                     })
                     .catch((err) => {
                         console.log('err: ', err)
@@ -113,5 +104,22 @@ export default {
                 resolve()
             })
         },
-    },
+        /**
+         * @description 登出 清空缓存和持久化用户数据
+         * @param {Object} context
+         */
+        initUser({ dispatch }, callback = null) {
+            return new Promise<void>(async (resolve) => {
+                await dispatch('user/set', {}, { root: true })
+                // 删除cookie
+                util.cookies.remove('token')
+                util.cookies.remove('uuid')
+                util.cookies.remove('password')
+                if (callback) callback()
+                else router.push({ name: 'login' })
+                // end
+                resolve()
+            })
+        }
+    }
 }

@@ -45,7 +45,7 @@ import { ref, watch } from 'vue'
 import util from '@/libs/util'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const props = defineProps({
     centerDialogVisible: Boolean,
     folder_id: String
@@ -76,7 +76,7 @@ function handleClosed() {
     if (!loading.value) {
         if (count == 0) close()
         else
-            proxy
+            _this
                 .$confirm(`还有` + count + `个文件未上传，确定关闭嘛？`, '提醒', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -98,7 +98,7 @@ function close() {
 
 function handleExceed(files, fileList) {
     let count = maxLimit - fileList.length
-    proxy.$message.warning(`您一次选择的文件过多，还能选择` + count + `个文件`)
+    _this.$message.warning(`您一次选择的文件过多，还能选择` + count + `个文件`)
 }
 
 function handleRemove(file) {
@@ -107,7 +107,7 @@ function handleRemove(file) {
 
 function beforeUpload(file) {
     if (file.size > 1024 * 1024 * maxSize) {
-        proxy.$message.warning(`文件` + file.name + `超过了` + maxSize + `MB`)
+        _this.$message.warning(`文件` + file.name + `超过了` + maxSize + `MB`)
         return false
     }
 }
@@ -144,7 +144,7 @@ function CreateUpload() {
     formData.append('folder_id', props.folder_id)
     formData.append('status', 1)
 
-    if (formData.get('document') == null) return proxy.$message.error('请选择上传文件')
+    if (formData.get('document') == null) return _this.$message.error('请选择上传文件')
 
     loading.value = true
     CreateDocument(formData, handelProgress)

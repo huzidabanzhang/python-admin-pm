@@ -153,7 +153,7 @@ import Pagination from '@/layout/pages/pagination/index.vue'
 import setting from '@/setting'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 
 const lockOption = [
     { label: '显示', value: 'false' },
@@ -161,15 +161,15 @@ const lockOption = [
 ]
 const auth = reactive({
     add: false,
-    del: proxy.$auth('del_admin'),
-    lock: proxy.$auth('lock_admin'),
-    set: proxy.$auth('set_admin'),
+    del: _this.$auth('del_admin'),
+    lock: _this.$auth('lock_admin'),
+    set: _this.$auth('set_admin'),
     del_all: true,
     lock_all: true
 })
 const auth_all = {
-    del: proxy.$auth('del_admin'),
-    lock: proxy.$auth('lock_admin')
+    del: _this.$auth('del_admin'),
+    lock: _this.$auth('lock_admin')
 }
 
 const adminData = ref([])
@@ -287,9 +287,9 @@ function handleRowLock(row) {
 }
 
 function lockAdmin(keys, disable) {
-    if (keys.length == 0) return proxy.$message.warning('未选择任何记录')
+    if (keys.length == 0) return _this.$message.warning('未选择任何记录')
 
-    proxy
+    _this
         .$confirm(disable ? '确定要隐藏该管理员吗' : '确定要显示该管理员吗', disable ? '隐藏管理员' : '显示管理员', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -311,9 +311,9 @@ function Lock(keys, disable) {
 }
 
 function delAdmin(admins) {
-    if (admins.length == 0) return proxy.$message.warning('未选择任何记录')
+    if (admins.length == 0) return _this.$message.warning('未选择任何记录')
 
-    proxy
+    _this
         .$confirm('确定要删除该管理员吗', '删除管理员', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -325,7 +325,7 @@ function delAdmin(admins) {
                     return i.admin_id
                 })
             }).then(async (res) => {
-                proxy.$message.success('删除管理员成功')
+                _this.$message.success('删除管理员成功')
                 init()
             })
         })

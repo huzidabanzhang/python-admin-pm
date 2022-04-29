@@ -9,17 +9,6 @@ import pluginLog from '@/plugin/log'
 import pluginOpen from '@/plugin/open'
 import premission from '@/plugin/premission'
 
-declare module '@vue/runtime-core' {
-    interface ComponentCustomProperties {
-        $env: any,
-        $baseUrl: String,
-        $version: String,
-        $buildTime: any,
-        $auth: Function,
-        loadOption: Function
-    }
-}
-
 export default {
     async install(app) {
         // 注册全局组件

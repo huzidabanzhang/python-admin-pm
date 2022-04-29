@@ -222,7 +222,7 @@ import Pagination from '@/layout/pages/pagination/index.vue'
 import Upload from '@/layout/pages/upload/index.vue'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const store = useStore()
 const props = defineProps({
     visible: Boolean
@@ -374,7 +374,7 @@ function bytesToSize(bytes) {
 }
 
 function addFolder() {
-    proxy
+    _this
         .$prompt('', '新建文件夹', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -388,7 +388,7 @@ function addFolder() {
                         pid: pid.value,
                         is_sys: is_sys.value,
                         admin_id: user.admin_id
-                    } as any)
+                    })
                         .then(async (res) => {
                             instance.confirmButtonLoading = false
                             getFolder(pid.value, false)
@@ -403,13 +403,13 @@ function addFolder() {
             }
         })
         .then(() => {
-            proxy.$message.success('创建文件夹成功')
+            _this.$message.success('创建文件夹成功')
         })
         .catch()
 }
 
 function setFolder(item) {
-    proxy
+    _this
         .$prompt('', '重命名文件夹', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -437,13 +437,13 @@ function setFolder(item) {
             }
         })
         .then(() => {
-            proxy.$message.success('重命名文件夹成功')
+            _this.$message.success('重命名文件夹成功')
         })
         .catch()
 }
 
 function delFile(id) {
-    proxy
+    _this
         .$confirm('确定将文件删除吗？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -453,14 +453,14 @@ function delFile(id) {
             DelDocument({
                 document_id: id
             }).then(async (res) => {
-                proxy.$message.success('删除文件成功')
+                _this.$message.success('删除文件成功')
                 init()
             })
         })
 }
 
 function retrieveFile(id, deleted) {
-    proxy
+    _this
         .$confirm(deleted ? '确定将文件移到回收站吗？' : '确定还原文件吗？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -471,14 +471,14 @@ function retrieveFile(id, deleted) {
                 document_id: id,
                 deleted: deleted
             }).then(async (res) => {
-                proxy.$message.success('移动文件成功')
+                _this.$message.success('移动文件成功')
                 init()
             })
         })
 }
 
 function delFolder(id) {
-    proxy
+    _this
         .$confirm('删除该文件夹，其中的文件将转移到根目录下，确定要删除吗？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -488,14 +488,14 @@ function delFolder(id) {
             DelFolder({
                 folder_id: id.folder_id
             }).then(async (res) => {
-                proxy.$message.success('删除文件夹成功')
+                _this.$message.success('删除文件夹成功')
                 getFolder(pid.value, false)
             })
         })
 }
 
 function handleCommand(command) {
-    if (checked.value.length == 0) return proxy.$message.warning('未选择任何记录')
+    if (checked.value.length == 0) return _this.$message.warning('未选择任何记录')
     switch (command) {
         case '1':
             retrieveFile(checked.value, true)

@@ -7,4 +7,15 @@ declare module 'axios' {
     }
 }
 
+declare module '@vue/runtime-core' {
+    interface ComponentCustomProperties {
+        $env: any,
+        $baseUrl: String,
+        $version: String,
+        $buildTime: any,
+        $auth: Function,
+        loadOption: Function
+    }
+}
+
 declare module '*.md'

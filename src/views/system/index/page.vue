@@ -15,18 +15,20 @@
 import { GetLoginInfo } from '@api/sys.base'
 import { computed, ref, onMounted, nextTick } from 'vue'
 import { useStore } from 'vuex'
+import type { CalendarInstance } from 'element-plus'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const store = useStore()
 const user = computed(() => store.getters['user/user'])
 const info = ref({})
 const time = ref(new Date())
+const calendar = ref<CalendarInstance>()
 
-function init(time) {
-    let loadingInstance = proxy.$loading({
+function init(time, calendarEl: CalendarInstance) {
+    let loadingInstance = _this.$loading({
         lock: true,
-        target: proxy.$refs.calendar.$el
+        target: calendarEl.$el
     })
 
     GetLoginInfo({
@@ -47,7 +49,7 @@ function getDate(time) {
 }
 
 onMounted(() => {
-    init(getDate(time.value))
+    init(getDate(time.value), calendar.value)
 
     nextTick(() => {
         // 点击前一个月
@@ -58,15 +60,15 @@ onMounted(() => {
         let nowBtn = document.querySelector('.el-calendar__button-group .el-button-group>button:nth-child(2)')
 
         prevBtn.addEventListener('click', () => {
-            init(getDate(time.value))
+            init(getDate(time.value), calendar.value)
         })
 
         nextBtn.addEventListener('click', () => {
-            init(getDate(time.value))
+            init(getDate(time.value), calendar.value)
         })
 
         nowBtn.addEventListener('click', () => {
-            init(getDate(time.value))
+            init(getDate(time.value), calendar.value)
         })
     })
 })

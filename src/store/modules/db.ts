@@ -62,7 +62,7 @@ export default {
          */
         databasePage(context, { basis = 'fullPath', user = false } = {}) {
             return getDatabase({
-                path: `$page.${router.app.$route[basis]}`,
+                path: `$page.${router.currentRoute.value[basis]}`,
                 user,
                 defaultValue: {},
             })
@@ -75,7 +75,7 @@ export default {
          */
         databasePageClear(context, { basis = 'fullPath', user = false } = {}) {
             return getDatabase({
-                path: `$page.${router.app.$route[basis]}`,
+                path: `$page.${router.currentRoute.value[basis]}`,
                 user,
                 defaultValue: {},
             })
@@ -89,7 +89,7 @@ export default {
          */
         pageSet(context, { instance, basis = 'fullPath', user = false }) {
             return getDatabase({
-                path: `$page.${router.app.$route[basis]}.$data`,
+                path: `$page.${router.currentRoute.value[basis]}.$data`,
                 user,
                 defaultValue: cloneDeep(instance.$data),
             })
@@ -103,7 +103,7 @@ export default {
          */
         pageGet(context, { instance, basis = 'fullPath', user = false }) {
             return dbGet({
-                path: `$page.${router.app.$route[basis]}.$data`,
+                path: `$page.${router.currentRoute.value[basis]}.$data`,
                 user,
                 defaultValue: cloneDeep(instance.$data),
             })
@@ -116,7 +116,7 @@ export default {
          */
         pageClear(context, { basis = 'fullPath', user = false }) {
             return getDatabase({
-                path: `$page.${router.app.$route[basis]}.$data`,
+                path: `$page.${router.currentRoute.value[basis]}.$data`,
                 user,
                 defaultValue: {},
             })

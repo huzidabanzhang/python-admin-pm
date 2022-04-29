@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue'
 import { useStore } from 'vuex'
-import { frameInRoutes } from '@/router/index'
+import { frameInRoutes } from '@/menu'
 import setting from './setting'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 

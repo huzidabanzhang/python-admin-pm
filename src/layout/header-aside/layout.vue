@@ -1,5 +1,5 @@
 <template>
-    <div class="admin-layout-header-aside-group" :style="styleLayoutMainGroup">
+    <div class="admin-layout-header-aside-group">
         <!-- 半透明遮罩 -->
         <div class="admin-layout-header-aside-mask"></div>
         <!-- 主体内容 -->
@@ -62,13 +62,20 @@
                         <!-- 页面 -->
                         <div class="admin-theme-container-main-body" flex-box="1">
                             <router-view v-slot="{ Component }">
-                                <transition :name="transitionActive ? 'fade-transverse' : ''" mode="out-in">
+                                <transition :name="transitionActive ? 'fade-transverse' : ''">
                                     <keep-alive :include="keepAlive">
                                         <component :is="Component" />
                                     </keep-alive>
                                 </transition>
                             </router-view>
                         </div>
+                    </div>
+
+                    <div class="admin-theme-container-main-footer" flex="dir:bottom">
+                        <p class="admin-theme-container-main-footer-copyright">
+                            Copyright@2019
+                            <a href="https://beian.miit.gov.cn/" target="_blank">浙ICP备2021024276号</a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -82,12 +89,10 @@ import adminMenuSide from './components/menu-side'
 import adminHeaderUser from './components/header-user/index.vue'
 import adminTabs from './components/tabs/index.vue'
 import adminBase from '@/layout/pages/sys/base/index.vue'
-import useCurrentInstance from '@/proxy'
 import { computed, ref, provide } from 'vue'
 import { useStore } from 'vuex'
-import { Bell, Fold, Expand } from '@element-plus/icons-vue'
+import { Fold, Expand } from '@element-plus/icons-vue'
 
-const { proxy } = useCurrentInstance() as any
 const store = useStore()
 const asideWidth = ref('200px')
 const asideWidthCollapse = ref('65px')
@@ -95,16 +100,7 @@ const Visible = ref(false)
 const keepAlive = computed(() => store.state.page.keepAlive)
 const transitionActive = computed(() => store.state.transition.active)
 const asideCollapse = computed(() => store.state.menu.asideCollapse)
-const themeActiveSetting = computed(() => store.getters['theme/activeSetting']) as any
-const styleLayoutMainGroup = computed(() => {
-    return {
-        ...(themeActiveSetting.preview
-            ? {
-                  backgroundImage: `url('${proxy.$baseUrl}${themeActiveSetting.preview}')`
-              }
-            : {})
-    }
-})
+const themeActiveSetting = computed(() => store.getters['theme/activeSetting'])
 
 const handleToggleAside = () => {
     store.dispatch('menu/asideCollapseToggle')

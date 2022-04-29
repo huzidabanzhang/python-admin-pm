@@ -1,7 +1,8 @@
 import qs from 'qs'
 import axios from 'axios'
 import util from '@/libs/util'
-import store from '@/store/index'
+import store from '@/store'
+import router from '@/router'
 import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash'
 
@@ -23,7 +24,7 @@ function errorLog(error) {
     ElMessage({
         message: error.message,
         type: 'error',
-        duration: 5 * 1000,
+        duration: 5 * 1000
     })
 }
 
@@ -80,7 +81,7 @@ service.interceptors.request.use(
         config.cancelToken = new cancelToekn((c) => {
             pending.push({
                 name: config.url + JSON.stringify(config.data) + '&' + config.method,
-                fun: c,
+                fun: c
             })
         })
 
@@ -145,50 +146,25 @@ service.interceptors.response.use(
         // 判断是否是被取消请求
         if (!axios.isCancel(error)) {
             if (error && error.response) {
+                setTimeout(() => {
+                    // 请求成功后删除记录（延时是为了防止短时间内重复请求）
+                    removePending(error.response.config)
+                }, 500)
+
                 switch (error.response.status) {
-                    case 400:
-                        error.message = '请求错误'
-                        break
                     case 401:
-                        error.message = '未授权，请登录'
+                        store.dispatch('account/initUser')
                         break
                     case 403:
-                        error.message = '拒绝访问'
+                        router.push({ name: '403' })
                         break
                     case 404:
-                        error.message = `请求地址出错: ${error.response.config.url}`
-                        break
-                    case 408:
-                        error.message = '请求超时'
-                        break
-                    case 500:
-                        error.message = '服务器内部错误'
-                        break
-                    case 501:
-                        error.message = '服务未实现'
-                        break
-                    case 502:
-                        error.message = '网关错误'
-                        break
-                    case 503:
-                        error.message = '服务不可用'
-                        break
-                    case 504:
-                        error.message = '网关超时'
-                        break
-                    case 505:
-                        error.message = 'HTTP版本不受支持'
-                        break
-                    default:
+                        router.push({ name: '404' })
                         break
                 }
 
-                setTimeout(() => {
-                    // 请求成功后删除记录（延时是为了防止短时间内重复请求）
-                    removePending(error.config)
-                }, 500)
+                errorCreate(error.response.data)
             }
-            errorLog(error)
         }
 
         return Promise.reject(error)

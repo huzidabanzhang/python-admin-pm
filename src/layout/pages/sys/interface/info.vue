@@ -60,7 +60,7 @@
         <template v-slot:footer>
             <span class="dialog-footer">
                 <el-button @click="handleClosed">取 消</el-button>
-                <el-button type="primary" :loading="isSubmit" :disabled="btn" @click="handelInfo('interfaceForm')"
+                <el-button type="primary" :loading="isSubmit" :disabled="btn" @click="handelInfo(interfaceForm)"
                     >提 交</el-button
                 >
             </span>
@@ -71,12 +71,13 @@
 <script setup lang="ts">
 import { CreateInterface, ModifyInterface } from '@/api/sys.interface'
 import { cloneDeep } from 'lodash'
-import { ref, watch } from 'vue'
+import { ref, watch, reactive } from 'vue'
 import { useStore } from 'vuex'
-import useCurrentInstance from '@/proxy'
 import util from '@/libs/util'
+import type { FormInstance, FormRules } from 'element-plus'
+import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const store = useStore()
 const props = defineProps({
     title: String,
@@ -89,7 +90,8 @@ const props = defineProps({
     roles: Array
 })
 const emits = defineEmits(['callback', 'handleClose'])
-const rules = {
+const interfaceForm = ref<FormInstance>()
+const rules = reactive<FormRules>({
     name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
     path: [{ required: true, message: '请输入路由', trigger: 'blur' }],
     method: [
@@ -115,7 +117,7 @@ const rules = {
             trigger: 'change'
         }
     ]
-}
+})
 const methodOption = [
     { label: 'GET', value: 'GET' },
     { label: 'POST', value: 'POST' },
@@ -141,7 +143,7 @@ watch(
             roleOption.value = props.roles
             form.value = cloneDeep(props.params)
             setTimeout(() => {
-                proxy.$refs.interfaceForm.clearValidate()
+                interfaceForm.value.clearValidate()
             })
         }
     },
@@ -156,8 +158,8 @@ watch(
     { immediate: true }
 )
 
-function handelInfo(formName) {
-    proxy.$refs[formName].validate((valid) => {
+function handelInfo(formEl: FormInstance) {
+    formEl.validate((valid) => {
         if (valid) {
             isSubmit.value = true
             let interfaces = cloneDeep(store.getters['user/interfaces'])
@@ -190,7 +192,7 @@ function handelInfo(formName) {
 }
 
 function handleInitParent(title) {
-    proxy.$message.success(title)
+    _this.$message.success(title)
     emits('callback', true)
     isSubmit.value = false
 }

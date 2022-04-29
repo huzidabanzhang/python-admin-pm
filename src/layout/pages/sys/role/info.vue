@@ -60,10 +60,11 @@ import { Delete } from '@element-plus/icons-vue'
 import { QueryMenuByParam } from '@/api/sys.menu'
 import { CreateRole, ModifyRole, DelRole } from '@/api/sys.role'
 import { cloneDeep } from 'lodash'
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, reactive } from 'vue'
+import type { FormInstance, FormRules, ElTree } from 'element-plus'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const props = defineProps({
     title: String,
     params: Object,
@@ -77,10 +78,12 @@ const prop = {
     label: 'title',
     children: 'children'
 }
-const rules = {
+const rules = reactive<FormRules>({
     name: [{ required: true, message: '请输入角色名', trigger: 'blur' }],
     mark: [{ required: true, message: '请输入标识', trigger: 'blur' }]
-}
+})
+const roleForm = ref<FormInstance>()
+const treeMenu = ref<InstanceType<typeof ElTree>>()
 const addAuth = ref(false)
 const delAuth = ref(false)
 const Visible = ref(false)
@@ -156,16 +159,17 @@ function dealData(data) {
     }
 }
 
-function handelInfo(formName) {
-    proxy.$refs[formName].validate((valid) => {
+function handelInfo(formEl: FormInstance) {
+    formEl.validate((valid) => {
         if (valid) {
             let role = [],
                 menu = []
-            proxy.$refs.treeMenu.getCheckedNodes().forEach((i) => {
+
+            treeMenu.value.getCheckedNodes().forEach((i) => {
                 if (i.type !== 'MENU') role.push(i.menu_id.split('.')[1])
                 else menu.push(i.menu_id)
             })
-            proxy.$refs.treeMenu.getHalfCheckedNodes().forEach((i) => {
+            treeMenu.value.getHalfCheckedNodes().forEach((i) => {
                 if (i.type !== 'MENU') role.push(i.menu_id)
                 else menu.push(i.menu_id)
             })
@@ -202,7 +206,7 @@ function handelInfo(formName) {
 }
 
 function handleInitParent(title) {
-    proxy.$message.success(title)
+    _this.$message.success(title)
     isSubmit.value = false
     emits('callback', true)
 }
@@ -212,7 +216,7 @@ function handleClosed() {
 }
 
 function delRole() {
-    proxy
+    _this
         .$confirm('确定要删除该角色吗', '删除角色', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -222,7 +226,7 @@ function delRole() {
             DelRole({
                 role_id: [props.params.role_id]
             }).then(async (res) => {
-                proxy.$message.success('删除角色成功')
+                _this.$message.success('删除角色成功')
                 emits('callback', true)
             })
         })

@@ -75,11 +75,11 @@ import Info from './info.vue'
 import setting from '@/setting'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const auth_all = {
-    set: proxy.$auth('set_role', 'all'),
-    del: proxy.$auth('del_role', 'all'),
-    lock: proxy.$auth('lock_role', 'all')
+    set: _this.$auth('set_role', 'all'),
+    del: _this.$auth('del_role', 'all'),
+    lock: _this.$auth('lock_role', 'all')
 }
 const statusOption = [
     { label: '显示', value: 'false' },
@@ -143,9 +143,9 @@ function editRole(disabled, role) {
 function lockRole(keys, disable) {
     if (auth_all.lock) return true
 
-    if (keys.length == 0) return proxy.$message.warning('未选择任何记录')
+    if (keys.length == 0) return _this.$message.warning('未选择任何记录')
 
-    proxy
+    _this
         .$confirm(disable ? '确定要隐藏该角色吗' : '确定要显示该角色吗', disable ? '隐藏角色' : '显示角色', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -168,7 +168,7 @@ function Lock(keys, disable) {
 
 function delRole() {
     if (select.value.role_id !== null && select.value.mark !== mark) {
-        proxy
+        _this
             .$confirm('确定要删除该角色吗', '删除角色', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -178,12 +178,12 @@ function delRole() {
                 DelRole({
                     role_id: [select.value.role_id]
                 }).then(async (res) => {
-                    proxy.$message.success('删除角色成功')
+                    _this.$message.success('删除角色成功')
                     select.value = { role_id: null }
                     init()
                 })
             })
-    } else proxy.$message.warning('未选择任何记录')
+    } else _this.$message.warning('未选择任何记录')
 }
 
 onMounted(() => {

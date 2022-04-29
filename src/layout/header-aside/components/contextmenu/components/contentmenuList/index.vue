@@ -16,12 +16,14 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-    menulist: {
-        type: Array,
-        default: () => []
-    } as any
-})
+withDefaults(
+    defineProps<{
+        menulist: Array<any>
+    }>(),
+    {
+        menulist: () => []
+    }
+)
 const emits = defineEmits(['rowClick'])
 
 function rowClick(event) {

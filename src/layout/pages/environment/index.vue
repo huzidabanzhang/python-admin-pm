@@ -59,7 +59,7 @@ import useCurrentInstance from '@/proxy'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const store = useStore()
 
 const dialogVisible = ref(false)
@@ -72,7 +72,7 @@ function onClose() {
 }
 
 function onSelect(value) {
-    proxy
+    _this
         .$confirm('确定切换该环境嘛？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -82,7 +82,7 @@ function onSelect(value) {
             await store.commit('user/setInit', false)
             let is_route = store.dispatch('api/set', value)
             if (Object.keys(is_route).length == 0)
-                proxy.$router.push({
+                _this.$router.push({
                     path: '/'
                 })
             onClose()
@@ -91,7 +91,7 @@ function onSelect(value) {
 }
 
 function onRemove(value) {
-    proxy
+    _this
         .$confirm('确定删除该环境嘛？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
