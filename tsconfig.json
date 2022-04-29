@@ -12,6 +12,7 @@
         "sourceMap": true,
         "isolatedModules": true,
         "baseUrl": ".",
+        "allowJs": true,
         "types": [
             "vite/client"
         ],

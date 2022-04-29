@@ -7,7 +7,7 @@ import router from '@/router/index'
 import store from '@/store/index'
 import layoutHeaderAside from '@/layout/header-aside'
 import { cloneDeep } from 'lodash'
-import { frameInRoutes } from '@/router/index'
+import { frameInRoutes } from '@/menu'
 import { ElNotification, ElMessageBox, ElLoading } from 'element-plus'
 import { checkDb } from '@api/sys.user'
 import { CreateDrop } from '@api/sys.base'
@@ -69,6 +69,18 @@ function componentToImport(ary) {
     })
 }
 
+function addRoute(params) {
+    const routers = router.getRoutes()
+    params.forEach((i) => {
+        if (
+            routers.findIndex((x) => {
+                return x.path === i.path
+            }) === -1
+        )
+            router.addRoute(i)
+    })
+}
+
 /**
  * @description 动态加载路由
  * @param {Object} r 路由
@@ -90,7 +102,7 @@ util.initRoute = function (r) {
     componentToImport(data)
 
     let routes = route.concat(data)
-    router.$addRoute(routes)
+    addRoute(routes)
     // 更新标签页池
     store.commit('page/init', [...frameInRoutes, ...routes])
 }
@@ -108,7 +120,7 @@ util.initMenu = function (m, isAll = false) {
             title: '提示',
             message: '动态加载菜单成功',
             type: 'success',
-            offset: 100,
+            offset: 100
         })
         let info = store.getters['user/info']
         store.dispatch(
@@ -116,7 +128,7 @@ util.initMenu = function (m, isAll = false) {
             {
                 user: info.user,
                 menus: params,
-                interfaces: info.interfaces,
+                interfaces: info.interfaces
             },
             { root: true }
         )

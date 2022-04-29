@@ -83,7 +83,7 @@ import { ref, computed, watch } from 'vue'
 import icon from './data/index'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { proxy } = useCurrentInstance()
 const props = defineProps({
     // 值
     value: {
@@ -158,7 +158,7 @@ watch(
 
 function selectIcon(iconName = '') {
     emits('update:value', iconName)
-    if (iconName && props.autoClose) (proxy.$refs.popover as any).hide()
+    if (iconName && props.autoClose) popover.value.hide()
 }
 
 function clear() {

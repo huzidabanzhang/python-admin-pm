@@ -7,6 +7,10 @@ import adminContainerGhostBs from './components/admin-container-ghost-bs.vue'
 import adminContainerCard from './components/admin-container-card.vue'
 import adminContainerCardBs from './components/admin-container-card-bs.vue'
 
+interface Slots {
+    [key: string]: Function
+}
+
 export default {
     name: 'admin-container',
     props: {
@@ -40,11 +44,11 @@ export default {
         },
     },
     render() {
-        let slots = {
+        let slots: Slots = {
             default: () => {
                 return [this.$slots.default()]
             }
-        } as any
+        }
 
         if (this.$slots.header) slots.header = () => {
             return [this.$slots.header()]

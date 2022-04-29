@@ -27,10 +27,10 @@ export function pathInit({
     dbName = 'database',
     path = '',
     user = true,
-    defaultValue = '' as any
+    defaultValue = '' as (string | object)
 }) {
-    const token = util.cookies.get('token') || 'test'
-    const currentPath = `${dbName}.${user ? `user.${token}` : 'public'}${path ? `.${path}` : ''}`
+    const admin_id = util.cookies.get('uuid') || 'test'
+    const currentPath = `${dbName}.${user ? `user.${admin_id}` : 'public'}${path ? `.${path}` : ''}`
     const value = db.get(currentPath).value()
     if (!(value !== undefined)) {
         db
@@ -72,7 +72,7 @@ export function dbSet({
 export function dbGet({
     dbName = 'database',
     path = '',
-    defaultValue = '' as any,
+    defaultValue = '' as (string | object),
     user = false
 }) {
     return new Promise<void>(resolve => {
@@ -93,7 +93,7 @@ export function database({
     dbName = 'database',
     path = '',
     user = false,
-    defaultValue = '' as any
+    defaultValue = '' as (string | object)
 } = {}) {
     return new Promise<void>(resolve => {
         resolve(db.get(pathInit({

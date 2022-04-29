@@ -38,7 +38,7 @@
                     <span>{{ !form.menu_id ? '新建菜单' : '编辑菜单' }}</span>
                 </div>
             </template>
-            <el-form ref="SYSMENU" label-width="80px" :model="form" :rules="rules">
+            <el-form ref="sysMenu" label-width="80px" :model="form" :rules="rules">
                 <el-form-item label="图标" prop="icon">
                     <admin-icon-select v-model:value="form.icon" />
                 </el-form-item>
@@ -106,7 +106,7 @@
                         :icon="Check"
                         :disabled="auth.add"
                         v-auth:add_menu
-                        @click="submit('SYSMENU')"
+                        @click="submit(sysMenu)"
                         >保 存</el-button
                     >
                 </el-form-item>
@@ -117,7 +117,7 @@
                         :icon="Check"
                         :disabled="auth.set"
                         v-auth:set_menu
-                        @click="submit('SYSMENU')"
+                        @click="submit(sysMenu)"
                         >保 存</el-button
                     >
                     <el-button
@@ -169,11 +169,12 @@ import { QueryMenuByParam, CreateMenu, ModifyMenu, LockMenu, DelMenu, GetMenuToI
 import { QueryRoleByParam } from '@/api/sys.role'
 import { cloneDeep } from 'lodash'
 import { ref, reactive, onMounted } from 'vue'
+import type { FormInstance, FormRules } from 'element-plus'
 import util from '@/libs/util'
 import setting from '@/setting'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 
 const tree_prop = {
     label: 'title',
@@ -185,7 +186,7 @@ const menu_prop = {
     emitPath: false,
     checkStrictly: true
 }
-const rules = {
+const rules = reactive<FormRules>({
     title: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
     name: [{ required: true, message: '请输入路由名称', trigger: 'blur' }],
     mark: [{ required: true, message: '请输入标识', trigger: 'blur' }],
@@ -199,7 +200,7 @@ const rules = {
     componentPath: [{ required: true, message: '请输入组件路径', trigger: 'blur' }],
     cache: [{ required: true, message: '请选择路由缓存', trigger: 'blur' }],
     roles: [{ required: true, message: '请选择角色', trigger: 'blur' }]
-}
+})
 const auth = reactive({
     add: false,
     set: false,
@@ -222,6 +223,7 @@ const form = ref({
 }) as any
 const roleDefault = ref(null)
 const dialogTitle = ref('')
+const sysMenu = ref<FormInstance>()
 
 function init(visible = false) {
     loading.value = true
@@ -255,8 +257,8 @@ function isHidden(mark) {
     })
 }
 
-function submit(formName) {
-    proxy.$refs[formName].validate((valid) => {
+function submit(formEl: FormInstance) {
+    formEl.validate((valid) => {
         if (valid) {
             formLoad.value = true
             if (form.value.pid === null) form.value.pid = '0'
@@ -283,11 +285,11 @@ function submit(formName) {
 
 function copy_this() {
     delete form.value['menu_id']
-    proxy.$refs['SYSMENU'].clearValidate()
+    sysMenu.value.clearValidate()
 }
 
 function handleInitParent(title) {
-    proxy.$message.success(title)
+    _this.$message.success(title)
     formLoad.value = false
     init(true)
 }
@@ -303,7 +305,7 @@ function getMenuItem(data = null) {
           }
     treeData.value = cloneDeep(menuData.value)
     disabledMenu(form.value, treeData.value)
-    proxy.$refs['SYSMENU'].clearValidate()
+    sysMenu.value.clearValidate()
 }
 
 function disabledMenu(item, data) {
@@ -314,7 +316,7 @@ function disabledMenu(item, data) {
 }
 
 function delMenu(menu_id) {
-    proxy
+    _this
         .$confirm('删除后子菜单将自动到根菜单下，确定删除该菜单吗', '删除菜单', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',

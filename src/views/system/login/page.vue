@@ -36,14 +36,19 @@
                                     type="text"
                                     placeholder="验证码"
                                     v-model="formLogin.code"
-                                    @keyup.enter="handleSubmit"
+                                    @keyup.enter="handleSubmit(loginForm)"
                                 >
                                     <template v-slot:append>
                                         <img class="login-code" :src="captcha" @click="refreshCaptcha" />
                                     </template>
                                 </el-input>
                             </el-form-item>
-                            <el-button type="primary" class="button-login" :disabled="!isDis" @click="handleSubmit">
+                            <el-button
+                                type="primary"
+                                class="button-login"
+                                :disabled="!isDis"
+                                @click="handleSubmit(loginForm)"
+                            >
                                 登 录
                             </el-button>
                         </el-form>
@@ -69,14 +74,15 @@
 import useCurrentInstance from '@/proxy'
 import environment from '@/layout/pages/environment/index.vue'
 import util from '@/libs/util'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, reactive } from 'vue'
 import { useStore } from 'vuex'
 import { Lock, User } from '@element-plus/icons-vue'
+import type { FormInstance, FormRules } from 'element-plus'
 
-const { proxy } = useCurrentInstance() as any
+const { proxy, _this } = useCurrentInstance()
 const store = useStore()
 
-const rules = {
+const rules = reactive<FormRules>({
     username: [
         {
             required: true,
@@ -110,8 +116,9 @@ const rules = {
             trigger: 'blur'
         }
     ]
-}
-const formLogin = ref({
+})
+const loginForm = ref<FormInstance>()
+const formLogin = reactive({
     username: '',
     password: '',
     code: ''
@@ -150,21 +157,17 @@ function refreshCaptcha() {
     captcha.value = captchaUrl.value + '?rand=' + Math.random()
 }
 
-function handleSubmit() {
-    proxy.$refs.loginForm.validate((valid) => {
+function handleSubmit(formEl: FormInstance) {
+    formEl.validate((valid) => {
         if (valid) {
-            let loadingInstance = proxy.$loading(proxy.loadOption('正在登陆中.....'))
+            let loadingInstance = _this.$loading(_this.loadOption('正在登陆中.....'))
 
             store
-                .dispatch('account/login', {
-                    username: formLogin.value.username,
-                    password: formLogin.value.password,
-                    code: formLogin.value.code
-                })
+                .dispatch('account/login', formLogin)
                 .then(() => {
                     loadingInstance.close()
                     // 重定向对象不存在则返回顶层路径
-                    proxy.$router.replace(proxy.$route.query.redirect || '/')
+                    proxy.$router.replace((proxy.$route.query.redirect as string) || '/')
                 })
                 .catch(() => {
                     loadingInstance.close()
@@ -172,7 +175,7 @@ function handleSubmit() {
                 })
         } else {
             // 登录表单校验失败
-            proxy.$message.error('用户名、密码或者验证码不能为空')
+            _this.$message.error('用户名、密码或者验证码不能为空')
         }
     })
 }

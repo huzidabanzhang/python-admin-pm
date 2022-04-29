@@ -93,9 +93,22 @@
                 .admin-theme-container-main-layer {
                     position: absolute;
                     top: 16px;
-                    bottom: 16px;
+                    bottom: 48px;
                     left: 16px;
                     right: 16px;
+                }
+                .admin-theme-container-main-footer {
+                    position: absolute;
+                    bottom: 8px;
+                    left: 16px;
+                    right: 16px;
+                    height: 32px;
+                    line-height: 32px;
+                    .admin-theme-container-main-footer-copyright {
+                        margin: 0;
+                        text-align: center;
+                        font-size: 12px;
+                    }
                 }
                 .admin-theme-container-main-body {
                     position: relative;

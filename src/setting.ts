@@ -38,13 +38,13 @@ export default {
             {
                 title: '经典',
                 name: 'admin',
-                preview: 'image/theme/admin/preview@2x.png',
+                preview: 'image/theme/admin/preview@2x.png'
             }
         ]
     },
     // 是否默认开启页面切换动画
     transition: {
-        active: true,
+        active: true
     },
     hidden_menu: ['system', 'system_menu'],
     // 按钮接口标识

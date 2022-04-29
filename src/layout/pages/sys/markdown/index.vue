@@ -6,7 +6,7 @@
             </el-radio-group>
         </div>
 
-        <Preview ref="MARK_PREVIEW" :content="content" :loading="loadingInstance"></Preview>
+        <Preview ref="MARK_PREVIEW" :content="content" :callback="loadingInstance"></Preview>
     </admin-container>
 </template>
 
@@ -17,14 +17,15 @@ import { html } from '/README.md'
 import Preview from '@/layout/pages/markdown/preview.vue'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const data = ['vue-admin', 'python-admin']
 const value = ref('vue-admin')
 const content = ref('')
-let loadingInstance = '' as any
+const markPreview = ref<HTMLElement>()
+let loadingInstance = {} as any
 
 function handleChange() {
-    loadingInstance = proxy.$loading(proxy.loadOption('', proxy.$refs.MARK_PREVIEW.$el, false))
+    loadingInstance = _this.$loading(_this.loadOption('', markPreview.value, false))
 
     if (value.value == 'vue-admin') {
         content.value = html

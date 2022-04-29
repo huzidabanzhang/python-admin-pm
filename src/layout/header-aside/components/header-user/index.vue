@@ -38,9 +38,9 @@ import { AgainCreateDrop } from '@api/sys.base'
 import Admin from '@/layout/pages/sys/admin/info.vue'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const store = useStore()
-const user = computed(() => store.getters['user/user']) as any
+const user = computed(() => store.getters['user/user'])
 const params = ref({})
 const centerDialogVisible = ref(false)
 
@@ -57,8 +57,7 @@ function getInfo() {
     centerDialogVisible.value = true
 }
 
-function handleClose(data) {
-    if (data.admin_id) user.value = cloneDeep(data)
+function handleClose() {
     centerDialogVisible.value = false
 }
 
@@ -77,18 +76,18 @@ function handleCommand(command) {
             })
             break
         case 'database':
-            proxy
+            _this
                 .$confirm('重置数据库将清空所有数据，确定要重置吗？', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    let loadingInstance = proxy.$loading(proxy.loadOption('正在重置数据库中.....'))
+                    let loadingInstance = _this.$loading(_this.loadOption('正在重置数据库中.....'))
                     AgainCreateDrop()
                         .then((res) => {
                             loadingInstance.close()
-                            proxy
+                            _this
                                 .$confirm('请重新登录', '提示', {
                                     confirmButtonText: '确定',
                                     type: 'success',

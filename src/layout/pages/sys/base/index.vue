@@ -8,7 +8,7 @@
             <el-button type="danger" v-if="handleVisible" @click="handleDataBase('init')">重置数据库</el-button>
         </el-button-group>
 
-        <input type="file" style="display: none" ref="SQL_FILE" @change="handleImport" />
+        <input type="file" style="display: none" ref="sqlInput" @change="handleImport" />
 
         <DataBase
             :params="form"
@@ -25,7 +25,7 @@ import { AgainCreateDrop, ImportSql } from '@/api/sys.base'
 import DataBase from './select.vue'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const store = useStore()
 const props = defineProps({
     Visible: Boolean
@@ -35,8 +35,9 @@ const visible = ref(false)
 const centerDialogVisible = ref(false)
 const form = ref({ type: 1 })
 const user = computed(() => store.getters['user/user'])
+const sqlInput = ref<HTMLInputElement>()
 
-const handleVisibles = inject('handleVisible') as any
+const handleVisibles = inject('handleVisible') as Function
 
 watch(
     () => props.Visible,
@@ -59,7 +60,7 @@ function handleVisible() {
 }
 
 function handleLogout() {
-    proxy
+    _this
         .$confirm('请重新登录', '提示', {
             confirmButtonText: '确定',
             type: 'success',
@@ -81,25 +82,25 @@ function handleDataBase(command) {
             centerDialogVisible.value = true
             break
         case 'import':
-            proxy
+            _this
                 .$confirm('导入数据库将覆盖所有数据，确定要导入吗？', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    proxy.$refs.SQL_FILE.click()
+                    sqlInput.value.click()
                 })
             break
         case 'init':
-            proxy
+            _this
                 .$confirm('重置数据库将清空所有数据，确定要重置吗？', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    let loadingInstance = proxy.$loading(proxy.loadOption('正在重置数据库中.....'))
+                    let loadingInstance = _this.$loading(_this.loadOption('正在重置数据库中.....'))
                     AgainCreateDrop()
                         .then(async (res) => {
                             loadingInstance.close()
@@ -115,23 +116,23 @@ function handleDataBase(command) {
 
 function handleImport() {
     let formData = new FormData(),
-        file = (event.target as any).files
+        file = sqlInput.value.files
 
-    if (file.length == 0) return proxy.$message.warning('请选择上传文件')
+    if (file.length == 0) return _this.$message.warning('请选择上传文件')
 
     formData.append('document', file[0])
 
-    let loadingInstance = proxy.$loading(proxy.loadOption('正在导入数据库中.....'))
+    let loadingInstance = _this.$loading(_this.loadOption('正在导入数据库中.....'))
 
     ImportSql(formData)
         .then((response) => {
             loadingInstance.close()
             handleLogout()
-            proxy.$refs.SQL_FILE.value = ''
+            sqlInput.value.value = ''
         })
         .catch(async (res) => {
             loadingInstance.close()
-            proxy.$refs.SQL_FILE.value = ''
+            sqlInput.value.value = ''
         })
 }
 </script>

@@ -330,6 +330,12 @@
                     }
                 }
             }
+            .admin-theme-container-main-footer-copyright {
+                color: $theme-aside-menu-empty-text-color;
+                a {
+                    color: $theme-aside-menu-empty-text-color;
+                }
+            }
             // 主体
             .admin-theme-container-main-body {
                 // 布局组件

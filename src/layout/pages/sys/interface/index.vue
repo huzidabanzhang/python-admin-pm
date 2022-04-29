@@ -180,7 +180,7 @@ import setting from '@/setting'
 import util from '@/libs/util'
 import useCurrentInstance from '@/proxy'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const store = useStore()
 const lockOption = [
     { label: '显示', value: 'false' },
@@ -194,15 +194,15 @@ const methodOption = [
 ]
 const auth = reactive({
     add: false,
-    del: proxy.$auth('del_interface'),
-    set: proxy.$auth('set_interface'),
-    lock: proxy.$auth('lock_interface'),
+    del: _this.$auth('del_interface'),
+    set: _this.$auth('set_interface'),
+    lock: _this.$auth('lock_interface'),
     del_all: true,
     lock_all: true
 })
 const auth_all = {
-    del: proxy.$auth('del_interface'),
-    lock: proxy.$auth('lock_interface')
+    del: _this.$auth('del_interface'),
+    lock: _this.$auth('lock_interface')
 }
 const interfaceData = ref([])
 const menuOption = ref([])
@@ -332,9 +332,9 @@ function handleRowLock(row) {
 }
 
 function lockInterface(keys, disable) {
-    if (keys.length === 0) return proxy.$message.warning('未选择任何记录')
+    if (keys.length === 0) return _this.$message.warning('未选择任何记录')
 
-    proxy
+    _this
         .$confirm(disable ? '确定要隐藏该接口吗' : '确定要显示该接口吗', disable ? '隐藏接口' : '显示接口', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -347,9 +347,9 @@ function lockInterface(keys, disable) {
 }
 
 function delInterface(interface_id) {
-    if (interface_id.length === 0) return proxy.$message.warning('未选择任何记录')
+    if (interface_id.length === 0) return _this.$message.warning('未选择任何记录')
 
-    proxy
+    _this
         .$confirm('确定要删除该接口吗', '删除接口', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -360,7 +360,7 @@ function delInterface(interface_id) {
                 interface_id: interface_id
             }).then(async (res) => {
                 getInterfaceInfo(interface_id, 1)
-                proxy.$message.success('接口删除成功')
+                _this.$message.success('接口删除成功')
                 init()
             })
         })
@@ -391,7 +391,7 @@ function Lock(keys, disable) {
         disable: disable
     }).then(async (res) => {
         getInterfaceInfo(keys, 2, disable)
-        proxy.$message.success(disable ? '接口隐藏成功' : '接口显示成功')
+        _this.$message.success(disable ? '接口隐藏成功' : '接口显示成功')
         init()
     })
 }

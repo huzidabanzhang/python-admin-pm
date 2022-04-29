@@ -36,7 +36,7 @@ const flag = computed({
     get() {
         if (props.visible) {
             // 注册全局监听事件 [ 目前只考虑鼠标解除触发 ]
-            window.addEventListener('mousedown', proxy.watchContextmenu)
+            window.addEventListener('mousedown', watchContextmenu)
         }
         return props.visible
     },
@@ -47,7 +47,7 @@ const flag = computed({
 
 function watchContextmenu(event) {
     if (!proxy.$el.contains(event.target) || event.button !== 0) flag.value = false
-    window.removeEventListener('mousedown', proxy.watchContextmenu)
+    window.removeEventListener('mousedown', watchContextmenu)
 }
 
 onMounted(() => {

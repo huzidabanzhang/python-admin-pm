@@ -75,7 +75,7 @@ import useCurrentInstance from '@/proxy'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 
-const { proxy } = useCurrentInstance() as any
+const { _this } = useCurrentInstance()
 const store = useStore()
 
 const contextmenuFlag = ref(false)
@@ -147,7 +147,7 @@ function handleControlItemClick(command, name = null) {
             store.dispatch('page/closeAll')
             break
         default:
-            proxy.$message.error('无效的操作')
+            _this.$message.error('无效的操作')
             break
     }
 }
@@ -167,7 +167,7 @@ function handleClick(tab, event) {
     const page = opened.value.find((page) => page.fullPath === tab.paneName)
     const { name, params, query } = page
     if (page) {
-        proxy.$router.push({ name, params, query })
+        _this.$router.push({ name, params, query })
     }
 }
 
