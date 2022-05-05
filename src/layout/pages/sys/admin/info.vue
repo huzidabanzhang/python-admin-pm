@@ -18,11 +18,11 @@
                     :http-request="CreateUpload"
                     :show-file-list="false"
                 >
-                    <img v-if="avatar != '' && avatar" :src="avatar" class="avatar" />
+                    <img v-if="avatar !== '' && avatar" :src="avatar" class="avatar" />
                     <img v-else :src="defaultImg" class="avatar" />
                 </el-upload>
             </el-form-item>
-            <el-form-item v-if="isAdmin == false" label="角色" prop="role_id">
+            <el-form-item v-if="isAdmin === false" label="角色" prop="role_id">
                 <el-select v-model="form.role_id" placeholder="请选择角色">
                     <el-option
                         v-for="item in roleOption"
@@ -35,7 +35,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="用户名" prop="username">
-                <el-input v-model="form.username" :readonly="form.admin_id != undefined"></el-input>
+                <el-input v-model="form.username" :readonly="form.admin_id !== undefined"></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
                 <el-input v-model="form.password" type="password" show-password></el-input>
@@ -203,7 +203,7 @@ function handelInfo(formEl: FormInstance) {
             if (form.value.admin_id) {
                 ModifyAdmin(params)
                     .then((res) => {
-                        if (res.is_self == true) {
+                        if (res.is_self === true) {
                             util.updateUserInfo(res)
                             _this.$message.success('编辑成功')
                             emits('callback', res.user)
@@ -227,7 +227,7 @@ function handelInfo(formEl: FormInstance) {
 }
 
 function handleInitParent(type) {
-    _this.$message.success(type == 1 ? '编辑成功' : '创建成功')
+    _this.$message.success(type === 1 ? '编辑成功' : '创建成功')
     emits('callback', true)
     isSubmit.value = false
 }

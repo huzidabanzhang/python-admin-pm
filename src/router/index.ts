@@ -23,7 +23,7 @@ async function ResetRoute(to, next) {
             defaultValue: {},
             user: true
         }, { root: true }).then(res => {
-            if (Object.keys(res).length == 0) {
+            if (Object.keys(res).length === 0) {
                 next({ name: 'login' })
             } else {
                 util.initMenu(res.menus || {
@@ -31,9 +31,9 @@ async function ResetRoute(to, next) {
                     route: []
                 }, false)
 
-                if (to.path != '/login') RouteFresh = false
+                if (to.path !== '/login') RouteFresh = false
 
-                if (to.matched.length == 0) {
+                if (to.matched.length === 0) {
                     next({ ...to, replace: true })
                 } else next()
             }
@@ -59,13 +59,13 @@ router.beforeEach(async (to, from, next) => {
         const token = util.cookies.get('token')
         const admin_id = util.cookies.get('uuid')
         if (token && admin_id) {
-            if (to.path == '/index') RouteFresh = true
+            if (to.path === '/index') RouteFresh = true
 
-            if (to.matched.some((r) => r.meta.disable == true)) {
+            if (to.matched.some((r) => r.meta.disable === true)) {
                 next({ name: 'page403' })
             } else await ResetRoute(to, next)
         } else {
-            store.dispatch('account/initUser', () => {
+            await store.dispatch('account/initUser', () => {
                 next({
                     name: 'login',
                     query: {
@@ -75,7 +75,7 @@ router.beforeEach(async (to, from, next) => {
             })
         }
     } else {
-        if (to.matched.length == 0) await ResetRoute(to, next)
+        if (to.matched.length === 0) await ResetRoute(to, next)
         // 不需要身份校验 直接通过
         else next()
     }

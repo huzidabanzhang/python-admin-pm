@@ -27,7 +27,7 @@ let loadingInstance = {} as any
 function handleChange() {
     loadingInstance = _this.$loading(_this.loadOption('', markPreview.value, false))
 
-    if (value.value == 'vue-admin') {
+    if (value.value === 'vue-admin') {
         content.value = html
     } else {
         GetReadmeContent()

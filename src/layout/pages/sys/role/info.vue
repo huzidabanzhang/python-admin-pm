@@ -47,7 +47,7 @@
                     @click="delRole"
                 ></el-button>
                 <el-button @click="handleClosed">取 消</el-button>
-                <el-button type="primary" :loading="isSubmit" :disabled="addAuth" @click="handelInfo('roleForm')"
+                <el-button type="primary" :loading="isSubmit" :disabled="addAuth" @click="handelInfo(roleForm)"
                     >提 交</el-button
                 >
             </span>
@@ -144,13 +144,13 @@ function getMenuList() {
 function dealData(data) {
     while (data.length > 0) {
         for (let i = 0; i < data.length; i++) {
-            if (data[i].pid == '0') {
+            if (data[i].pid === '0') {
                 menu.value.push(data[i])
                 data.splice(i, 1)
                 i--
             } else {
-                let index = menu.value.findIndex((item) => item.menu_id == data[i].pid)
-                if (index == -1) continue
+                let index = menu.value.findIndex((item) => item.menu_id === data[i].pid)
+                if (index === -1) continue
                 menu.value[index].children.push(data[i])
                 data.splice(i, 1)
                 i--

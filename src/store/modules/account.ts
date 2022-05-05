@@ -38,7 +38,7 @@ export default {
                             {
                                 user: res.info,
                                 menus: util.dealData(res.menus),
-                                interfaces: res.interface,
+                                interfaces: res.interface
                             },
                             { root: true }
                         )

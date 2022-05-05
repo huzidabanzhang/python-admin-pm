@@ -59,7 +59,7 @@ util.open = function (url) {
 function componentToImport(ary) {
     const modules = import.meta.glob('../layout/pages/**/**.vue')
     ary.forEach((i) => {
-        if (i.componentPath != 'layout/header-aside') {
+        if (i.componentPath !== 'layout/header-aside') {
             i.component = modules[/* @vite-ignore */ `../layout/pages/${i.componentPath}.vue`]
         } else {
             i.component = layoutHeaderAside
@@ -163,19 +163,19 @@ util.getMenuTree = function (isGet, params) {
         let data = []
         while (params.length > 0) {
             for (let i = 0; i < params.length; i++) {
-                if (params[i].menu_id == undefined) {
+                if (params[i].menu_id === undefined) {
                     params.splice(i, 1)
                     i--
                     continue
                 }
 
-                if (params[i].pid == 0) {
+                if (params[i].pid === 0) {
                     data.push(params[i])
                     params.splice(i, 1)
                     i--
                 } else {
                     let index = data.findIndex((item) => item.menu_id === params[i].pid)
-                    if (index == -1) continue
+                    if (index === -1) continue
                     if (!data[index]['children']) data[index]['children'] = []
                     data[index]['children'].push(params[i])
                     params.splice(i, 1)
@@ -246,20 +246,20 @@ util.dealData = function (params) {
     }
     while (params.length > 0) {
         for (let i = 0; i < params.length; i++) {
-            if (params[i].menu_id == undefined) {
+            if (params[i].menu_id === undefined) {
                 params.splice(i, 1)
                 i--
                 continue
             }
 
-            if (params[i].pid == 0) {
+            if (params[i].pid === '0') {
                 data.menu.push(getMenuInfo(params[i]))
                 data.route.push(getRouteInfo(params[i]))
                 params.splice(i, 1)
                 i--
             } else {
                 let index = data.menu.findIndex((item) => item.id === params[i].pid)
-                if (index == -1) continue
+                if (index === -1) continue
                 if (!data.menu[index]['children']) data.menu[index]['children'] = []
                 if (!data.route[index]['children']) data.route[index]['children'] = []
                 data.menu[index]['children'].push(getMenuInfo(params[i]))

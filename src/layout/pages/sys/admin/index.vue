@@ -228,7 +228,7 @@ function getRoleList() {
 
 function getRoleName(role_id) {
     const item = roleOption.value.find((i) => {
-        return i.value == role_id
+        return i.value === role_id
     })
     return item ? item.label : '未选择角色'
 }
@@ -287,7 +287,7 @@ function handleRowLock(row) {
 }
 
 function lockAdmin(keys, disable) {
-    if (keys.length == 0) return _this.$message.warning('未选择任何记录')
+    if (keys.length === 0) return _this.$message.warning('未选择任何记录')
 
     _this
         .$confirm(disable ? '确定要隐藏该管理员吗' : '确定要显示该管理员吗', disable ? '隐藏管理员' : '显示管理员', {
@@ -311,7 +311,7 @@ function Lock(keys, disable) {
 }
 
 function delAdmin(admins) {
-    if (admins.length == 0) return _this.$message.warning('未选择任何记录')
+    if (admins.length === 0) return _this.$message.warning('未选择任何记录')
 
     _this
         .$confirm('确定要删除该管理员吗', '删除管理员', {

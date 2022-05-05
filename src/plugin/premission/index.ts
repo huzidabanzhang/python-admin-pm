@@ -59,14 +59,14 @@ export default {
             const t = mark.split('_')[0]
             const item = handleAuth(mark)
             if (isBoolean(item)) return item
-            node.context.auth[t] = item.length == 0 ? true : Boolean(item[0].disable)
+            node.context.auth[t] = item.length === 0 ? true : Boolean(item[0].disable)
         })
 
         // 注册权限判断事件
         app.config.globalProperties.$auth = (mark) => {
             const item = handleAuth(mark)
             if (isBoolean(item)) return item
-            return item.length == 0 ? true : Boolean(item[0].disable)
+            return item.length === 0 ? true : Boolean(item[0].disable)
         }
     }
 }
