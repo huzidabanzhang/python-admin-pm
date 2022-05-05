@@ -5,7 +5,7 @@
                 title="返回上一级"
                 style="float: left"
                 circle
-                v-if="pid != '0' && !isDel"
+                v-if="pid !== '0' && !isDel"
                 :icon="Back"
                 @click="backFolder(prev)"
             ></el-button>
@@ -67,7 +67,7 @@
                     <el-button
                         type="primary"
                         @click="centerDialogVisible = true"
-                        :disabled="auth.add || pid == '0'"
+                        :disabled="auth.add || pid === '0'"
                         v-auth:add_document
                         :icon="UploadFilled"
                         >上传</el-button
@@ -91,13 +91,13 @@
                                         <el-dropdown-item @click.native="openFolder(item)">打开文件夹</el-dropdown-item>
                                         <el-dropdown-item
                                             @click.native="setFolder(item)"
-                                            v-if="item.admin_id && (user.admin_id == item.admin_id || user.is_admin)"
+                                            v-if="item.admin_id && (user.admin_id === item.admin_id || user.is_admin)"
                                             :disabled="auth.setf"
                                             >重命名</el-dropdown-item
                                         >
                                         <el-dropdown-item
                                             @click.native="delFolder(item)"
-                                            v-if="item.admin_id && (user.admin_id == item.admin_id || user.is_admin)"
+                                            v-if="item.admin_id && (user.admin_id === item.admin_id || user.is_admin)"
                                             :disabled="auth.delf"
                                             >删除</el-dropdown-item
                                         >
@@ -155,7 +155,7 @@
                             class="image"
                             :src="src + item.path"
                             fit="scale-down"
-                            v-if="item.status == 1"
+                            v-if="item.status === 1"
                             :preview-src-list="[src + item.path]"
                         >
                             <div slot="error" class="image-slot">
@@ -285,7 +285,7 @@ function init() {
             checked.value = []
             total.value = res.total
             for (let i = 0; i < data.value.length; i++) {
-                if (data.value[i].is_folder == false) {
+                if (data.value[i].is_folder === false) {
                     data.value.splice(i)
                     i--
                 }
@@ -495,7 +495,7 @@ function delFolder(id) {
 }
 
 function handleCommand(command) {
-    if (checked.value.length == 0) return _this.$message.warning('未选择任何记录')
+    if (checked.value.length === 0) return _this.$message.warning('未选择任何记录')
     switch (command) {
         case '1':
             retrieveFile(checked.value, true)
@@ -524,7 +524,7 @@ function backFolder(item) {
         count = tree.value.length - data.index
     tree.value.splice(item.index, count)
     pid.value = data.pid
-    if (pid.value == '0') {
+    if (pid.value === '0') {
         prev.value = {}
         is_sys.value = false
     } else {
@@ -539,7 +539,7 @@ function toFolder(item) {
         count = tree.value.length - data.index + 1
     tree.value.splice(item.index + 1, count)
     pid.value = data.folder_id
-    if (pid.value == '0') {
+    if (pid.value === '0') {
         prev.value = {}
         is_sys.value = false
     } else {

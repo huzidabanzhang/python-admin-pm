@@ -66,7 +66,7 @@ service.interceptors.request.use(
         if (config.headers.isCheck) {
             let interfaces = cloneDeep(store.getters['user/interfaces'])
             isCheck = interfaces.some((item) => {
-                return item.path == config.url && !item.disable
+                return item.path === config.url && !item.disable
             })
 
             if (!isCheck) return Promise.reject({ message: '无权限~' })
@@ -98,7 +98,7 @@ service.interceptors.request.use(
                 let count = 0
                 config.url += '?'
                 for (let i in config.data) {
-                    config.url += (count == 0 ? '' : '&') + i + '=' + config.data[i]
+                    config.url += (count === 0 ? '' : '&') + i + '=' + config.data[i]
                     count++
                 }
             }

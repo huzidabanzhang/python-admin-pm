@@ -48,7 +48,7 @@
             <el-divider>自定义</el-divider>
             <div flex="main:justify cross:center">
                 <el-input v-model="custom" class="admin-mr-5" />
-                <el-button :disabled="custom.length === 0" @click="onSelect(custom)">使用</el-button>
+                <el-button :disabled="!custom" @click="onSelect(custom)">使用</el-button>
             </div>
         </el-dialog>
     </div>
@@ -81,7 +81,7 @@ function onSelect(value) {
         .then(async () => {
             await store.commit('user/setInit', false)
             let is_route = store.dispatch('api/set', value)
-            if (Object.keys(is_route).length == 0)
+            if (Object.keys(is_route).length === 0)
                 _this.$router.push({
                     path: '/'
                 })

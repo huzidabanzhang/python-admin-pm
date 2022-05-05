@@ -79,7 +79,7 @@ export default {
                     defaultValue: {},
                     user: true
                 }, { root: true })
-                if (Object.keys(user).length == 0) {
+                if (Object.keys(user).length === 0) {
                     // 显示提示
                     ElNotification({
                         title: '环境变更',

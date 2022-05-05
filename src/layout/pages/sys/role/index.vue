@@ -38,7 +38,7 @@
                 class="role-group"
                 v-for="(item, key) in roleData"
                 :key="key"
-                :class="select.role_id == item.role_id ? 'select' : ''"
+                :class="select.role_id === item.role_id ? 'select' : ''"
                 @dblclick="editRole(auth_all.set, item)"
                 @click="getRole(item)"
             >
@@ -105,7 +105,7 @@ const select = ref({
 }) as any
 
 function init(visible = false) {
-    if (visible == true) centerDialogVisible.value = false
+    if (visible === true) centerDialogVisible.value = false
     let params = {}
     if (search.status !== '') params['disable'] = search.status
 
@@ -143,7 +143,7 @@ function editRole(disabled, role) {
 function lockRole(keys, disable) {
     if (auth_all.lock) return true
 
-    if (keys.length == 0) return _this.$message.warning('未选择任何记录')
+    if (keys.length === 0) return _this.$message.warning('未选择任何记录')
 
     _this
         .$confirm(disable ? '确定要隐藏该角色吗' : '确定要显示该角色吗', disable ? '隐藏角色' : '显示角色', {

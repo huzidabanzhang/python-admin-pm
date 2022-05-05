@@ -118,7 +118,7 @@ function handleImport() {
     let formData = new FormData(),
         file = sqlInput.value.files
 
-    if (file.length == 0) return _this.$message.warning('请选择上传文件')
+    if (file.length === 0) return _this.$message.warning('请选择上传文件')
 
     formData.append('document', file[0])
 

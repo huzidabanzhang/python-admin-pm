@@ -70,11 +70,11 @@ watch(
 function handleClosed() {
     let count = 0
     for (let i in fileList.value) {
-        if (fileList.value[i].type == 'ready') count++
+        if (fileList.value[i].type === 'ready') count++
     }
 
     if (!loading.value) {
-        if (count == 0) close()
+        if (count === 0) close()
         else
             _this
                 .$confirm(`还有` + count + `个文件未上传，确定关闭嘛？`, '提醒', {
@@ -134,7 +134,7 @@ function CreateUpload() {
         uids = []
 
     for (let i in fileList.value) {
-        if (fileList.value[i].type == 'ready') {
+        if (fileList.value[i].type === 'ready') {
             formData.append('document', fileList.value[i].file)
             uids.push(fileList.value[i].uid)
         }
@@ -144,18 +144,18 @@ function CreateUpload() {
     formData.append('folder_id', props.folder_id)
     formData.append('status', 1)
 
-    if (formData.get('document') == null) return _this.$message.error('请选择上传文件')
+    if (formData.get('document') === null) return _this.$message.error('请选择上传文件')
 
     loading.value = true
     CreateDocument(formData, handelProgress)
         .then((res) => {
             res.map((i) => {
-                if (i.res == 1) {
+                if (i.res === 1) {
                     fileList.value[i.uid].onSuccess()
                     fileList.value[i.uid].type = 'success'
                 }
 
-                if (i.res == 2) {
+                if (i.res === 2) {
                     fileList.value[i.uid].onError()
                     fileList.value[i.uid].type = 'error'
                 }

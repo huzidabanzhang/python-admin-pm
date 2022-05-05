@@ -41,7 +41,7 @@
             <el-table-column prop="time" label="请求时长(ms)" align="center"> </el-table-column>
             <el-table-column prop="status" label="状态" align="center">
                 <template v-slot="scope">
-                    <el-tag type="success" v-if="scope.row.status == 0">成功</el-tag>
+                    <el-tag type="success" v-if="scope.row.status === 0">成功</el-tag>
                     <el-tag type="danger" v-else>失败</el-tag>
                 </template>
             </el-table-column>
@@ -84,7 +84,7 @@ function init() {
         page: page.value,
         page_size: size.value
     }
-    if (value.value != '') params['status'] = [value.value]
+    if (value.value !== '') params['status'] = [value.value]
 
     loading.value = true
     QueryLogByParam(params)
