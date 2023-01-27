@@ -38,7 +38,7 @@
     "stompjs": "^2.3.3",
     "tiny-emitter": "^2.1.0",
     "typescript": "^4.6.3",
-    "ua-parser-js": "^0.7.20",
+    "ua-parser-js": "^0.7.33",
     "unplugin-auto-import": "^0.6.4",
     "unplugin-element-plus": "^0.3.2",
     "unplugin-vue-components": "^0.18.0",
